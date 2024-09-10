@@ -453,12 +453,10 @@ class JSGenerator {
         case 'list.get': {
             const index = this.descendInput(node.index);
             if (environment.supportsNullishCoalescing) {
-                if (index.isAlwaysNumberOrNaN()) {
-                    return new TypedInput(`(${this.referenceVariable(node.list)}.value[(${index.asNumber()} | 0) - 1] ?? "")`, TYPE_UNKNOWN);
-                }
                 if (index instanceof ConstantInput && index.constantValue === 'last') {
                     return new TypedInput(`(${this.referenceVariable(node.list)}.value[${this.referenceVariable(node.list)}.value.length - 1] ?? "")`, TYPE_UNKNOWN);
                 }
+                return new TypedInput(`(${this.referenceVariable(node.list)}.value[(${index.asNumber()} | 0) - 1] ?? "")`, TYPE_UNKNOWN);
             }
             return new TypedInput(`listGet(${this.referenceVariable(node.list)}.value, ${index.asUnknown()})`, TYPE_UNKNOWN);
         }
@@ -959,7 +957,8 @@ class JSGenerator {
             break;
         }
         case 'list.replace':
-            this.source += `listReplace(${this.referenceVariable(node.list)}, ${this.descendInput(node.index).asUnknown()}, ${this.descendInput(node.item).asSafe()});\n`;
+            this.source += `${this.referenceVariable(node.list)}.value[(${this.descendInput(node.index).asNumber()} | 0) - 1] = ${this.descendInput(node.item).asSafe()};\n`;
+            this.source += `${this.referenceVariable(node.list)}._monitorUpToDate = false;\n`;
             break;
         case 'list.show':
             this.source += `runtime.monitorBlocks.changeBlock({ id: "${sanitize(node.list.id)}", element: "checkbox", value: true }, runtime);\n`;
