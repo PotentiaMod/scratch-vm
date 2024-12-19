@@ -1535,11 +1535,8 @@ const deserialize = async function (json, runtime, zip, isSingleSprite) {
     }
 
     // Extract any custom fonts before loading costumes.
-    let fontPromise;
     if (json.customFonts) {
-        fontPromise = runtime.fontManager.deserialize(json.customFonts, zip, isSingleSprite);
-    } else {
-        fontPromise = Promise.resolve();
+        await runtime.fontManager.deserialize(json.customFonts, zip, isSingleSprite);
     }
 
     // First keep track of the current target order in the json,
@@ -1550,42 +1547,48 @@ const deserialize = async function (json, runtime, zip, isSingleSprite) {
         .map((t, i) => Object.assign(t, {targetPaneOrder: i}))
         .sort((a, b) => a.layerOrder - b.layerOrder);
 
-    const monitorObjects = json.monitors || [];
+    const eagerTargets = targetObjects.filter(i => i.lazy !== true);
+    const assets = eagerTargets.map(target => parseScratchAssets(target, runtime, zip));
 
-    return fontPromise.then(() => targetObjects.map(target => parseScratchAssets(target, runtime, zip)))
-        // Force this promise to wait for the next loop in the js tick. Let
-        // storage have some time to send off asset requests.
-        .then(assets => Promise.resolve(assets))
-        .then(assets => Promise.all(targetObjects
-            .map((target, index) =>
-                parseScratchObject(target, runtime, extensions, zip, assets[index]))))
-        .then(targets => targets // Re-sort targets back into original sprite-pane ordering
-            .map((t, i) => {
-                // Add layer order property to deserialized targets.
-                // This property is used to initialize executable targets in
-                // the correct order and is deleted in VM's installTargets function
-                t.layerOrder = i;
-                return t;
-            })
-            .sort((a, b) => a.targetPaneOrder - b.targetPaneOrder)
-            .map(t => {
-                // Delete the temporary properties used for
-                // sprite pane ordering and stage layer ordering
-                delete t.targetPaneOrder;
-                return t;
-            }))
-        .then(targets => replaceUnsafeCharsInVariableIds(targets))
-        .then(targets => {
-            monitorObjects.map(monitorDesc => deserializeMonitor(monitorDesc, runtime, targets, extensions));
-            if (Object.prototype.hasOwnProperty.call(json, 'extensionStorage')) {
-                runtime.extensionStorage = json.extensionStorage;
-            }
-            return targets;
+    // Force to wait for the next loop in the js tick. Let
+    // storage have some time to send off asset requests.
+    await Promise.resolve();
+
+    const unsortedTargets = await Promise.all(
+        eagerTargets.map((target, index) => parseScratchObject(target, runtime, extensions, zip, assets[index]))
+    );
+
+    // Re-sort targets back into original sprite-pane ordering
+    const sortedTargets = unsortedTargets
+        .map((t, i) => {
+            // Add layer order property to deserialized targets.
+            // This property is used to initialize executable targets in
+            // the correct order and is deleted in VM's installTargets function
+            t.layerOrder = i;
+            return t;
         })
-        .then(targets => ({
-            targets,
-            extensions
-        }));
+        .sort((a, b) => a.targetPaneOrder - b.targetPaneOrder)
+        .map(t => {
+            // Delete the temporary properties used for
+            // sprite pane ordering and stage layer ordering
+            delete t.targetPaneOrder;
+            return t;
+        });
+
+    const targets = replaceUnsafeCharsInVariableIds(sortedTargets);
+
+    const monitorObjects = json.monitors || [];
+    monitorObjects.map(monitorDesc => deserializeMonitor(monitorDesc, runtime, targets, extensions));
+
+    if (Object.prototype.hasOwnProperty.call(json, 'extensionStorage')) {
+        // eslint-disable-next-line require-atomic-updates
+        runtime.extensionStorage = json.extensionStorage;
+    }
+
+    return {
+        targets,
+        extensions
+    };
 };
 
 module.exports = {
