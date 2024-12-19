@@ -851,9 +851,7 @@ class VirtualMachine extends EventEmitter {
                 if (Object.prototype.hasOwnProperty.call(error, 'validationError')) {
                     return Promise.reject(JSON.stringify(error));
                 }
-                // TODO: reject with an Error (possible breaking API change!)
-                // eslint-disable-next-line prefer-promise-reject-errors
-                return Promise.reject(`${errorPrefix} ${error}`);
+                return Promise.reject(error);
             });
     }
 
