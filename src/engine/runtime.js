@@ -948,14 +948,6 @@ class Runtime extends EventEmitter {
     }
 
     /**
-     * Event when lazily loaded sprites are unloaded.
-     * Called with array of targets, including clones.
-     */
-    static get LAZY_SPRITES_UNLOADED () {
-        return 'LAZY_SPRITES_UNLOADED';
-    }
-
-    /**
      * How rapidly we try to step threads by default, in ms.
      */
     static get THREAD_STEP_INTERVAL () {
@@ -3539,10 +3531,10 @@ class Runtime extends EventEmitter {
                         // Already loaded or loading. Nothing to do.
                     }
                 } else {
-                    throw new Error(`Unknown lazy sprite: ${spriteNames}`);
+                    throw new Error(`Unknown lazy sprite: ${name}`);
                 }
             }
-    
+
             const promises = lazySprites.map(sprite => sprite.load());
             const allTargets = await Promise.all(promises);
 
@@ -3564,9 +3556,30 @@ class Runtime extends EventEmitter {
 
     /**
      * @param {string[]} spriteNames Assumed to contain no duplicate entries.
+     * @returns {Promise<void>} Resolves when all sprites have been unloaded.
      */
     unloadLazySprites (spriteNames) {
-        // TODO(lazy)
+        return this.lazySpritesLock.do(() => {
+            const lazySprites = [];
+            for (const name of spriteNames) {
+                const lazySprite = this.lazySprites.find(sprite => sprite.name === name);
+                if (lazySprite) {
+                    if (lazySprite.state === LazySprite.State.LOADED || lazySprite.state === LazySprite.State.LOADING) {
+                        lazySprites.push(lazySprite);
+                    } else if (lazySprite.state === LazySprite.State.ERROR) {
+                        // TODO(lazy)
+                    } else {
+                        // Already unloaded. Nothing to do.
+                    }
+                } else {
+                    throw new Error(`Unknown lazy sprite: ${name}`);
+                }
+            }
+
+            for (const lazySprite of lazySprites) {
+                lazySprite.unload();
+            }
+        });
     }
 }
 
