@@ -706,7 +706,7 @@ class VirtualMachine extends EventEmitter {
             return Promise.reject('Unable to verify Scratch Project version.');
         };
         return deserializePromise()
-            .then(({targets, extensions}) => {
+            .then(({targets, lazySprites, extensions}) => {
                 if (typeof performance !== 'undefined') {
                     performance.mark('scratch-vm-deserialize-end');
                     try {
@@ -720,7 +720,7 @@ class VirtualMachine extends EventEmitter {
                         log.error(e);
                     }
                 }
-                return this.installTargets(targets, extensions, true);
+                return this.installTargets(targets, lazySprites, extensions, true);
             });
     }
 
@@ -756,11 +756,12 @@ class VirtualMachine extends EventEmitter {
     /**
      * Install `deserialize` results: zero or more targets after the extensions (if any) used by those targets.
      * @param {Array.<Target>} targets - the targets to be installed
+     * @param {Array.<Sprite>} lazySprites - sprites that can be loaded lazily
      * @param {ImportedExtensionsInfo} extensions - metadata about extensions used by these targets
      * @param {boolean} wholeProject - set to true if installing a whole project, as opposed to a single sprite.
      * @returns {Promise} resolved once targets have been installed
      */
-    async installTargets (targets, extensions, wholeProject) {
+    async installTargets (targets, lazySprites, extensions, wholeProject) {
         await this.extensionManager.allAsyncExtensionsLoaded();
 
         targets = targets.filter(target => !!target);
@@ -778,6 +779,12 @@ class VirtualMachine extends EventEmitter {
             targets.forEach(target => {
                 delete target.layerOrder;
             });
+
+            if (wholeProject) {
+                this.runtime.lazySprites = lazySprites;
+            } else {
+                this.runtime.lazySprites = this.runtime.lazySprites.concat(lazySprites);
+            }
 
             // Select the first target for editing, e.g., the first sprite.
             if (wholeProject && (targets.length > 1)) {
@@ -866,8 +873,8 @@ class VirtualMachine extends EventEmitter {
 
         const sb2 = require('./serialization/sb2');
         return sb2.deserialize(sprite, this.runtime, true, zip)
-            .then(({targets, extensions}) =>
-                this.installTargets(targets, extensions, false));
+            .then(({targets, lazySprites, extensions}) =>
+                this.installTargets(targets, lazySprites, extensions, false));
     }
 
     /**
@@ -881,7 +888,7 @@ class VirtualMachine extends EventEmitter {
         const sb3 = require('./serialization/sb3');
         return sb3
             .deserialize(sprite, this.runtime, zip, true)
-            .then(({targets, extensions}) => this.installTargets(targets, extensions, false));
+            .then(({targets, lazySprites, extensions}) => this.installTargets(targets, lazySprites, extensions, false));
     }
 
     /**

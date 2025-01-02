@@ -7,6 +7,7 @@
 const Runtime = require('../engine/runtime');
 const Blocks = require('../engine/blocks');
 const Sprite = require('../sprites/sprite');
+const LazySprite = require('../sprites/tw-lazy-sprite.js');
 const Variable = require('../engine/variable');
 const Comment = require('../engine/comment');
 const MonitorRecord = require('../engine/monitor-record');
@@ -1150,52 +1151,12 @@ const parseScratchAssets = function (object, runtime, zip) {
 };
 
 /**
- * Parse a single "Scratch object" and create all its in-memory VM objects.
- * @param {!object} object From-JSON "Scratch object:" sprite, stage, watcher.
- * @param {!Runtime} runtime Runtime object to load all structures into.
- * @param {ImportedExtensionsInfo} extensions - (in/out) parsed extension information will be stored here.
- * @param {JSZip} zip Sb3 file describing this project (to load assets from)
- * @param {object} assets - Promises for assets of this scratch object grouped
- *   into costumes and sounds
- * @return {!Promise.<Target>} Promise for the target created (stage or sprite), or null for unsupported objects.
+ * Loads data from a target's JSON to an actual Target object, in place.
+ * @param {Runtime} runtime
+ * @param {Target} target
+ * @param {object} object
  */
-const parseScratchObject = function (object, runtime, extensions, zip, assets) {
-    if (!Object.prototype.hasOwnProperty.call(object, 'name')) {
-        // Watcher/monitor - skip this object until those are implemented in VM.
-        // @todo
-        return Promise.resolve(null);
-    }
-    // Blocks container for this object.
-    const blocks = new Blocks(runtime);
-
-    // @todo: For now, load all Scratch objects (stage/sprites) as a Sprite.
-    const sprite = new Sprite(blocks, runtime);
-
-    // Sprite/stage name from JSON.
-    if (Object.prototype.hasOwnProperty.call(object, 'name')) {
-        sprite.name = object.name;
-    }
-    if (Object.prototype.hasOwnProperty.call(object, 'blocks')) {
-        deserializeBlocks(object.blocks);
-        // Take a second pass to create objects and add extensions
-        for (const blockId in object.blocks) {
-            if (!Object.prototype.hasOwnProperty.call(object.blocks, blockId)) continue;
-            const blockJSON = object.blocks[blockId];
-            blocks.createBlock(blockJSON);
-
-            // If the block is from an extension, record it.
-            const extensionID = getExtensionIdForOpcode(blockJSON.opcode);
-            if (extensionID) {
-                extensions.extensionIDs.add(extensionID);
-            }
-        }
-    }
-    // Costumes from JSON.
-    const {costumePromises} = assets;
-    // Sounds from JSON
-    const {soundBank, soundPromises} = assets;
-    // Create the first clone, and load its run-state from JSON.
-    const target = sprite.createClone(object.isStage ? StageLayering.BACKGROUND_LAYER : StageLayering.SPRITE_LAYER);
+const parseTargetStateFromJSON = function (runtime, target, object) {
     // Load target properties from JSON.
     if (Object.prototype.hasOwnProperty.call(object, 'tempo')) {
         target.tempo = object.tempo;
@@ -1316,6 +1277,57 @@ const parseScratchObject = function (object, runtime, extensions, zip, assets) {
     if (Object.prototype.hasOwnProperty.call(object, 'extensionStorage')) {
         target.extensionStorage = object.extensionStorage;
     }
+};
+
+/**
+ * Parse a single "Scratch object" and create all its in-memory VM objects.
+ * @param {!object} object From-JSON "Scratch object:" sprite, stage, watcher.
+ * @param {!Runtime} runtime Runtime object to load all structures into.
+ * @param {ImportedExtensionsInfo} extensions - (in/out) parsed extension information will be stored here.
+ * @param {JSZip} zip Sb3 file describing this project (to load assets from)
+ * @param {object} assets - Promises for assets of this scratch object grouped
+ *   into costumes and sounds
+ * @return {!Promise.<Target>} Promise for the target created (stage or sprite), or null for unsupported objects.
+ */
+const parseScratchObject = function (object, runtime, extensions, zip, assets) {
+    if (!Object.prototype.hasOwnProperty.call(object, 'name')) {
+        // Watcher/monitor - skip this object until those are implemented in VM.
+        // @todo
+        return Promise.resolve(null);
+    }
+    // Blocks container for this object.
+    const blocks = new Blocks(runtime);
+
+    // @todo: For now, load all Scratch objects (stage/sprites) as a Sprite.
+    const sprite = new Sprite(blocks, runtime);
+
+    // Sprite/stage name from JSON.
+    if (Object.prototype.hasOwnProperty.call(object, 'name')) {
+        sprite.name = object.name;
+    }
+    if (Object.prototype.hasOwnProperty.call(object, 'blocks')) {
+        deserializeBlocks(object.blocks);
+        // Take a second pass to create objects and add extensions
+        for (const blockId in object.blocks) {
+            if (!Object.prototype.hasOwnProperty.call(object.blocks, blockId)) continue;
+            const blockJSON = object.blocks[blockId];
+            blocks.createBlock(blockJSON);
+
+            // If the block is from an extension, record it.
+            const extensionID = getExtensionIdForOpcode(blockJSON.opcode);
+            if (extensionID) {
+                extensions.extensionIDs.add(extensionID);
+            }
+        }
+    }
+    // Costumes from JSON.
+    const {costumePromises} = assets;
+    // Sounds from JSON
+    const {soundBank, soundPromises} = assets;
+    // Create the first clone, and load its run-state from JSON.
+    const target = sprite.createClone(object.isStage ? StageLayering.BACKGROUND_LAYER : StageLayering.SPRITE_LAYER);
+    // Load target properties from JSON.
+    parseTargetStateFromJSON(runtime, target, object);
     Promise.all(costumePromises).then(costumes => {
         sprite.costumes = costumes;
     });
@@ -1325,6 +1337,37 @@ const parseScratchObject = function (object, runtime, extensions, zip, assets) {
         sprite.soundBank = soundBank || null;
     });
     return Promise.all(costumePromises.concat(soundPromises)).then(() => target);
+};
+
+/**
+ * @param {object} object Sprite's JSON
+ * @param {Runtime} runtime
+ * @param {ImportedExtensionsInfo} extensions Extension information
+ * @param {JSZip|null} zip Zip file, if any
+ * @returns {LazySprite} Sprite with lazy-loading capabilities
+ */
+const parseLazySprite = (object, runtime, extensions, zip) => {
+    const sprite = new LazySprite(runtime, object, zip);
+    const blocks = sprite.blocks;
+
+    // See parseScratchObject above
+    if (Object.prototype.hasOwnProperty.call(object, 'name')) {
+        sprite.name = object.name;
+    }
+    if (Object.prototype.hasOwnProperty.call(object, 'blocks')) {
+        deserializeBlocks(object.blocks);
+        for (const blockId in object.blocks) {
+            if (!Object.prototype.hasOwnProperty.call(object.blocks, blockId)) continue;
+            const blockJSON = object.blocks[blockId];
+            blocks.createBlock(blockJSON);
+            const extensionID = getExtensionIdForOpcode(blockJSON.opcode);
+            if (extensionID) {
+                extensions.extensionIDs.add(extensionID);
+            }
+        }
+    }
+
+    return sprite;
 };
 
 const deserializeMonitor = function (monitorData, runtime, targets, extensions) {
@@ -1585,8 +1628,14 @@ const deserialize = async function (json, runtime, zip, isSingleSprite) {
         runtime.extensionStorage = json.extensionStorage;
     }
 
+    const lazyTargets = targetObjects.filter(i => i.lazy === true);
+    const lazySprites = await Promise.all(lazyTargets.map(object => (
+        parseLazySprite(object, runtime, extensions, zip)
+    )));
+
     return {
         targets,
+        lazySprites,
         extensions
     };
 };
@@ -1598,5 +1647,7 @@ module.exports = {
     serializeBlocks: serializeBlocks,
     deserializeStandaloneBlocks: deserializeStandaloneBlocks,
     serializeStandaloneBlocks: serializeStandaloneBlocks,
-    getExtensionIdForOpcode: getExtensionIdForOpcode
+    getExtensionIdForOpcode: getExtensionIdForOpcode,
+    parseScratchAssets: parseScratchAssets,
+    parseTargetStateFromJSON: parseTargetStateFromJSON
 };
