@@ -2,6 +2,7 @@ const formatMessage = require('format-message');
 const BlockType = require('../../extension-support/block-type');
 const ArgumentType = require('../../extension-support/argument-type');
 const Cast = require('../../util/cast');
+const Runtime = require('../../engine/runtime');
 
 class LazySprites {
     constructor (runtime) {
@@ -10,6 +11,14 @@ class LazySprites {
          * @type {Runtime}
          */
         this.runtime = runtime;
+
+        // This is implemented with an event rather than in the blocks below so that it works if
+        // some other extension loads sprites lazily.
+        this.runtime.on(Runtime.LAZY_SPRITES_LOADED, targets => {
+            for (const target of targets) {
+                this.runtime.startHats('twlazy_whenLoaded', null, target);
+            }
+        });
     }
 
     /**
@@ -21,6 +30,16 @@ class LazySprites {
             name: 'Lazy Loading',
             blocks: [
                 {
+                    blockType: BlockType.EVENT,
+                    opcode: 'whenLoaded',
+                    isEdgeActivated: false,
+                    text: formatMessage({
+                        id: 'tw.lazy.whenLoaded',
+                        default: 'when I load',
+                        description: 'Hat block that runs when a sprite loads'
+                    })
+                },
+                {
                     blockType: BlockType.COMMAND,
                     opcode: 'loadSprite',
                     text: formatMessage({
@@ -31,29 +50,44 @@ class LazySprites {
                     arguments: {
                         SPRITE: {
                             type: ArgumentType.STRING,
-                            menu: 'sprite'
+                            menu: 'lazySprite'
+                        }
+                    }
+                },
+                {
+                    blockType: BlockType.COMMAND,
+                    opcode: 'unloadSprite',
+                    text: formatMessage({
+                        id: 'tw.lazy.unloadSprite',
+                        default: 'unload sprite [SPRITE]',
+                        description: 'Block that unloads a sprite'
+                    }),
+                    arguments: {
+                        SPRITE: {
+                            type: ArgumentType.STRING,
+                            menu: 'lazySprite'
                         }
                     }
                 }
             ],
             menus: {
-                sprite: {
+                lazySprite: {
                     acceptReporters: true,
-                    items: 'getSpriteMenu'
+                    items: 'getLazySpritesMenu'
                 },
-                costume: {
+                lazyCostume: {
                     acceptReporters: true,
-                    items: 'getCostumeMenu'
+                    items: 'getLazyCostumesMenu'
                 },
-                sound: {
+                lazySound: {
                     acceptReporters: true,
-                    items: 'getSoundMenu'
+                    items: 'getLazySoundsMenu'
                 }
             }
         };
     }
 
-    getSpriteMenu () {
+    getLazySpritesMenu () {
         if (this.runtime.lazySprites.length === 0) {
             return [
                 {
@@ -70,12 +104,12 @@ class LazySprites {
         return this.runtime.lazySprites.map(i => i.name);
     }
 
-    getCostumeMenu () {
+    getLazyCostumesMenu () {
         // TODO(lazy)
         return ['b'];
     }
 
-    getSoundMenu () {
+    getLazySoundsMenu () {
         // TODO(lazy)
         return ['c'];
     }
@@ -83,6 +117,14 @@ class LazySprites {
     loadSprite (args) {
         const name = Cast.toString(args.SPRITE);
         return this.runtime.loadLazySprites([name])
+            .catch(() => {
+                // TODO(lazy): handle this...
+            });
+    }
+
+    unloadSprite (args) {
+        const name = Cast.toString(args.SPRITE);
+        return this.runtime.unloadLazySprites([name])
             .catch(() => {
                 // TODO(lazy): handle this...
             });
