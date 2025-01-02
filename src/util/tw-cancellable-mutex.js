@@ -56,8 +56,12 @@ class CancellableMutex {
                 startNextOperation();
             };
 
-            const run = () => {
-                callback(isCancelled).then(handleResolve, handleReject);
+            const run = async () => {
+                try {
+                    handleResolve(await callback(isCancelled));
+                } catch (error) {
+                    handleReject(error);
+                }
             };
 
             if (this._locked) {

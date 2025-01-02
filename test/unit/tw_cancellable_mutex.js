@@ -5,8 +5,7 @@ test('basic queing', t => {
     const mutex = new CancellableMutex();
     const events = [];
 
-    // Even though this operation takes the longest, because they are run sequentially,
-    // should finish first.
+    // Tests long resolved promise.
     mutex.do(() => new Promise(resolve => {
         setTimeout(() => resolve(5), 100);
     })).then(value => {
@@ -15,15 +14,44 @@ test('basic queing', t => {
         events.push(1);
     });
 
-    // Tests rejection and instant finishing.
+    // Tests long rejected promise.
     mutex.do(() => new Promise((resolve, reject) => {
-        reject(new Error('Test error'));
+        setTimeout(() => reject(new Error('Test error 1')), 100);
     })).catch(error => {
-        // Make sure rejection reason passes through transparently
-        t.equal(error.message, 'Test error');
+        t.equal(error.message, 'Test error 1');
         events.push(2);
     });
+    
+    // Tests instantly-resolving resolved promise.
+    mutex.do(() => new Promise(resolve => {
+        resolve(10);
+    })).then(value => {
+        t.equal(value, 10);
+        events.push(3);
+    });
 
+    // Tests instantly-resolving rejected promise.
+    mutex.do(() => new Promise((resolve, reject) => {
+        reject(new Error('Test error 2'));
+    })).catch(error => {
+        t.equal(error.message, 'Test error 2');
+        events.push(4);
+    });
+
+    // Tests instantly-returning sync function.
+    mutex.do(() => 15).then(value => {
+        t.equal(value, 15);
+        events.push(5);
+    });
+
+    // Tests instantly-throwing sync function.
+    mutex.do(() => {
+        throw new Error('Test error 3');
+    }).catch(error => {
+        t.equal(error.message, 'Test error 3');
+        events.push(6);
+    });
+    
     mutex.do(() => new Promise(resolve => {
         setTimeout(() => {
             resolve();
@@ -34,14 +62,14 @@ test('basic queing', t => {
                 mutex.do(() => new Promise(resolve2 => {
                     resolve2();
                 })).then(() => {
-                    events.push(4);
-                    t.same(events, [1, 2, 3, 4]);
+                    events.push(8);
+                    t.same(events, [1, 2, 3, 4, 5, 6, 7, 8]);
                     t.end();
                 });
             });
         }, 50);
     })).then(() => {
-        events.push(3);
+        events.push(7);
     });
 });
 
