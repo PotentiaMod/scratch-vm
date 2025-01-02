@@ -237,6 +237,41 @@ class LazySprite extends Sprite {
             this.runtime.disposeTarget(target);
         }
     }
+
+    /**
+     * Fetch all assets used in this sprite for serialization.
+     * @returns {Promise<Array<{fileName: string; fileContents: Uint8Array}>>}
+     */
+    async serializeAssets () {
+        // Loaded lazily to avoid circular dependencies
+        const deserializeAssets = require('../serialization/deserialize-assets');
+
+        const promises = [];
+        for (const costume of this.object.costumes) {
+            if (!costume.asset) {
+                promises.push(deserializeAssets.deserializeCostume(costume, this.runtime, assetCacheSingleton));
+            }
+        }
+        for (const sound of this.object.sounds) {
+            if (!sound.asset) {
+                promises.push(deserializeAssets.deserializeSound(sound, this.runtime, assetCacheSingleton));
+            }
+        }
+        await Promise.all(promises);
+
+        const allResources = [
+            ...this.object.costumes,
+            ...this.object.sounds
+        ];
+
+        return allResources
+            .map(o => (o.broken ? o.broken.asset : o.asset))
+            .filter(asset => asset)
+            .map(asset => ({
+                fileName: `${asset.assetId}.${asset.dataFormat}`,
+                fileContent: asset.data
+            }));
+    }
 }
 
 // Export enums

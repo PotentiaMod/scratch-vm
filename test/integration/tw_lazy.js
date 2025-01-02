@@ -189,6 +189,7 @@ test('sb2 has no lazy sprites', t => {
 for (const load of [true, false]) {
     test(`export lazy sprites ${load ? 'after' : 'before'} loading`, t => {
         const vm = new VM();
+        vm.attachStorage(makeTestStorage());
         const fixture = fs.readFileSync(path.join(__dirname, '../fixtures/tw-lazy-simple.sb3'));
     
         vm.loadProject(fixture).then(async () => {
@@ -216,7 +217,10 @@ for (const load of [true, false]) {
             delete fixtureJSON.targets[1].layerOrder;
 
             t.same(json.targets[1], fixtureJSON.targets[1]);
-    
+
+            // Check for lazy loaded sprite's costume existing
+            t.not(zip.file('927d672925e7b99f7813735c484c6922.svg'), null);
+
             t.end();
         });
     });

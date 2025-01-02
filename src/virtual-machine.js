@@ -514,9 +514,9 @@ class VirtualMachine extends EventEmitter {
     }
 
     /**
-     * @returns {JSZip} JSZip zip object representing the sb3.
+     * @returns {Promise<JSZip>} JSZip zip object representing the sb3.
      */
-    _saveProjectZip () {
+    async _saveProjectZip () {
         const projectJson = this.toJSON();
 
         // TODO want to eventually move zip creation out of here, and perhaps
@@ -525,7 +525,7 @@ class VirtualMachine extends EventEmitter {
 
         // Put everything in a zip file
         zip.file('project.json', projectJson);
-        this._addFileDescsToZip(this.serializeAssets(), zip);
+        this._addFileDescsToZip(await this.serializeAssets(), zip);
 
         // Use a fixed modification date for the files in the zip instead of letting JSZip use the
         // current time to avoid a very small metadata leak and make zipping deterministic. The magic
@@ -543,8 +543,9 @@ class VirtualMachine extends EventEmitter {
      * @param {JSZip.OutputType} [type] JSZip output type. Defaults to 'blob' for Scratch compatibility.
      * @returns {Promise<unknown>} Compressed sb3 file in a type determined by the type argument.
      */
-    saveProjectSb3 (type) {
-        return this._saveProjectZip().generateAsync({
+    async saveProjectSb3 (type) {
+        const zip = await this._saveProjectZip();
+        return zip.generateAsync({
             type: type || 'blob',
             mimeType: 'application/x.scratch.sb3',
             compression: 'DEFLATE'
@@ -553,11 +554,12 @@ class VirtualMachine extends EventEmitter {
 
     /**
      * @param {JSZip.OutputType} [type] JSZip output type. Defaults to 'arraybuffer'.
-     * @returns {StreamHelper} JSZip StreamHelper object generating the compressed sb3.
+     * @returns {Promise<StreamHelper>} JSZip StreamHelper object generating the compressed sb3.
      * See: https://stuk.github.io/jszip/documentation/api_streamhelper.html
      */
-    saveProjectSb3Stream (type) {
-        return this._saveProjectZip().generateInternalStream({
+    async saveProjectSb3Stream (type) {
+        const zip = await this._saveProjectZip();
+        return zip.generateInternalStream({
             type: type || 'arraybuffer',
             mimeType: 'application/x.scratch.sb3',
             compression: 'DEFLATE'
@@ -601,19 +603,34 @@ class VirtualMachine extends EventEmitter {
 
     /**
      * @param {string} targetId Optional ID of target to export
-     * @returns {Array<{fileName: string; fileContent: Uint8Array;}} list of file descs
+     * @returns {Promise<Array<{fileName: string; fileContent: Uint8Array;}>} list of file descs
      */
-    serializeAssets (targetId) {
-        const costumeDescs = serializeCostumes(this.runtime, targetId);
-        const soundDescs = serializeSounds(this.runtime, targetId);
+    async serializeAssets (targetId) {
+        // This will include non-lazy sprites and loaded lazy sprites.
+        const loadedCostumeDescs = serializeCostumes(this.runtime, targetId);
+        const loadedSoundDescs = serializeSounds(this.runtime, targetId);
+
+        // Assume every target needs all fonts.
         const fontDescs = this.runtime.fontManager.serializeAssets().map(asset => ({
             fileName: `${asset.assetId}.${asset.dataFormat}`,
             fileContent: asset.data
         }));
+
+        // Fetch assets used by lazy sprites.
+        const unloadedSprites = this.runtime.lazySprites.filter(i => i.clones.length === 0);
+        const unloadedSpriteDescs = await Promise.all(unloadedSprites.map(s => s.serializeAssets()));
+        const flattenedUnloadedSpriteDescs = [];
+        for (const descs of unloadedSpriteDescs) {
+            for (const desc of descs) {
+                flattenedUnloadedSpriteDescs.push(desc);
+            }
+        }
+
         return [
-            ...costumeDescs,
-            ...soundDescs,
-            ...fontDescs
+            ...loadedCostumeDescs,
+            ...loadedSoundDescs,
+            ...fontDescs,
+            ...flattenedUnloadedSpriteDescs
         ];
     }
 
@@ -637,12 +654,12 @@ class VirtualMachine extends EventEmitter {
      * @return {object} A generated zip of the sprite and its assets in the format
      * specified by optZipType or blob by default.
      */
-    exportSprite (targetId, optZipType) {
+    async exportSprite (targetId, optZipType) {
         const spriteJson = this.toJSON(targetId);
 
         const zip = new JSZip();
         zip.file('sprite.json', spriteJson);
-        this._addFileDescsToZip(this.serializeAssets(targetId), zip);
+        this._addFileDescsToZip(await this.serializeAssets(targetId), zip);
 
         return zip.generateAsync({
             type: typeof optZipType === 'string' ? optZipType : 'blob',
