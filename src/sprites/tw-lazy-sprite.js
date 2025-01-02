@@ -116,6 +116,10 @@ class LazySprite extends Sprite {
         this._cancelLoadCallback = () => {};
     }
 
+    get isLazy () {
+        return true;
+    }
+
     /**
      * Creates an instance of this sprite.
      * State must be unloaded.
@@ -132,6 +136,7 @@ class LazySprite extends Sprite {
         const load = async () => {
             this.state = State.LOADING;
 
+            // Loaded lazily to avoid circular dependencies
             const sb3 = require('../serialization/sb3');
             const {
                 costumePromises,
@@ -195,7 +200,8 @@ class LazySprite extends Sprite {
         const serializeAssets = require('../serialization/serialize-assets');
 
         const target = this.clones[0];
-        const serializedJSON = sb3.serialize(this.runtime, target.id);
+        const extensions = new Set();
+        const serializedJSON = sb3.serializeTarget(target.toJSON(), extensions);
         const assets = [
             ...serializeAssets.serializeCostumes(this.runtime, target.id),
             ...serializeAssets.serializeSounds(this.runtime, target.id)

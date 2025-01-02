@@ -629,11 +629,34 @@ const serializeTarget = function (target, extensions) {
         obj.rotationStyle = target.rotationStyle;
     }
 
+    // Only output anything for lazy sprites so that we match vanilla for non-lazy sprites.
+    if (target.lazy) {
+        obj.lazy = true;
+    }
+
     // Add found extensions to the extensions object
     targetExtensions.forEach(extensionId => {
         extensions.add(extensionId);
     });
     return obj;
+};
+
+/**
+ * @param {LazySprite} lazySprite
+ * @param {Set} extensions
+ * @returns {object}
+ */
+const serializeLazySprite = function (lazySprite, extensions) {
+    if (lazySprite.state === LazySprite.State.LOADED) {
+        lazySprite.save();
+    }
+
+    const [_blocks, targetExtensions] = serializeBlocks(lazySprite.object.blocks);
+    targetExtensions.forEach(extensionId => {
+        extensions.add(extensionId);
+    });
+
+    return lazySprite.object;
 };
 
 /**
@@ -720,7 +743,8 @@ const serialize = function (runtime, targetId, {allowOptimization = true} = {}) 
 
     const originalTargetsToSerialize = targetId ?
         [runtime.getTargetById(targetId)] :
-        runtime.targets.filter(target => target.isOriginal);
+        runtime.targets.filter(target => target.isOriginal && !target.sprite.isLazy);
+    const lazySpritesToSerialize = targetId ? [] : runtime.lazySprites;
 
     const layerOrdering = getSimplifiedLayerOrdering(originalTargetsToSerialize);
 
@@ -745,10 +769,17 @@ const serialize = function (runtime, targetId, {allowOptimization = true} = {}) 
             return serialized;
         });
 
+    const serializedLazySprites = lazySpritesToSerialize.map(s => serializeLazySprite(s, extensions));
+
     const fonts = runtime.fontManager.serializeJSON();
 
     if (targetId) {
         const target = serializedTargets[0];
+
+        // Doesn't make sense for an export of a single sprite to be lazy when it gets
+        // imported again.
+        delete target.lazy;
+
         if (extensions.size) {
             // Vanilla Scratch doesn't include extensions in sprites, so don't add this if it's not needed
             target.extensions = Array.from(extensions);
@@ -768,7 +799,10 @@ const serialize = function (runtime, targetId, {allowOptimization = true} = {}) 
         obj.extensionStorage = globalExtensionStorage;
     }
 
-    obj.targets = serializedTargets;
+    obj.targets = [
+        ...serializedTargets,
+        ...serializedLazySprites
+    ];
 
     obj.monitors = serializeMonitors(runtime.getMonitorState(), runtime, extensions);
 
@@ -1645,6 +1679,7 @@ module.exports = {
     deserialize: deserialize,
     deserializeBlocks: deserializeBlocks,
     serializeBlocks: serializeBlocks,
+    serializeTarget: serializeTarget,
     deserializeStandaloneBlocks: deserializeStandaloneBlocks,
     serializeStandaloneBlocks: serializeStandaloneBlocks,
     getExtensionIdForOpcode: getExtensionIdForOpcode,

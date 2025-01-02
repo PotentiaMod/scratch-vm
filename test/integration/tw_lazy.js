@@ -2,6 +2,7 @@ const {test} = require('tap');
 const path = require('path');
 const fs = require('fs');
 const nodeCrypto = require('crypto');
+const JSZip = require('@turbowarp/jszip');
 const VM = require('../../src/virtual-machine');
 const FakeRenderer = require('../fixtures/fake-renderer');
 const makeTestStorage = require('../fixtures/make-test-storage');
@@ -36,7 +37,7 @@ test('lazy loaded sprite inside a zip', t => {
         t.equal(lazySprite.object.name, 'Sprite1');
         t.not(lazySprite.zip, null);
 
-        t.not(loadedMd5Sums.has('927d672925e7b99f7813735c484c6922'));
+        t.notOk(loadedMd5Sums.has('927d672925e7b99f7813735c484c6922'));
 
         lazySprite.load().then(target => {
             // Ensure sprite pointer matches
@@ -55,6 +56,16 @@ test('lazy loaded sprite inside a zip', t => {
 
             t.end();
         });
+    });
+});
+
+test('isLazy === true', t => {
+    const vm = new VM();
+    const fixture = fs.readFileSync(path.join(__dirname, '../fixtures/tw-lazy-simple.sb3'));
+    vm.loadProject(fixture).then(() => {
+        const lazySprite = vm.runtime.lazySprites[0];
+        t.equal(lazySprite.isLazy, true);
+        t.end();
     });
 });
 
@@ -172,5 +183,53 @@ test('sb2 has no lazy sprites', t => {
     vm.loadProject(fixture).then(() => {
         t.equal(vm.runtime.lazySprites.length, 0);
         t.end();
+    });
+});
+
+for (const load of [true, false]) {
+    test(`export lazy sprites ${load ? 'after' : 'before'} loading`, t => {
+        const vm = new VM();
+        const fixture = fs.readFileSync(path.join(__dirname, '../fixtures/tw-lazy-simple.sb3'));
+    
+        vm.loadProject(fixture).then(async () => {
+            if (load) {
+                await vm.runtime.loadLazySprites(['Sprite1']);
+            }
+    
+            const buffer = await vm.saveProjectSb3('arraybuffer');
+            const zip = await JSZip.loadAsync(buffer);
+            const json = JSON.parse(await zip.file('project.json').async('text'));
+    
+            // Surface-level checks
+            t.equal(json.targets.length, 2);
+            t.notOk(Object.prototype.hasOwnProperty.call(json.targets[0], 'lazy'));
+            t.equal(json.targets[1].name, 'Sprite1');
+            t.equal(json.targets[1].lazy, true);
+    
+            // Expect exact equality of target JSON
+            const fixtureZip = await JSZip.loadAsync(fixture);
+            const fixtureJSON = JSON.parse(await fixtureZip.file('project.json').async('text'));
+    
+            delete json.targets[1].targetPaneOrder;
+            delete fixtureJSON.targets[1].targetPaneOrder;
+            delete json.targets[1].layerOrder;
+            delete fixtureJSON.targets[1].layerOrder;
+
+            t.same(json.targets[1], fixtureJSON.targets[1]);
+    
+            t.end();
+        });
+    });
+}
+
+test('lazy sprite is not lazy when exported individually', t => {
+    const vm = new VM();
+    const fixture = fs.readFileSync(path.join(__dirname, '../fixtures/tw-lazy-simple.sb3'));
+    vm.loadProject(fixture).then(() => {
+        vm.runtime.loadLazySprites(['Sprite1']).then(([target]) => {
+            const json = JSON.parse(vm.toJSON(target.id));
+            t.notOk(Object.prototype.hasOwnProperty.call(json, 'lazy'));
+            t.end();
+        });
     });
 });
