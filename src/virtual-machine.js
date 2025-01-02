@@ -570,15 +570,15 @@ class VirtualMachine extends EventEmitter {
      * tw: Serialize the project into a map of files without actually zipping the project.
      * The buffers returned are the exact same ones used internally, not copies. Avoid directly
      * manipulating them (except project.json, which is created by this function).
-     * @returns {Record<string, Uint8Array>} Map of file name to the raw data for that file.
+     * @returns {Promise<Record<string, Uint8Array>>} Map of file name to the raw data for that file.
      */
-    saveProjectSb3DontZip () {
+    async saveProjectSb3DontZip () {
         const projectJson = this.toJSON();
 
         const files = {
             'project.json': new _TextEncoder().encode(projectJson)
         };
-        for (const fileDesc of this.serializeAssets()) {
+        for (const fileDesc of await this.serializeAssets()) {
             files[fileDesc.fileName] = fileDesc.fileContent;
         }
 

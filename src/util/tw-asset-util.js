@@ -37,17 +37,6 @@ class AssetUtil {
 
         return runtime.wrapAssetRequest(() => runtime.storage.load(assetType, md5, ext));
     }
-
-    /**
-     * 
-     * @param {JSZip} zip Zip to search
-     * @param {Storage.assetType} assetType scratch-storage asset type
-     * @param {string} md5ext full md5 with file extension
-     * @returns {boolean}
-     */
-    static md5ExtExists (zip, assetType, md5ext) {
-
-    }
 }
 
 module.exports = AssetUtil;

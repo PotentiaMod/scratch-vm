@@ -88,7 +88,7 @@ test('cancellation', t => {
         t.fail();
     }));
 
-    // After dispoing, existing operation should be cancelled, queue should be cleared.
+    // After cancelling, existing operation should be able to see that, and queue should be cleared.
     mutex.cancel();
     t.equal(isCancelled(), true);
 
