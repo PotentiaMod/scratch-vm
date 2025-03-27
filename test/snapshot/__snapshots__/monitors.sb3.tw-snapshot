@@ -1,0 +1,16 @@
+// TW Snapshot
+// Input SHA-256: 943137ed040a50103e956cd00de2b287f962f6c43740d7db0a34c9a815990515
+
+// Shirt-T script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ () {
+runtime.monitorBlocks.changeBlock({ id: "u_HOKnSj5IGIR:I-*hEf", element: "checkbox", value: true }, runtime);
+retire(); return;
+}; })
+
+// Shirt-T script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ () {
+runtime.monitorBlocks.changeBlock({ id: "u_HOKnSj5IGIR:I-*hEf", element: "checkbox", value: false }, runtime);
+retire(); return;
+}; })

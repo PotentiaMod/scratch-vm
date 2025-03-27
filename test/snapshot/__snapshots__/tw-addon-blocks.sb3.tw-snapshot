@@ -1,0 +1,54 @@
+// TW Snapshot
+// Input SHA-256: 54a4ec28132b64d6928f5fc7496f96d648e96fd16ce59424c4b43aa62dd4a961
+
+// Sprite1 script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = stage.variables["k.O6oY;$?=5p74J]N,t7"];
+const b1 = stage.variables["^Deo^FV^tjC{e}!j`RXd"];
+const b2 = stage.variables["D:w}sRoQ_8JYf0!Sf+dW"];
+const b3 = stage.variables["c(Ic~QBcP%C=Ud6oz2=)"];
+const b4 = stage.variables["9z]/YWoORq17j:!][.DQ"];
+return function* genXYZ () {
+b0.value = "false";
+b1.value = "false";
+b2.value = "false";
+b3.value = "false";
+thread.procedures["Zblock 1"]();
+thread.procedures["Zblock 2 %s"]("banana");
+thread.procedures["Zblock 3"]();
+b4.value = thread.procedures["Zblock 4 %s"]("apple");
+retire(); return;
+}; })
+
+// Sprite1 Zblock 1
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = stage.variables["k.O6oY;$?=5p74J]N,t7"];
+return function funXYZ_block_1 () {
+b0.value = "block 1 ran";
+return "";
+}; })
+
+// Sprite1 Zblock 2 %s
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = stage.variables["^Deo^FV^tjC{e}!j`RXd"];
+return function funXYZ_block_2_ (p0) {
+b0.value = ("block 2: " + ("" + p0));
+return "";
+}; })
+
+// Sprite1 Zblock 3
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = stage.variables["D:w}sRoQ_8JYf0!Sf+dW"];
+return function funXYZ_block_3 () {
+b0.value = "block 3 ran";
+return "";
+}; })
+
+// Sprite1 Zblock 4 %s
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = stage.variables["c(Ic~QBcP%C=Ud6oz2=)"];
+return function funXYZ_block_4_ (p0) {
+b0.value = "block 4 ran";
+return ("block 4: " + ("" + p0));
+return "";
+}; })

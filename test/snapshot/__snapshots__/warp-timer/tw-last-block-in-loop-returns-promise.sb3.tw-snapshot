@@ -1,0 +1,24 @@
+// TW Snapshot
+// Input SHA-256: b7b9a840cc3767a2de466267b637d3f37f16b08768e389cc038b14aaa8700ada
+
+// Sprite1 script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = runtime.getOpcodeFunction("sound_changeeffectby");
+return function* genXYZ () {
+for (var a0 = 15; a0 >= 0.5; a0--) {
+yield* executeInCompatibilityLayer({"VALUE":0,"EFFECT":"PITCH",}, b0, false, true, "e", null);
+if (hasResumedFromPromise) {hasResumedFromPromise = false;continue;}
+yield;
+}
+runtime.stopForTarget(target, thread);
+retire(); return;
+}; })
+
+// Sprite1 script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ () {
+while (true) {
+yield;
+}
+retire(); return;
+}; })

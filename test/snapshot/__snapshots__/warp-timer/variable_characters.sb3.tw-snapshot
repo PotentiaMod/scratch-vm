@@ -1,0 +1,14 @@
+// TW Snapshot
+// Input SHA-256: 65313d7ee826758db8cf48d56dde43ddec1c4eba437594a4195cb1ee757d2425
+
+// Sprite1 script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = stage.variables["#9v=w31Sr^/]9|H48#aq-quotfoo-"];
+const b1 = stage.variables["#9v=w31Sr^/]9|H48#aq-aampb-list"];
+return function* genXYZ () {
+target.setDirection(((target.direction + 15) || 0));
+b0.value = "foo";
+b1.value.push("thing");
+b1._monitorUpToDate = false;
+retire(); return;
+}; })

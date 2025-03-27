@@ -4,9 +4,31 @@ const crypto = require('crypto');
 const VM = require('../../src/virtual-machine');
 const JSGenerator = require('../../src/compiler/jsgen');
 
-const executeDir = path.resolve(__dirname, '../fixtures/execute');
+/**
+ * @param {string} directoryPath Path to the directory
+ * @returns {string[]} Absolute paths for all files in the directory
+ */
+const recursiveReadDirectory = directoryPath => {
+    const result = [];
+    const children = fs.readdirSync(directoryPath).sort();
+    for (const childName of children) {
+        const childPath = path.join(directoryPath, childName);
+        const stat = fs.statSync(childPath);
+        if (stat.isDirectory()) {
+            for (const file of recursiveReadDirectory(childPath)) {
+                result.push(file);
+            }
+        } else {
+            result.push(childPath);
+        }
+    }
+    return result;
+};
+
+const fixtureDir = path.resolve(__dirname, '../fixtures');
+
 // sb2 project loading results in random IDs each time, so for now we only snapshot sb3 files
-const testFiles = fs.readdirSync(executeDir).filter(uri => uri.endsWith('.sb3'));
+const testFiles = recursiveReadDirectory(fixtureDir).filter(uri => uri.endsWith('.sb3'));
 
 /**
  * @typedef {string} Snapshot Represents either a generated or parsed test case snapshot.
@@ -22,14 +44,14 @@ const testFiles = fs.readdirSync(executeDir).filter(uri => uri.endsWith('.sb3'))
 /** @type {TestCase[]} */
 const testCases = testFiles.map(file => ([
     {
-        id: file,
+        id: path.relative(fixtureDir, file),
         file: file,
         compilerOptions: {
             warpTimer: false
         }
     },
     {
-        id: `warp-timer/${file}`,
+        id: `warp-timer/${path.relative(fixtureDir, file)}`,
         file: file,
         compilerOptions: {
             warpTimer: true
@@ -38,14 +60,12 @@ const testCases = testFiles.map(file => ([
 ])).flat();
 
 const snapshotDir = path.resolve(__dirname, '__snapshots__');
-fs.mkdirSync(snapshotDir, {recursive: true});
-fs.mkdirSync(path.join(snapshotDir, 'warp-timer'), {recursive: true});
 
 /**
  * @param {TestCase} testCase From testCases.
  * @returns {Buffer} Compressed project file from disk.
  */
-const getProjectData = testCase => fs.readFileSync(path.join(executeDir, testCase.file));
+const getProjectData = testCase => fs.readFileSync(testCase.file);
 
 /**
  * @param {TestCase} testCase From testCases.
@@ -66,14 +86,27 @@ const parseSnapshotSHA256 = snapshot => snapshot.match(/^\/\/ Input SHA-256: ([0
 
 /**
  * @param {TestCase} testCase Test to run from testCases
- * @returns {Promise<Snapshot>} Actual snapshot
+ * @returns {Promise<Snapshot|null>} Actual snapshot
  */
 const generateActualSnapshot = async testCase => {
     const vm = new VM();
     vm.setCompilerOptions(testCase.compilerOptions);
     const projectData = getProjectData(testCase);
     const inputSHA256 = computeSHA256(projectData);
-    await vm.loadProject(projectData);
+
+    let triedToLoadExtension = false;
+    vm.securityManager.canLoadExtensionFromProject = () => {
+        triedToLoadExtension = true;
+        return false;
+    };
+
+    try {
+        await vm.loadProject(projectData);
+    } catch (e) {
+        if (triedToLoadExtension) {
+            return '// Snapshot unavailable as fixture contains custom extension\n';
+        }
+    }
 
     /*
         Example source (manually formatted):
@@ -85,7 +118,7 @@ const generateActualSnapshot = async testCase => {
                 // ...
             };
         }; })
-        The numbers in the function names are indeterministic, we we remove them.
+        The numbers in the function names are non-deterministic, so we replace them with generic versions here.
     */
     const normalizeJS = source => source
         .replace(/^\(function factory\d+/, '(function factoryXYZ')
@@ -166,7 +199,11 @@ const compareSnapshots = (expected, actual) => {
  * @param {Snapshot} snapshot From generateActualSnapshot
  */
 const saveSnapshot = (testCase, snapshot) => {
-    fs.writeFileSync(getSnapshotPath(testCase), snapshot);
+    const snapshotPath = getSnapshotPath(testCase);
+    fs.mkdirSync(path.dirname(snapshotPath), {
+        recursive: true
+    });
+    fs.writeFileSync(snapshotPath, snapshot);
 };
 
 module.exports = {

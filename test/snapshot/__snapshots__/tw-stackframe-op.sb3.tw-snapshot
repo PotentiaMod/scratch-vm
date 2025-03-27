@@ -1,0 +1,10 @@
+// TW Snapshot
+// Input SHA-256: 67dc90fd319806e222ecb2d8c565b783d1204647a62782e62478b640d9c7ca4e
+
+// Sprite1 script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = runtime.getOpcodeFunction("looks_say");
+return function* genXYZ () {
+yield* executeInCompatibilityLayer({"MESSAGE":(5 + 7),}, b0, false, false, "a", null);
+retire(); return;
+}; })

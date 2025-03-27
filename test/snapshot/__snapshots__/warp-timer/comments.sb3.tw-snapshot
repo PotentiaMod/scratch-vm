@@ -1,0 +1,16 @@
+// TW Snapshot
+// Input SHA-256: 656102a3256382d4cbb39b4af37cb8d23df0b6ac05f00fb4d02d4642277dce95
+
+// Sprite1 script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ () {
+runtime.ext_scratch3_motion._moveSteps(10, target);
+target.setDirection(((target.direction + 15) || 0));
+for (var a0 = 10; a0 >= 0.5; a0--) {
+target.setEffect("color", runtime.ext_scratch3_looks.clampEffect("color", 25 + target.effects["color"]));
+yield;
+}
+runtime.stopAll();
+retire(); return;
+retire(); return;
+}; })

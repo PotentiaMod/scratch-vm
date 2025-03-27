@@ -1,0 +1,22 @@
+// TW Snapshot
+// Input SHA-256: b86984d1b137647e4a280cf11202109bf0a2867678f92e800aaf6ec8af819bdc
+
+// Stage script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = runtime.getOpcodeFunction("event_whengreaterthan");
+const b1 = runtime.getOpcodeFunction("looks_say");
+return function* genXYZ () {
+{
+const resolvedValue = toBoolean((yield* executeInCompatibilityLayer({"VALUE":10,"WHENGREATERTHANMENU":"TIMER",}, b0, false, false, "a", null)));
+const id = "a";
+const hasOldEdgeValue = target.hasEdgeActivatedValue(id);
+const oldEdgeValue = target.updateEdgeActivatedValue(id, resolvedValue);
+const edgeWasActivated = hasOldEdgeValue ? (!oldEdgeValue && resolvedValue) : resolvedValue;
+if (!edgeWasActivated) {
+retire(); return;
+}
+yield;
+}
+yield* executeInCompatibilityLayer({"MESSAGE":"Hello!",}, b1, false, false, "b", null);
+retire(); return;
+}; })

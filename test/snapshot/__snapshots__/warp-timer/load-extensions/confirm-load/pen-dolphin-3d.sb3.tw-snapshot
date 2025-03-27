@@ -1,0 +1,457 @@
+// TW Snapshot
+// Input SHA-256: 975052cbd3946ea1d60eb3c2c8c0d99fc1d9bf9aa39d4e0c30a96112b4297a83
+
+// Trivia script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ () {
+target.setVisible(false);
+runtime.ext_scratch3_looks._renderBubble(target);
+target.setXY(0, 0);
+target.setEffect("ghost", runtime.ext_scratch3_looks.clampEffect("ghost", 100));
+runtime.ext_scratch3_looks._setCostume(target, "species");
+thread.timer = timer();
+var a0 = Math.max(0, 1000 * 24);
+runtime.requestRedraw();
+yield;
+while (thread.timer.timeElapsed() < a0) {
+yield;
+}
+thread.timer = null;
+target.setVisible(true);
+runtime.ext_scratch3_looks._renderBubble(target);
+while (true) {
+thread.timer = timer();
+var a1 = Math.max(0, 1000 * 2);
+runtime.requestRedraw();
+yield;
+while (thread.timer.timeElapsed() < a1) {
+yield;
+}
+thread.timer = null;
+yield* thread.procedures["Zfade in"]();
+thread.timer = timer();
+var a2 = Math.max(0, 1000 * 10);
+runtime.requestRedraw();
+yield;
+while (thread.timer.timeElapsed() < a2) {
+yield;
+}
+thread.timer = null;
+yield* thread.procedures["Zfade out"]();
+target.setCostume(target.currentCostume + 1);
+yield;
+}
+retire(); return;
+}; })
+
+// Trivia Zfade in
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ_fade_in () {
+for (var a0 = 10; a0 >= 0.5; a0--) {
+target.setEffect("ghost", runtime.ext_scratch3_looks.clampEffect("ghost", -10 + target.effects["ghost"]));
+thread.timer = timer();
+var a1 = Math.max(0, 1000 * 0.033);
+runtime.requestRedraw();
+yield;
+while (thread.timer.timeElapsed() < a1) {
+yield;
+}
+thread.timer = null;
+yield;
+}
+return "";
+}; })
+
+// Trivia Zfade out
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ_fade_out () {
+for (var a0 = 25; a0 >= 0.5; a0--) {
+target.setEffect("ghost", runtime.ext_scratch3_looks.clampEffect("ghost", 4 + target.effects["ghost"]));
+thread.timer = timer();
+var a1 = Math.max(0, 1000 * 0.033);
+runtime.requestRedraw();
+yield;
+while (thread.timer.timeElapsed() < a1) {
+yield;
+}
+thread.timer = null;
+yield;
+}
+return "";
+}; })
+
+// Trivia script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ () {
+target.setVisible(false);
+runtime.ext_scratch3_looks._renderBubble(target);
+retire(); return;
+}; })
+
+// Title script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ () {
+target.setXY(0, 0);
+target.setEffect("ghost", runtime.ext_scratch3_looks.clampEffect("ghost", 100));
+runtime.ext_scratch3_looks._setCostume(target, "HeldLaw presents");
+target.setVisible(true);
+runtime.ext_scratch3_looks._renderBubble(target);
+thread.timer = timer();
+var a0 = Math.max(0, 1000 * 1.5);
+runtime.requestRedraw();
+yield;
+while (thread.timer.timeElapsed() < a0) {
+yield;
+}
+thread.timer = null;
+yield* thread.procedures["Zfade in"]();
+thread.timer = timer();
+var a1 = Math.max(0, 1000 * 3.5);
+runtime.requestRedraw();
+yield;
+while (thread.timer.timeElapsed() < a1) {
+yield;
+}
+thread.timer = null;
+yield* thread.procedures["Zfade out"]();
+while (!(runtime.ioDevices.clock.projectTimer() > 11.5)) {
+yield;
+}
+runtime.ext_scratch3_looks._setCostume(target, "Dolphins");
+yield* thread.procedures["Zfade in"]();
+thread.timer = timer();
+var a2 = Math.max(0, 1000 * 4);
+runtime.requestRedraw();
+yield;
+while (thread.timer.timeElapsed() < a2) {
+yield;
+}
+thread.timer = null;
+yield* thread.procedures["Zfade out"]();
+target.setVisible(false);
+runtime.ext_scratch3_looks._renderBubble(target);
+retire(); return;
+}; })
+
+// Title Zfade in
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ_fade_in () {
+for (var a0 = 10; a0 >= 0.5; a0--) {
+target.setEffect("ghost", runtime.ext_scratch3_looks.clampEffect("ghost", -10 + target.effects["ghost"]));
+thread.timer = timer();
+var a1 = Math.max(0, 1000 * 0.033);
+runtime.requestRedraw();
+yield;
+while (thread.timer.timeElapsed() < a1) {
+yield;
+}
+thread.timer = null;
+yield;
+}
+return "";
+}; })
+
+// Title Zfade out
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ_fade_out () {
+for (var a0 = 25; a0 >= 0.5; a0--) {
+target.setEffect("ghost", runtime.ext_scratch3_looks.clampEffect("ghost", 4 + target.effects["ghost"]));
+thread.timer = timer();
+var a1 = Math.max(0, 1000 * 0.033);
+runtime.requestRedraw();
+yield;
+while (thread.timer.timeElapsed() < a1) {
+yield;
+}
+thread.timer = null;
+yield;
+}
+return "";
+}; })
+
+// Title script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ () {
+target.setVisible(false);
+runtime.ext_scratch3_looks._renderBubble(target);
+retire(); return;
+}; })
+
+// Camera script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = target.variables["3+TOVtu8%(5U[K8AK8)1-zoom-"];
+return function* genXYZ () {
+b0.value = 500;
+retire(); return;
+}; })
+
+// Camera script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ () {
+thread.procedures["Zposition camera %n"](runtime.ioDevices.clock.projectTimer());
+retire(); return;
+}; })
+
+// Camera Zposition camera %n
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function funXYZ_position_camera_ (p0) {
+if (compareLessThan(p0, 20)) {
+thread.procedures["Zrush from behind %n"](p0);
+} else {
+thread.procedures["Zcircle around %n %n"](p0,-150);
+}
+return "";
+}; })
+
+// Camera Zrush from behind %n
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = target.variables["3+TOVtu8%(5U[K8AK8)1-dir-"];
+const b1 = target.variables["3+TOVtu8%(5U[K8AK8)1-x-"];
+const b2 = target.variables["3+TOVtu8%(5U[K8AK8)1-y-"];
+const b3 = target.variables["3+TOVtu8%(5U[K8AK8)1-z-"];
+return function funXYZ_rush_from_behind_ (p0) {
+b0.value = (20 - (((+p0 || 0) / 2) || 0));
+b1.value = (-120 * (((+p0 || 0) - 8) || 0));
+b2.value = -20;
+b3.value = -20;
+return "";
+}; })
+
+// Camera Zcircle around %n %n
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = target.variables["3+TOVtu8%(5U[K8AK8)1-dir-"];
+const b1 = target.variables["3+TOVtu8%(5U[K8AK8)1-x-"];
+const b2 = target.variables["3+TOVtu8%(5U[K8AK8)1-y-"];
+const b3 = target.variables["3+TOVtu8%(5U[K8AK8)1-z-"];
+return function funXYZ_circle_around__ (p0,p1) {
+b0.value = (10 * (+p0 || 0));
+b1.value = ((+p1 || 0) * ((Math.round(Math.cos((Math.PI * (b0.value || 0)) / 180) * 1e10) / 1e10) || 0));
+b2.value = ((+p1 || 0) * ((Math.round(Math.sin((Math.PI * (b0.value || 0)) / 180) * 1e10) / 1e10) || 0));
+b3.value = 0;
+return "";
+}; })
+
+// Pen script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = target.variables[")oX8]moZ5,D5zBVvi9Qz-dir-"];
+const b1 = target.variables[")oX8]moZ5,D5zBVvi9Qz-period-"];
+const b2 = target.variables[")oX8]moZ5,D5zBVvi9Qz-amplitude-"];
+return function* genXYZ () {
+runtime.ext_pen.clear();
+runtime.ext_pen._setPenColorToColor(1268621, target);
+b0.value = 0;
+b1.value = 3;
+b2.value = 20;
+retire(); return;
+}; })
+
+// Pen script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ () {
+yield* thread.procedures["Wpaint frame"]();
+retire(); return;
+}; })
+
+// Pen Wpaint frame
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = target.variables[")oX8]moZ5,D5zBVvi9Qz-x-"];
+const b1 = target.variables[")oX8]moZ5,D5zBVvi9Qz-y-"];
+const b2 = target.variables[")oX8]moZ5,D5zBVvi9Qz-z-"];
+const b3 = target.variables[")oX8]moZ5,D5zBVvi9Qz-phase-"];
+const b4 = target.variables[")oX8]moZ5,D5zBVvi9Qz-period-"];
+return function* genXYZ_paint_frame () {
+runtime.ext_pen.clear();
+thread.procedures["Wpaint background"]();
+b0.value = 20;
+b1.value = -40;
+b2.value = 20;
+b3.value = 240;
+for (var a0 = 3; a0 >= 0.5; a0--) {
+yield* thread.procedures["Wpaint dolphin %n"]((360 * ((runtime.ioDevices.clock.projectTimer() / (+b4.value || 0)) || 0)));
+b0.value = ((+b0.value || 0) + -20);
+b1.value = ((+b1.value || 0) + 40);
+b2.value = ((+b2.value || 0) + -20);
+b3.value = ((+b3.value || 0) + -20);
+if (isStuck()) yield;
+}
+return "";
+}; })
+
+// Pen Wpaint background
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = runtime.getSpriteTargetByName("Camera");
+const b1 = b0 && b0.lookupVariableByNameAndType("zoom", "", true);
+const b2 = b0 && b0.lookupVariableByNameAndType("dir", "", true);
+return function funXYZ_paint_background () {
+runtime.ext_pen._penUp(target);
+target.setXY((mod((((((+(b1 ? b1.value : 0) || 0) * (+(b2 ? b2.value : 0) || 0)) || 0) * ((3.1416 / 180) || 0)) || 0), 460) || 0), 0);
+if (target.interpolationData) target.interpolationData = null;
+runtime.ext_pen._stamp(target);
+target.setXY(target.x + -460, target.y);
+runtime.ext_pen._stamp(target);
+return "";
+}; })
+
+// Pen Wpaint dolphin %n
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ_paint_dolphin_ (p0) {
+yield* thread.procedures["Wpaint tail fin %n"](p0);
+yield* thread.procedures["Wpaint dorsal fin %n"](p0);
+yield* thread.procedures["Wpaint flippers %n"](p0);
+yield* thread.procedures["Wpaint body %n"](p0);
+return "";
+}; })
+
+// Pen Wpaint tail fin %n
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = target.variables[")oX8]moZ5,D5zBVvi9Qz-i-"];
+return function* genXYZ_paint_tail_fin_ (p0) {
+b0.value = -62;
+for (var a0 = 10; a0 >= 0.5; a0--) {
+b0.value = ((+b0.value || 0) + 1);
+thread.procedures["Wdraw horizontally for fluke %n %n"](12,p0);
+thread.procedures["Wdraw horizontally for fluke %n %n"](-12,p0);
+if (isStuck()) yield;
+}
+return "";
+}; })
+
+// Pen Wpaint dorsal fin %n
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = target.variables[")oX8]moZ5,D5zBVvi9Qz-i-"];
+return function* genXYZ_paint_dorsal_fin_ (p0) {
+b0.value = -13;
+thread.procedures["Wgo to %n %n %n %n %n"](b0.value,0,0,0,p0);
+for (var a0 = 12; a0 >= 0.5; a0--) {
+b0.value = ((+b0.value || 0) + 1);
+thread.procedures["Wgo to %n %n %n %n %n"](b0.value,0,0,2,p0);
+thread.procedures["Wgo to %n %n %n %n %n"](((+b0.value || 0) - 15),0,(12 * ((Math.round(Math.cos((Math.PI * ((4 * (((+b0.value || 0) + 10) || 0)) || 0)) / 180) * 1e10) / 1e10) || 0)),2,p0);
+if (isStuck()) yield;
+}
+return "";
+}; })
+
+// Pen Wpaint flippers %n
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = target.variables[")oX8]moZ5,D5zBVvi9Qz-i-"];
+return function* genXYZ_paint_flippers_ (p0) {
+b0.value = 8;
+for (var a0 = 10; a0 >= 0.5; a0--) {
+b0.value = ((+b0.value || 0) + 1);
+thread.procedures["Wdraw diagonally for flipper %n %n %n"](-11,-11,p0);
+thread.procedures["Wdraw diagonally for flipper %n %n %n"](11,-11,p0);
+if (isStuck()) yield;
+}
+return "";
+}; })
+
+// Pen Wpaint body %n
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = target.variables[")oX8]moZ5,D5zBVvi9Qz-i-"];
+return function* genXYZ_paint_body_ (p0) {
+b0.value = -61;
+thread.procedures["Wgo to %n %n %n %n %n"](b0.value,0,0,0,p0);
+for (var a0 = 90; a0 >= 0.5; a0--) {
+b0.value = ((+b0.value || 0) + 1);
+thread.procedures["Wgo to %n %n %n %n %n"](b0.value,0,0,(10 - ((8 * ((Math.round(Math.cos((Math.PI * ((((40 * (Math.sqrt(((30 - (b0.value || 0)) || 0)) || 0)) || 0) - 36) || 0)) / 180) * 1e10) / 1e10) || 0)) || 0)),p0);
+if (isStuck()) yield;
+}
+return "";
+}; })
+
+// Pen Wdraw horizontally for fluke %n %n
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = target.variables[")oX8]moZ5,D5zBVvi9Qz-i-"];
+return function funXYZ_draw_horizontally_fo (p0,p1) {
+thread.procedures["Wgo to %n %n %n %n %n"](b0.value,0,0,0,p1);
+thread.procedures["Wgo to %n %n %n %n %n"](-63,((+p0 || 0) * ((1 - ((Math.round(Math.sin((Math.PI * Math.abs(((8 * (((+b0.value || 0) + 55.25) || 0)) || 0))) / 180) * 1e10) / 1e10) || 0)) || 0)),0,2,p1);
+return "";
+}; })
+
+// Pen Wgo to %n %n %n %n %n
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = target.variables[")oX8]moZ5,D5zBVvi9Qz-x-"];
+const b1 = runtime.getSpriteTargetByName("Camera");
+const b2 = b1 && b1.lookupVariableByNameAndType("x", "", true);
+const b3 = target.variables[")oX8]moZ5,D5zBVvi9Qz-dir-"];
+const b4 = target.variables[")oX8]moZ5,D5zBVvi9Qz-y-"];
+const b5 = b1 && b1.lookupVariableByNameAndType("y", "", true);
+const b6 = target.variables[")oX8]moZ5,D5zBVvi9Qz-z-"];
+const b7 = b1 && b1.lookupVariableByNameAndType("z", "", true);
+const b8 = target.variables[")oX8]moZ5,D5zBVvi9Qz-amplitude-"];
+const b9 = target.variables[")oX8]moZ5,D5zBVvi9Qz-phase-"];
+return function funXYZ_go_to_____ (p0,p1,p2,p3,p4) {
+thread.procedures["Wrotated go to %n %n %n %n"](((((+b0.value || 0) - (+(b2 ? b2.value : 0) || 0)) || 0) + (((((+p0 || 0) * ((Math.round(Math.cos((Math.PI * (+b3.value || 0)) / 180) * 1e10) / 1e10) || 0)) || 0) + (((+p1 || 0) * ((Math.round(Math.sin((Math.PI * (+b3.value || 0)) / 180) * 1e10) / 1e10) || 0)) || 0)) || 0)),((((+b4.value || 0) - (+(b5 ? b5.value : 0) || 0)) || 0) + (((((+p1 || 0) * ((Math.round(Math.cos((Math.PI * (+b3.value || 0)) / 180) * 1e10) / 1e10) || 0)) || 0) - (((+p0 || 0) * ((Math.round(Math.sin((Math.PI * (+b3.value || 0)) / 180) * 1e10) / 1e10) || 0)) || 0)) || 0)),((((((+b6.value || 0) - (+(b7 ? b7.value : 0) || 0)) || 0) + (+p2 || 0)) || 0) + (((+b8.value || 0) * ((Math.round(Math.sin((Math.PI * (((((+b9.value || 0) + (+p0 || 0)) || 0) + (+p4 || 0)) || 0)) / 180) * 1e10) / 1e10) || 0)) || 0)),p3);
+return "";
+}; })
+
+// Pen Wdraw diagonally for flipper %n %n %n
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = target.variables[")oX8]moZ5,D5zBVvi9Qz-i-"];
+return function funXYZ_draw_diagonally_for_ (p0,p1,p2) {
+thread.procedures["Wgo to %n %n %n %n %n"](b0.value,0,0,0,p2);
+thread.procedures["Wgo to %n %n %n %n %n"](((+b0.value || 0) - 15),((+p0 || 0) * ((Math.round(Math.cos((Math.PI * ((4 * (((+b0.value || 0) - 9) || 0)) || 0)) / 180) * 1e10) / 1e10) || 0)),((+p1 || 0) * ((Math.round(Math.cos((Math.PI * ((4 * (((+b0.value || 0) - 9) || 0)) || 0)) / 180) * 1e10) / 1e10) || 0)),2,p2);
+return "";
+}; })
+
+// Pen Wrotated go to %n %n %n %n
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = runtime.getSpriteTargetByName("Camera");
+const b1 = b0 && b0.lookupVariableByNameAndType("dir", "", true);
+const b2 = b0 && b0.lookupVariableByNameAndType("zoom", "", true);
+return function funXYZ_rotated_go_to____ (p0,p1,p2,p3) {
+thread.procedures["Wflat go to %n %n %n %n"](((((+p0 || 0) * ((Math.round(Math.sin((Math.PI * (+(b1 ? b1.value : 0) || 0)) / 180) * 1e10) / 1e10) || 0)) || 0) - (((+p1 || 0) * ((Math.round(Math.cos((Math.PI * (+(b1 ? b1.value : 0) || 0)) / 180) * 1e10) / 1e10) || 0)) || 0)),p2,p3,((+(b2 ? b2.value : 0) || 0) / (((((+p0 || 0) * ((Math.round(Math.cos((Math.PI * (+(b1 ? b1.value : 0) || 0)) / 180) * 1e10) / 1e10) || 0)) || 0) + (((+p1 || 0) * ((Math.round(Math.sin((Math.PI * (+(b1 ? b1.value : 0) || 0)) / 180) * 1e10) / 1e10) || 0)) || 0)) || 0)));
+return "";
+}; })
+
+// Pen Wflat go to %n %n %n %n
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function funXYZ_flat_go_to____ (p0,p1,p2,p3) {
+if ((!(((+p2 || 0) * (+p3 || 0)) <= 0) && compareLessThan(p3, 32))) {
+runtime.ext_pen._setPenSizeTo((((+p2 || 0) * (+p3 || 0)) || 0), target);
+runtime.ext_pen._penDown(target);
+} else {
+runtime.ext_pen._penUp(target);
+}
+target.setXY((((+p0 || 0) * (+p3 || 0)) || 0), (((+p1 || 0) * (+p3 || 0)) || 0));
+return "";
+}; })
+
+// Pen script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ () {
+runtime.ext_pen.clear();
+retire(); return;
+}; })
+
+// Stage script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ () {
+runtime.ext_scratch3_looks._setBackdrop(stage, "blank");
+yield* waitThreads(startHats("event_whenbroadcastreceived", { BROADCAST_OPTION: "initialize" }));
+while (true) {
+yield* waitThreads(startHats("event_whenbroadcastreceived", { BROADCAST_OPTION: "position camera" }));
+yield* waitThreads(startHats("event_whenbroadcastreceived", { BROADCAST_OPTION: "draw frame" }));
+yield;
+}
+retire(); return;
+}; })
+
+// Stage script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = runtime.getOpcodeFunction("sound_playuntildone");
+return function* genXYZ () {
+while (true) {
+yield* executeInCompatibilityLayer({"SOUND_MENU":"320839__thoribass__soundscape1-freesound",}, b0, false, true, "G1sgL=|dhBmXqUab4Pw6", null);
+if (hasResumedFromPromise) {hasResumedFromPromise = false;continue;}
+yield;
+}
+retire(); return;
+}; })
+
+// Stage script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+return function* genXYZ () {
+runtime.ext_scratch3_looks._setBackdrop(stage, "preview");
+retire(); return;
+}; })

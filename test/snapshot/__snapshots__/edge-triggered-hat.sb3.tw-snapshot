@@ -1,0 +1,21 @@
+// TW Snapshot
+// Input SHA-256: 9dda61f930b6bc46d5e91222a4a7981e78d928bd2ec3d02eaac10aad3a96e9db
+
+// Sprite1 script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = runtime.getOpcodeFunction("event_whengreaterthan");
+return function* genXYZ () {
+{
+const resolvedValue = toBoolean((yield* executeInCompatibilityLayer({"VALUE":-1,"WHENGREATERTHANMENU":"TIMER",}, b0, false, false, "6_LWXLQd4FuIZoqqsd,x", null)));
+const id = "6_LWXLQd4FuIZoqqsd,x";
+const hasOldEdgeValue = target.hasEdgeActivatedValue(id);
+const oldEdgeValue = target.updateEdgeActivatedValue(id, resolvedValue);
+const edgeWasActivated = hasOldEdgeValue ? (!oldEdgeValue && resolvedValue) : resolvedValue;
+if (!edgeWasActivated) {
+retire(); return;
+}
+yield;
+}
+runtime.ext_scratch3_motion._moveSteps(10, target);
+retire(); return;
+}; })

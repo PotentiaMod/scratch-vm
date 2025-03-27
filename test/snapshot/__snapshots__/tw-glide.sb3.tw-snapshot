@@ -1,0 +1,10 @@
+// TW Snapshot
+// Input SHA-256: aa5ae80b95f32b27edeefdf4e51bb27e4c7d131c80e0117b94c63d4066929b22
+
+// Sprite1 script
+(function factoryXYZ(thread) { const target = thread.target; const runtime = target.runtime; const stage = runtime.getTargetForStage();
+const b0 = runtime.getOpcodeFunction("motion_glidesecstoxy");
+return function* genXYZ () {
+yield* executeInCompatibilityLayer({"SECS":1,"X":100,"Y":50,}, b0, false, false, "b", null);
+retire(); return;
+}; })
