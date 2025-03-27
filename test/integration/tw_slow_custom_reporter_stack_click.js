@@ -24,7 +24,7 @@ test('when thread target is editing target', t => {
         t.same(visualReports, []);
 
         vm.runtime._step();
-        t.same(visualReports, [])
+        t.same(visualReports, []);
 
         vm.runtime._step();
         t.same(visualReports, [
@@ -54,7 +54,7 @@ test('when thread target is not editing target', t => {
         t.same(visualReports, []);
 
         vm.runtime._step();
-        t.same(visualReports, [])
+        t.same(visualReports, []);
 
         vm.setEditingTarget(vm.runtime.getSpriteTargetByName('Sprite2').id);
 

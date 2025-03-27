@@ -3078,7 +3078,7 @@ class Runtime extends EventEmitter {
      * @param {string} value Value to show associated with the block.
      */
     visualReport (target, blockId, value) {
-        if (target == this.getEditingTarget()) {
+        if (target === this.getEditingTarget()) {
             this.emit(Runtime.VISUAL_REPORT, {id: blockId, value: String(value)});
         }
     }
