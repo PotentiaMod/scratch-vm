@@ -23,6 +23,7 @@ const ScratchLinkWebSocket = require('../util/scratch-link-websocket');
 const FontManager = require('./tw-font-manager');
 const fetchWithTimeout = require('../util/fetch-with-timeout');
 const platform = require('./tw-platform.js');
+const {compareImmutableMaps, mergeMaps} = require('../util/tw-immutable-util');
 
 // Virtual I/O devices.
 const Clock = require('../io/clock');
@@ -2577,7 +2578,7 @@ class Runtime extends EventEmitter {
             this._refreshTargets = false;
         }
 
-        if (!this._prevMonitorState.equals(this._monitorState)) {
+        if (!compareImmutableMaps(this._prevMonitorState, this._monitorState)) {
             this.emit(Runtime.MONITORS_UPDATE, this._monitorState);
             this._prevMonitorState = this._monitorState;
         }
@@ -3112,13 +3113,7 @@ class Runtime extends EventEmitter {
         const id = monitor.get('id');
         if (this._monitorState.has(id)) {
             this._monitorState =
-                // Use mergeWith here to prevent undefined values from overwriting existing ones
-                this._monitorState.set(id, this._monitorState.get(id).mergeWith((prev, next) => {
-                    if (typeof next === 'undefined' || next === null) {
-                        return prev;
-                    }
-                    return next;
-                }, monitor));
+                this._monitorState.set(id, mergeMaps(this._monitorState.get(id), monitor));
             return true;
         }
         return false;
