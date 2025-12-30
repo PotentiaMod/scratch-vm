@@ -521,12 +521,21 @@ runtimeFunctions.listContains = `const listContains = (list, item) => {
  * @returns {number} The 1-indexed index of the item in the list, otherwise 0
  */
 runtimeFunctions.listIndexOf = `const listIndexOf = (list, item) => {
-    for (let i = 0; i < list.value.length; i++) {
+    const possible = list.value.indexOf(item);
+    if (possible === -1) {
+        for (let i = 0; i < list.value.length; i++) {
+            if (compareEqual(list.value[i], item)) {
+                return i + 1;
+            }
+        }
+        return 0;
+    }
+    for (let i = 0; i < possible; i++) {
         if (compareEqual(list.value[i], item)) {
             return i + 1;
         }
     }
-    return 0;
+    return possible;
 }`;
 
 /**
