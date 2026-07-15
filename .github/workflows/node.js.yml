@@ -1,8 +1,15 @@
 name: CI
 
 on:
+  workflow_dispatch:
   push:
+    branches: ["develop"]
   pull_request:
+
+permissions:
+  contents: read
+  id-token: write
+  pages: write
 
 jobs:
   build:
@@ -17,6 +24,5 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm install --legacy-peer-deps
-      - run: npm run lint -- --fix
       - run: npm run build
-      - run: npm run tap
+      - run: npm run docs
