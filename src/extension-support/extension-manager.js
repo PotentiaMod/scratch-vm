@@ -590,6 +590,114 @@ class ExtensionManager {
         return blockInfo;
     }
 
+    /**
+     * Get all opcodes for a loaded extension.
+     * @param {string} extensionId - the ID of the extension
+     * @returns {Array<string>} - list of opcodes
+     * @private
+     */
+    _getExtensionOpcodes (extensionId) {
+        const categoryInfo = this.runtime._blockInfo.find(info => info.id === extensionId);
+        if (!categoryInfo) return [];
+        return categoryInfo.blocks.filter(block => block.json).map(block => block.json.type);
+    }
+
+    /**
+     * Prepare to swap out an extension.
+     * @param {string} id - the ID of the extension
+     */
+    prepareSwap (id) {
+        const serviceName = this._loadedExtensions.get(id);
+        const serviceProvider = dispatch._getServiceProvider(serviceName);
+        if (serviceProvider) {
+            const {provider, isRemote} = serviceProvider;
+            if (isRemote || typeof provider.dispose === 'function') 
+                dispatch.call(serviceName, 'dispose');
+        }
+        delete dispatch.services[serviceName];
+        delete this.runtime[`ext_${id}`];
+
+        this._loadedExtensions.delete(id);
+        const workerId = +serviceName.split('.')[1];
+        delete this.workerURLs[workerId];
+    }
+
+    /**
+     * Remove an extension.
+     * @param {string} extensionId - the ID of the extension
+     */
+    removeExtension (extensionId) {
+        if (!this.isExtensionLoaded(extensionId)) return;
+        const serviceName = this._loadedExtensions.get(extensionId);
+        const serviceProvider = dispatch._getServiceProvider(serviceName);
+        if (serviceProvider) {
+            const {provider, isRemote} = serviceProvider;
+            if (isRemote || typeof provider.dispose === 'function') 
+                dispatch.call(serviceName, 'dispose');
+        }
+        delete dispatch.services[serviceName];
+        delete this.runtime[`ext_${extensionId}`];
+
+        this._loadedExtensions.delete(extensionId);
+        const workerId = +serviceName.split('.')[1];
+        delete this.workerURLs[workerId];
+        dispatch.call('runtime', '_removeExtensionPrimitive', extensionId);
+        this.refreshBlocks();
+    }
+
+    /**
+     * Get the extension ID from an opcode.
+     * @param {*} opcode - the opcode to examine
+     * @returns {string} - the extension ID, or empty string if core extension or invalid opcode
+     */
+    extensionIdFromOpcode (opcode) {
+        // Allowed ID characters are those matching the regular expression [\w-]: A-Z, a-z, 0-9, and hyphen ("-").
+        if (!(typeof opcode === 'string')) {
+            console.error('Invalid opcode', opcode);
+            return '';
+        }
+        const index = opcode.indexOf('_');
+        const forbiddenSymbols = /[^\w-]/g;
+        const prefix = opcode.substring(0, index).replace(forbiddenSymbols, '-');
+        if (CORE_EXTENSIONS.indexOf(prefix) === -1) {
+            if (prefix !== '') return prefix;
+        }
+    }
+
+    findUsedExtensions () {
+        const results = [];
+        for (const target of this.runtime.targets) {
+            for (const blockId in target.blocks._blocks) {
+                const block = target.blocks.getBlock(blockId);
+                const ext = this.extensionIdFromOpcode(block.opcode);
+                results.push(ext);
+            }
+        }
+        return results;
+    }
+
+    removeUnusedExtensions () {
+        const all = [...this._loadedExtensions.keys()];
+        const used = this.findUsedExtensions();
+        const unused = all.filter(ext => !used.includes(ext));
+        for (const toRemove of unused)
+            this.removeExtension(toRemove);
+    }
+
+    /**
+     * Get the extension URL from its ID.
+     * @param {string} extensionId - the ID of the extension
+     * @returns {string|undefined} - the URL of the extension, or undefined if not found
+     */
+    extensionURLFromId (extensionId) {
+        for (const [extensionId, serviceName] of this._loadedExtensions.entries()) {
+            if (extensionId !== extensionId) continue;
+            // Service names for extension workers are in the format "extension.WORKER_ID.EXTENSION_ID"
+            const workerId = +serviceName.split('.')[1];
+            return this.workerURLs[workerId];
+        }
+    }
+
     getExtensionURLs () {
         const extensionURLs = {};
         for (const [extensionId, serviceName] of this._loadedExtensions.entries()) {
