@@ -1109,6 +1109,28 @@ class Runtime extends EventEmitter {
     }
 
     /**
+     * Remove all extension primitives.
+     * @param {string} extensionId - the ID of the extension to remove
+     * @private
+     */
+    _removeExtensionPrimitive(extensionId) {
+        const extIdx = this._blockInfo.findIndex(ext => ext.id === extensionId);
+        const info = this._blockInfo[extIdx];
+        this._blockInfo.splice(extIdx, 1);
+        this.emit(Runtime.EXTENSION_REMOVED, extensionId);
+        // Cleanup blocks
+        for (const target of this.targets) {
+            for (const blockId in target.blocks._blocks) {
+                const {opcode} = target.blocks.getBlock(blockId);
+                if (info.blocks.find(block => block.json?.type === opcode)) {
+                    target.blocks.deleteBlock(blockId, true);
+                }
+            }
+        }
+        this.emit(Runtime.BLOCKS_NEED_UPDATE);
+    }
+
+    /**
      * Read extension information, convert menus, blocks and custom field types
      * and store the results in the provided category object.
      * @param {CategoryInfo} categoryInfo - the category to be filled
@@ -1752,6 +1774,7 @@ class Runtime extends EventEmitter {
 
             let xml = `<category name="${xmlEscape(name)}"`;
             xml += ` id="${xmlEscape(categoryInfo.id)}"`;
+			xml += ` options="extensionControls"`;
             xml += ` ${statusButtonXML}`;
             xml += ` ${colorXML}`;
             xml += ` ${menuIconXML}>`;
