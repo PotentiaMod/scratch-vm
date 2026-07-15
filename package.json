@@ -34,7 +34,7 @@
     "statements": 70
   },
   "dependencies": {
-    "@babel/eslint-parser": "^7.18.0"
+    "@babel/eslint-parser": "^7.18.0",
     "@turbowarp/json": "^0.1.2",
     "@turbowarp/jszip": "^3.11.0",
     "@turbowarp/nanolog": "^0.2.0",
@@ -59,7 +59,7 @@
   },
   
   "devDependencies": {
-    "@babel/core": "^7.24.0"
+    "@babel/core": "^7.24.0",
     "@babel/preset-env": "7.14.8",
 	"@turbowarp/scratch-svg-renderer": "^1.1.0",
     "adm-zip": "0.4.11",
