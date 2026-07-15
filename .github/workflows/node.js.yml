@@ -24,4 +24,5 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm install --legacy-peer-deps
+      - run: npm run build --workspace=scratch-blocks  # if scratch-blocks supports this
       - run: npm run build
