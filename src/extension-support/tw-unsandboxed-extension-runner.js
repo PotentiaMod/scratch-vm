@@ -22,9 +22,10 @@ const parseURL = url => {
 /**
  * Sets up the global.Scratch API for an unsandboxed extension.
  * @param {VirtualMachine} vm
+ * @param {{bypassSecurity?: boolean}} [options]
  * @returns {Promise<object[]>} Resolves with a list of extension objects when Scratch.extensions.register is called.
  */
-const setupUnsandboxedExtensionAPI = vm => new Promise(resolve => {
+const setupUnsandboxedExtensionAPI = (vm, options = {}) => new Promise(resolve => {
     const extensionObjects = [];
     const register = extensionObject => {
         extensionObjects.push(extensionObject);
@@ -39,8 +40,11 @@ const setupUnsandboxedExtensionAPI = vm => new Promise(resolve => {
     };
     Scratch.vm = vm;
     Scratch.renderer = vm.runtime.renderer;
+	
+	const bypass = options.bypassSecurity === true;
 
     Scratch.canFetch = async url => {
+	 if (bypass) return true;
         const parsed = parseURL(url);
         if (!parsed) {
             return false;
@@ -53,6 +57,7 @@ const setupUnsandboxedExtensionAPI = vm => new Promise(resolve => {
     };
 
     Scratch.canOpenWindow = async url => {
+	 if (bypass) return true;
         const parsed = parseURL(url);
         if (!parsed) {
             return false;
@@ -66,6 +71,7 @@ const setupUnsandboxedExtensionAPI = vm => new Promise(resolve => {
     };
 
     Scratch.canRedirect = async url => {
+	 if (bypass) return true;
         const parsed = parseURL(url);
         if (!parsed) {
             return false;
@@ -78,17 +84,33 @@ const setupUnsandboxedExtensionAPI = vm => new Promise(resolve => {
         return vm.securityManager.canRedirect(parsed.href);
     };
 
-    Scratch.canRecordAudio = async () => vm.securityManager.canRecordAudio();
+    Scratch.canRecordAudio = async () => {
+        if (bypass) return true;
+        return vm.securityManager.canRecordAudio();
+    };
 
-    Scratch.canRecordVideo = async () => vm.securityManager.canRecordVideo();
+    Scratch.canRecordVideo = async () => {
+        if (bypass) return true;
+        return vm.securityManager.canRecordVideo();
+    };
 
-    Scratch.canReadClipboard = async () => vm.securityManager.canReadClipboard();
+    Scratch.canReadClipboard = async () => {
+        if (bypass) return true;
+        return vm.securityManager.canReadClipboard();
+    };
 
-    Scratch.canNotify = async () => vm.securityManager.canNotify();
+    Scratch.canNotify = async () => {
+        if (bypass) return true;
+        return vm.securityManager.canNotify();
+    };
 
-    Scratch.canGeolocate = async () => vm.securityManager.canGeolocate();
+    Scratch.canGeolocate = async () => {
+        if (bypass) return true;
+        return vm.securityManager.canGeolocate();
+    };
 
     Scratch.canEmbed = async url => {
+	 if (bypass) return true;
         const parsed = parseURL(url);
         if (!parsed) {
             return false;
@@ -97,6 +119,7 @@ const setupUnsandboxedExtensionAPI = vm => new Promise(resolve => {
     };
 
     Scratch.canDownload = async (url, name) => {
+	 if (bypass) return true;
         const parsed = parseURL(url);
         if (!parsed) {
             return false;
@@ -175,10 +198,11 @@ const teardownUnsandboxedExtensionAPI = () => {
  * Load an unsandboxed extension from an arbitrary URL. This is dangerous.
  * @param {string} extensionURL
  * @param {Virtualmachine} vm
+ * @param {{bypassSecurity?: boolean}} [options]
  * @returns {Promise<object[]>} Resolves with a list of extension objects if the extension was loaded successfully.
  */
-const loadUnsandboxedExtension = (extensionURL, vm) => new Promise((resolve, reject) => {
-    setupUnsandboxedExtensionAPI(vm).then(resolve);
+const loadUnsandboxedExtension = (extensionURL, vm, options = {}) => new Promise((resolve, reject) => {
+    setupUnsandboxedExtensionAPI(vm, options)
 
     const script = document.createElement('script');
     script.onerror = () => {
@@ -194,7 +218,10 @@ const loadUnsandboxedExtension = (extensionURL, vm) => new Promise((resolve, rej
 // Because loading unsandboxed extensions requires messing with global state (global.Scratch),
 // only let one extension load at a time.
 const limiter = new AsyncLimiter(loadUnsandboxedExtension, 1);
-const load = (extensionURL, vm) => limiter.do(extensionURL, vm);
+const load = (extensionURL, vm, options = {}) => {
+    prefetchExtensionScript(extensionURL);
+    return limiter.do(extensionURL, vm, options);
+};
 
 module.exports = {
     setupUnsandboxedExtensionAPI,
