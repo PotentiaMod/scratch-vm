@@ -1,5 +1,4 @@
 const ScratchCommon = require('./tw-extension-api-common');
-const createScratchX = require('./tw-scratchx-compatibility-layer');
 const AsyncLimiter = require('../util/async-limiter');
 const createTranslate = require('./tw-l10n');
 const staticFetch = require('../util/tw-static-fetch');
@@ -40,11 +39,11 @@ const setupUnsandboxedExtensionAPI = (vm, options = {}) => new Promise(resolve =
     };
     Scratch.vm = vm;
     Scratch.renderer = vm.runtime.renderer;
-	
-	const bypass = options.bypassSecurity === true;
+
+    const bypass = options.bypassSecurity === true;
 
     Scratch.canFetch = async url => {
-	 if (bypass) return true;
+        if (bypass) return true;
         const parsed = parseURL(url);
         if (!parsed) {
             return false;
@@ -57,7 +56,7 @@ const setupUnsandboxedExtensionAPI = (vm, options = {}) => new Promise(resolve =
     };
 
     Scratch.canOpenWindow = async url => {
-	 if (bypass) return true;
+        if (bypass) return true;
         const parsed = parseURL(url);
         if (!parsed) {
             return false;
@@ -71,7 +70,7 @@ const setupUnsandboxedExtensionAPI = (vm, options = {}) => new Promise(resolve =
     };
 
     Scratch.canRedirect = async url => {
-	 if (bypass) return true;
+        if (bypass) return true;
         const parsed = parseURL(url);
         if (!parsed) {
             return false;
@@ -110,7 +109,7 @@ const setupUnsandboxedExtensionAPI = (vm, options = {}) => new Promise(resolve =
     };
 
     Scratch.canEmbed = async url => {
-	 if (bypass) return true;
+        if (bypass) return true;
         const parsed = parseURL(url);
         if (!parsed) {
             return false;
@@ -119,7 +118,7 @@ const setupUnsandboxedExtensionAPI = (vm, options = {}) => new Promise(resolve =
     };
 
     Scratch.canDownload = async (url, name) => {
-	 if (bypass) return true;
+        if (bypass) return true;
         const parsed = parseURL(url);
         if (!parsed) {
             return false;
@@ -146,6 +145,24 @@ const setupUnsandboxedExtensionAPI = (vm, options = {}) => new Promise(resolve =
         return fetch(url, options);
     };
 
+    Scratch.download = async (url, file) => {
+        if (!await Scratch.canDownload(url, file)) {
+            throw new Error(`Permission to download ${file} rejected.`);
+        }
+
+        // Initiate a download in a browser-compatible way.
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = file;
+        document.body.appendChild(link);
+        link.click();
+        if (typeof link.remove === 'function') {
+            link.remove();
+        } else if (link.parentNode && typeof link.parentNode.removeChild === 'function') {
+            link.parentNode.removeChild(link);
+        }
+    };
+
     Scratch.openWindow = async (url, features) => {
         if (!await Scratch.canOpenWindow(url)) {
             throw new Error(`Permission to open tab ${url} rejected.`);
@@ -163,24 +180,27 @@ const setupUnsandboxedExtensionAPI = (vm, options = {}) => new Promise(resolve =
         location.href = url;
     };
 
-    Scratch.download = async (url, name) => {
-        if (!await Scratch.canDownload(url, name)) {
-            throw new Error(`Permission to download ${name} rejected.`);
-        }
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = name;
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-    };
-
     Scratch.translate = createTranslate(vm);
 
-    global.Scratch = Scratch;
-    global.ScratchExtensions = createScratchX(Scratch);
+    // Allow VM users to extend the API surface for unsandboxed extensions.
+    // This is used by tests and by embedding environments.
+    if (vm && typeof vm.emit === 'function') {
+        vm.emit('CREATE_UNSANDBOXED_EXTENSION_API', Scratch);
+    }
 
-    vm.emit('CREATE_UNSANDBOXED_EXTENSION_API', Scratch);
+    // ScratchX compatibility layer: many old unsandboxed extensions expect a
+    // global `ScratchExtensions.register(...)` function.
+    // Keep this alias in sync with the simplified ScratchX layer used elsewhere.
+    global.ScratchExtensions = {
+        register: (name, descriptor, extensionObject) => {
+            void name;
+            void descriptor;
+            Scratch.extensions.register(extensionObject);
+        }
+    };
+
+    // Assign the Scratch object to global so extensions can access it
+    global.Scratch = Scratch;
 });
 
 /**
@@ -188,10 +208,15 @@ const setupUnsandboxedExtensionAPI = (vm, options = {}) => new Promise(resolve =
  * This helps debug poorly designed extensions.
  */
 const teardownUnsandboxedExtensionAPI = () => {
-    // We can assume global.Scratch already exists.
-    global.Scratch.extensions.register = () => {
-        throw new Error('Too late to register new extensions.');
-    };
+    // Check if global.Scratch exists before trying to access it
+    if (global.Scratch && global.Scratch.extensions) {
+        global.Scratch.extensions.register = () => {
+            throw new Error('Too late to register new extensions.');
+        };
+    }
+
+    // Remove ScratchX alias between loads to keep global state clean.
+    delete global.ScratchExtensions;
 };
 
 /**
@@ -202,21 +227,95 @@ const teardownUnsandboxedExtensionAPI = () => {
  * @returns {Promise<object[]>} Resolves with a list of extension objects if the extension was loaded successfully.
  */
 const loadUnsandboxedExtension = (extensionURL, vm, options = {}) => new Promise((resolve, reject) => {
+    let isResolved = false;
+    let registrationTimeout = null;
+    let overallTimeout = null;
+
+    const settle = (fn, arg) => {
+        if (isResolved) return;
+        isResolved = true;
+        clearTimeout(registrationTimeout);
+        clearTimeout(overallTimeout);
+        fn(arg);
+    };
+
     setupUnsandboxedExtensionAPI(vm, options)
+        .then(extensionObjects => settle(resolve, extensionObjects))
+        .catch(error => {
+            error.url = extensionURL;
+            error.type = 'registration-error';
+            settle(reject, error);
+        });
 
     const script = document.createElement('script');
-    script.onerror = () => {
-        reject(new Error(`Error in unsandboxed script ${extensionURL}. Check the console for more information.`));
+
+    script.onerror = event => {
+        const error = new Error(`Failed to load extension script from ${extensionURL}`);
+        error.url = extensionURL;
+        error.event = event;
+        error.type = 'script-load-error';
+        console.error(`Error loading unsandboxed script ${extensionURL}:`, error);
+        settle(reject, error);
     };
+
+    // Only start the registration deadline once the script has actually executed. A well-behaved
+    // extension calls register() synchronously as it runs, so it has already resolved by now; this
+    // grace period only catches scripts that ran but never registered. Arming it before the script
+    // executes (e.g. during a slow download) would release the load queue while this script is
+    // still pending, letting the next extension's global.Scratch capture this one's late
+    // register() call. See tw-unsandboxed-extension-runner registration serialization.
+    script.onload = () => {
+        if (isResolved) return;
+        registrationTimeout = setTimeout(() => {
+            const error = new Error(`Extension did not register within timeout period`);
+            error.url = extensionURL;
+            error.type = 'registration-timeout';
+            console.error(`Extension registration timeout for ${extensionURL}:`, error);
+            settle(reject, error);
+        }, 10000); // 10 second registration deadline, measured from script execution
+    };
+
+    // Catch scripts that never load or execute at all.
+    overallTimeout = setTimeout(() => {
+        const error = new Error(`Overall timeout loading extension script from ${extensionURL}`);
+        error.url = extensionURL;
+        error.type = 'overall-timeout';
+        console.error(`Overall timeout loading unsandboxed script ${extensionURL}`);
+        settle(reject, error);
+    }, 30000); // 30 second overall timeout
+
     script.src = extensionURL;
     document.body.appendChild(script);
-}).then(objects => {
-    teardownUnsandboxedExtensionAPI();
-    return objects;
-});
+})
+    .then(objects => {
+        teardownUnsandboxedExtensionAPI();
+        return objects;
+    })
+    .catch(error => {
+        teardownUnsandboxedExtensionAPI();
+        throw error;
+    });
+
+const prefetchExtensionScript = extensionURL => {
+    if (typeof document === 'undefined') {
+        return;
+    }
+    const parsed = parseURL(extensionURL);
+    if (!parsed || (parsed.protocol !== 'https:' && parsed.protocol !== 'http:')) {
+        return;
+    }
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'script';
+    link.href = extensionURL;
+    link.onload = () => link.remove();
+    link.onerror = () => link.remove();
+    document.head.appendChild(link);
+};
 
 // Because loading unsandboxed extensions requires messing with global state (global.Scratch),
-// only let one extension load at a time.
+// only let one extension register at a time. The script download is started up front (in
+// parallel across extensions) so only the registration step is serialized.
 const limiter = new AsyncLimiter(loadUnsandboxedExtension, 1);
 const load = (extensionURL, vm, options = {}) => {
     prefetchExtensionScript(extensionURL);
