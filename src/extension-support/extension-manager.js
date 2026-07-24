@@ -30,34 +30,7 @@ const defaultBuiltinExtensions = {
 	
     appmaker: () => require('../extensions/potentia_appmaker'),
     wonderblocks: () => require('../extensions/gaia_wonderblocks'),
-    
-    pmMotionExpansion: () => require("../extensions/pm_motionExpansion"),
-    pmOperatorsExpansion: () => require("../extensions/pm_operatorsExpansion"),
-    pmSensingExpansion: () => require("../extensions/pm_sensingExpansion"),
-    pmControlsExpansion: () => require("../extensions/pm_controlsExpansion"),
-    pmEventsExpansion: () => require("../extensions/pm_eventsExpansion"),
-
-    jgPrism: () => require("../extensions/jg_prism"),
-    jgScratchAuthenticate: () => require("../extensions/jg_scratchAuth"),
-    jgPackagerApplications: () => require("../extensions/jg_packagerApplications"),
-    jgTailgating: () => require("../extensions/jg_tailgating"),
-    jg3dVr: () => require("../extensions/jg_3dVr"),
-    jgVr: () => require("../extensions/jg_vr"),
-
-    jgChristmas: () => require("../extensions/jg_christmas"),
-    jwUnite: () => require("../extensions/jw_unite"),
-    jwXml: () => require("../extensions/jw_xml"),
-    jwPsychic: () => require("../extensions/jwPsychic"),
-    jwLambda: () => require("../extensions/jwLambda"),
-	
-    theshovelcanvaseffects: () => require("../extensions/theshovel_canvasEffects"),
-    shovelcss: () => require("../extensions/theshovel_customStyles"),
-    profanityAPI: () => require("../extensions/theshovel_profanity"),
-	
-    oddMessage: () => require("../extensions/silvxrcat_oddmessages"),
-    pmCamera: () => require('../extensions/pm_camera'),
-    sharkpoolPrinting: () => require("../extensions/sharkpool_printing"),
-	
+    		
 	// champierre
     scratch2webserialapi: () => require("../extensions/scratch3_scratch2webserialapi"),
     chatgpt2scratch: () => require("../extensions/scratch3_chatgpt2scratch"),
