@@ -27,7 +27,63 @@ const defaultBuiltinExtensions = {
     gdxfor: () => require('../extensions/scratch3_gdx_for'),
     // tw: core extension
     tw: () => require('../extensions/tw'),
-    appmaker: () => require('../extensions/potentia_appmaker')
+	
+    appmaker: () => require('../extensions/potentia_appmaker'),
+    wonderblocks: () => require('../extensions/gaia_wonderblocks'),
+    
+    pmMotionExpansion: () => require("../extensions/pm_motionExpansion"),
+    pmOperatorsExpansion: () => require("../extensions/pm_operatorsExpansion"),
+    pmSensingExpansion: () => require("../extensions/pm_sensingExpansion"),
+    pmControlsExpansion: () => require("../extensions/pm_controlsExpansion"),
+    pmEventsExpansion: () => require("../extensions/pm_eventsExpansion"),
+
+    jgPrism: () => require("../extensions/jg_prism"),
+    jgScratchAuthenticate: () => require("../extensions/jg_scratchAuth"),
+    jgPackagerApplications: () => require("../extensions/jg_packagerApplications"),
+    jgTailgating: () => require("../extensions/jg_tailgating"),
+    jg3dVr: () => require("../extensions/jg_3dVr"),
+    jgVr: () => require("../extensions/jg_vr"),
+
+    jgChristmas: () => require("../extensions/jg_christmas"),
+    jwUnite: () => require("../extensions/jw_unite"),
+    jwXml: () => require("../extensions/jw_xml"),
+    jwPsychic: () => require("../extensions/jwPsychic"),
+    jwLambda: () => require("../extensions/jwLambda"),
+	
+    theshovelcanvaseffects: () => require("../extensions/theshovel_canvasEffects"),
+    shovelcss: () => require("../extensions/theshovel_customStyles"),
+    profanityAPI: () => require("../extensions/theshovel_profanity"),
+	
+    oddMessage: () => require("../extensions/silvxrcat_oddmessages"),
+    pmCamera: () => require('../extensions/pm_camera'),
+    sharkpoolPrinting: () => require("../extensions/sharkpool_printing"),
+	
+	// champierre
+    scratch2webserialapi: () => require("../extensions/scratch3_scratch2webserialapi"),
+    chatgpt2scratch: () => require("../extensions/scratch3_chatgpt2scratch"),
+    facemesh2scratch: () => require("../extensions/scratch3_facemesh2scratch"),
+    handpose2scratch: () => require("../extensions/scratch3_handpose2scratch"),
+    posenet2scratch: () => require("../extensions/scratch3_posenet2scratch"),
+    helloscratch: () => require("../extensions/scratch3_hello"),
+    nn2scratch: () => require("../extensions/scratch3_nn2scratch"),
+    scratch2root: () => require("../extensions/scratch3_scratch2root"),
+    ic2scratch: () => require("../extensions/scratch3_ic2scratch"),
+    speech2scratch: () => require("../extensions/scratch3_speech2scratch"),
+    tm2scratch: () => require("../extensions/scratch3_tm2scratch"),
+    tmpose2scratch: () => require("../extensions/scratch3_tmpose2scratch"),
+    ml2scratch: () => require("../extensions/scratch3_ml2scratch"),
+	
+	    // adacraft
+    adabrowser: () => require('../extensions/scratch3_adabrowser'),
+    adacraftleaflet: ()=> require('../extensions/adacraft_leaflet'),
+    croquet: () => require('../extensions/scratch3_croquet'),
+    adahttp: () => require('../extensions/scratch3_adahttp'),
+    chronometer: () => require('../extensions/adacraft_chronometer'),
+    gif: () => require('../extensions/adacraft_gif'),
+    adavision: () => require('../extensions/scratch3_adavision'),
+    adasound: () => require('../extensions/scratch3_adasound'),
+    adaruntime: () => require('../extensions/scratch3_adaruntime'),
+    adap5: () => require('../extensions/scratch3_adap5')
 };
 
 /**
