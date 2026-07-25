@@ -56,7 +56,18 @@ const defaultBuiltinExtensions = {
     adavision: () => require('../extensions/scratch3_adavision'),
     adasound: () => require('../extensions/scratch3_adasound'),
     adaruntime: () => require('../extensions/scratch3_adaruntime'),
-    adap5: () => require('../extensions/scratch3_adap5')
+    adap5: () => require('../extensions/scratch3_adap5'),
+	
+	// rotur
+	patching: () => require('../extensions/mistwarp_patching'),
+    rotur: () => require('../extensions/rotur').RoturAccount,
+    roturEconomy: () => require('../extensions/rotur').RoturEconomy,
+    roturKeys: () => require('../extensions/rotur').RoturKeys,
+    roturStatus: () => require('../extensions/rotur').RoturStatus,
+    roturSocial: () => require('../extensions/rotur').RoturSocial,
+    roturShop: () => require('../extensions/rotur').RoturShop,
+    roturGroups: () => require('../extensions/rotur').RoturGroups,
+    roturFiles: () => require('../extensions/rotur').RoturFiles,
 };
 
 /**
