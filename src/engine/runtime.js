@@ -1782,7 +1782,7 @@ class Runtime extends EventEmitter {
 
             let xml = `<category name="${xmlEscape(name)}"`;
             xml += ` id="${xmlEscape(categoryInfo.id)}"`;
-			xml += ` options="extensionControls"`;
+            xml += ` options="extensionControls"`;
             xml += ` ${statusButtonXML}`;
             xml += ` ${colorXML}`;
             xml += ` ${menuIconXML}>`;
