@@ -93,7 +93,6 @@ const defaultBuiltinExtensions = {
     onegpioCpx: () => require('../extensions/scratch3_onegpioCpx'),
     onegpioRoboHAT: () => require('../extensions/scratch3_onegpioRoboHAT'),
     onegpioRpiPico: () => require('../extensions/scratch3_onegpioRpiPico'),
-	tello2: () => require('../extensions/scratch3_tello2'),
 	cubroidDCMotor: () => require('../extensions/scratch3_cubroid_dc_motor'),
 	cubroidProximity: () => require('../extensions/scratch3_cubroid_proximity'),
 	echidna: () => require('../extensions/scratch3_echidna'),
@@ -125,11 +124,6 @@ const defaultBuiltinExtensions = {
 	 pictobloxmath: () => require('../extensions/scratch3_PictoBloxMath'),
     pictobloxstring: () => require('../extensions/scratch3_PictoBloxString'),
 	
-	bricksmotor:() => require('../extensions/bricks_motor'),
-    brickstwomotor:() => require('../extensions/bricks_two_motor'),
-    brickslight:() => require('../extensions/bricks_light'),
-    brickssensors:() => require('../extensions/bricks_sensors'),
-    bricksevent:() => require('../extensions/bricks_event'),
 	
 	//by yj
     lazyAudio: () => require('../extensions/scratch3_lazy_audio'),
