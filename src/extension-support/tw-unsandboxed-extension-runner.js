@@ -35,6 +35,7 @@ const setupUnsandboxedExtensionAPI = (vm, options = {}) => new Promise(resolve =
     const Scratch = Object.assign({}, global.Scratch || {}, ScratchCommon);
     Scratch.extensions = {
         unsandboxed: true,
+        isPotentiaMod: true,
         register
     };
     Scratch.vm = vm;
