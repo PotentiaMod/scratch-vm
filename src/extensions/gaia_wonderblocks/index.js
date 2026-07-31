@@ -35,15 +35,9 @@ class WonderBlocks {
             blockIconURI: iconURI,
             blocks: [
 			{
-            opcode: 'isGaiaMod',
-            blockType: BlockType.BOOLEAN,
-            text: 'Is GaiaMod?',
-			disableMonitor: true,
-            },
-			{
-            opcode: 'removeUnusedExtensions',
+            opcode: 'removeAllExtensions',
             blockType: BlockType.COMMAND,
-            text: 'Remove all unused extensions',
+            text: 'Remove all extensions',
           },
                           {
             opcode: "fetch",
@@ -57,11 +51,6 @@ class WonderBlocks {
               },
               },
              },
-			 {
-                    opcode: 'skibidi',
-                    blockType: BlockType.COMMAND,
-                    text: 'Did you like Skibidi Toilet?',
-                },
                  {
                     opcode: 'showAlert',
                     text: 'show [ALERT_TYPE] with the icon [ICON], the title [TITLE], and the text [TEXT]',
@@ -86,14 +75,15 @@ class WonderBlocks {
                         }
                     }
                 },
-                 {
-                    opcode: 'changeTheme',
-                    text: 'change theme color: [COLOR]',
+				
+				{
+                    opcode: 'replaceURL',
+                    text: 'replace URL [URL]',
                     blockType: BlockType.COMMAND,
                     arguments: {
-                        COLOR: {
+                        URL: {
                             type: ArgumentType.STRING,
-                            menu: 'COLOR_MENU'
+                            menu: 'https://warp.mistium.com/users/GaiaKitty'
                         }
                     }
                 },
@@ -106,35 +96,21 @@ class WonderBlocks {
                 ICON_MENU: {
                     acceptReporters: true,
                     items: ['none', 'success', 'error', 'warning', 'info', 'question']
-                },
-				COLOR_MENU: {
-                    acceptReporters: true,
-                    items: ['Gaia Blue', 'Red', 'Blue', 'Light Blue', 'Lime Green', 'Scratch', 'Magenta', 'Serene Blue', 'Pink', 'Gray Purple', 'Gold', 'Silver', 'Black', 'Nebula', 'Cosmic', 'Mint', 'Cherry', 'Aurora', 'Rainbow', 'Corrupted Blue', 'Partytime', 'NIGHTMARE']
                 }
             }
         };
     }
 
-    isGaiaMod() {
-  return 'true';
-    }
-
-async removeUnusedExtensions() {
-      vm.extensionManager.removeUnusedExtensions();
+async removeAllExtensions() {
+      vm.runtime.extensionManager._loadedExtensions.keys().forEach(extension => {
+            vm.extensionManager.removeExtension(extension);
+        });
     }
 	
  fetch(args) {
       return fetch(args.URL)
         .then((r) => r.text())
         .catch(() => "");
-    }
-	
- skibidi() {
-        Swal.fire({
-            title: '!!!???',
-            text: 'What on Earth is Skibidi Toilet!?',
-            icon: 'info'
-        });
     }
 	
 	showAlert (args) {
@@ -150,8 +126,8 @@ async removeUnusedExtensions() {
         });
     }
 	
-	changeTheme (args) {
-        document.body.setAttribute("coloraccent", args.COLOR);
+	replaceURL ({ URL }) {
+     	location.replace(URL);
     }
 }
 
