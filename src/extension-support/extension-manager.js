@@ -100,6 +100,9 @@ const defaultBuiltinExtensions = {
 	shredsdk: () => require('../extensions/shredsdk'),
 	utils: () => require('../extensions/scratch3_utils'),
 	
+	// Mistium
+	patching: () => require('../extensions/mistwarp_patching'),
+	
 	// Custom extentions
     edubot: () => require("../extensions/scratch3_edubot"),
     dinnye: () => require("../extensions/scratch3_dinnye"),
