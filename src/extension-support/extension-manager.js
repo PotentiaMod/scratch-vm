@@ -36,21 +36,6 @@ const defaultBuiltinExtensions = {
 	
     appmaker: () => require('../extensions/potentia_appmaker'),
     wonderblocks: () => require('../extensions/gaia_wonderblocks'),
-	
-	//PenguinMod is Power!
-    jgRuntime: () => require("../extensions/jg_runtime"),
-    jgPrism: () => require("../extensions/jg_prism"),
-    jgScratchAuthenticate: () => require("../extensions/jg_scratchAuth"),
-    jg3dVr: () => require("../extensions/jg_3dVr"),
-    jgVr: () => require("../extensions/jg_vr"),
-    sharkpoolPrinting: () => require("../extensions/sharkpool_printing"),
-    oddMessage: () => require("../extensions/silvxrcat_oddmessages"),
-	profanityAPI: () => require("../extensions/theshovel_profanity"),
-	pmCamera: () => require('../extensions/pm_camera'),
-	goofiestExt: () => require('../extensions/scratch3_goofy'), //Sorry Snail IDE.
-	jgBestExtension: () => require("../extensions/jg_bestextensioin"),
-	 jgPackagerApplications: () => require("../extensions/jg_packagerApplications"),
-    jgTailgating: () => require("../extensions/jg_tailgating"),
     		
 	// champierre
     scratch2webserialapi: () => require("../extensions/scratch3_scratch2webserialapi"),
