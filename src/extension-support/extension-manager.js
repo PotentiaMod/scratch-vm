@@ -4,6 +4,12 @@ const maybeFormatMessage = require('../util/maybe-format-message');
 
 const BlockType = require('./block-type');
 const SecurityManager = require('./tw-security-manager');
+const Cast = require('../util/cast');
+
+const urlParams = new URLSearchParams(location.search);
+
+const IsLocal = String(window.location.href).startsWith(`http://localhost:`);
+const IsLiveTests = urlParams.has('enabletests');
 
 // These extensions are currently built into the VM repository but should not be loaded at startup.
 // TODO: move these out into a separate repository?
@@ -30,6 +36,21 @@ const defaultBuiltinExtensions = {
 	
     appmaker: () => require('../extensions/potentia_appmaker'),
     wonderblocks: () => require('../extensions/gaia_wonderblocks'),
+	
+	//PenguinMod is Power!
+    jgRuntime: () => require("../extensions/jg_runtime"),
+    jgPrism: () => require("../extensions/jg_prism"),
+    jgScratchAuthenticate: () => require("../extensions/jg_scratchAuth"),
+    jg3dVr: () => require("../extensions/jg_3dVr"),
+    jgVr: () => require("../extensions/jg_vr"),
+    sharkpoolPrinting: () => require("../extensions/sharkpool_printing"),
+    oddMessage: () => require("../extensions/silvxrcat_oddmessages"),
+	profanityAPI: () => require("../extensions/theshovel_profanity"),
+	pmCamera: () => require('../extensions/pm_camera'),
+	goofiestExt: () => require('../extensions/scratch3_goofy'), //Sorry Snail IDE.
+	jgBestExtension: () => require("../extensions/jg_bestextensioin"),
+	 jgPackagerApplications: () => require("../extensions/jg_packagerApplications"),
+    jgTailgating: () => require("../extensions/jg_tailgating"),
     		
 	// champierre
     scratch2webserialapi: () => require("../extensions/scratch3_scratch2webserialapi"),
