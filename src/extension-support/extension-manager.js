@@ -4,11 +4,8 @@ const maybeFormatMessage = require('../util/maybe-format-message');
 
 const BlockType = require('./block-type');
 const SecurityManager = require('./tw-security-manager');
-const Cast = require('../util/cast');
-
 const urlParams = new URLSearchParams(location.search);
 
-const IsLocal = String(window.location.href).startsWith(`http://localhost:`);
 const IsLiveTests = urlParams.has('enabletests');
 
 // These extensions are currently built into the VM repository but should not be loaded at startup.
