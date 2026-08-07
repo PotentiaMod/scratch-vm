@@ -24,7 +24,7 @@ const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const formatMessage = require('format-message');
 
-require('sweetalert2');
+const swal = require('sweetalert2');
 
 // The following are constants used within the extension
 
