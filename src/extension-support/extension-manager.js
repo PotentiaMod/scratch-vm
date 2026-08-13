@@ -168,6 +168,14 @@ const defaultBuiltinExtensions = {
     adap5: () => require('../extensions/scratch3_adap5')
 };
 
+// Compute SHA hash of a string (taken from StackOverflow)
+async function sha256 (source) {
+    const sourceBytes = new TextEncoder().encode(source);
+    const digest = await crypto.subtle.digest("SHA-256", sourceBytes);
+    const resultBytes = [...new Uint8Array(digest)];
+    return resultBytes.map(x => x.toString(16).padStart(2, '0')).join("");
+}
+
 /**
  * @typedef {object} ArgumentInfo - Information about an extension block argument
  * @property {ArgumentType} type - the type of value this argument can take
@@ -243,6 +251,18 @@ class ExtensionManager {
          * @private
          */
         this._loadedExtensions = new Map();
+		
+		   /**
+         * Extensions URL codes.
+         * @type {Object.<string,string>}
+         */
+        this.extensionsURLCodes = {};
+
+        /**
+         * Map of all new SHAs so we know when a new code update has happened and so ask the user about it.
+         * @type {Object.<string,string>}
+         */
+        this.extensionsHashes = {};
 
         /**
          * Responsible for determining security policies related to custom extensions.
@@ -354,7 +374,7 @@ _isLocalExtensionURL (extensionURL) {
         }
     }
     
-    async loadExtensionURL (extensionURL) {
+        async loadExtensionURL (extensionURL, oldHash = '') {
         if (this.isBuiltinExtension(extensionURL)) {
             this.loadExtensionIdSync(extensionURL);
             return;
@@ -377,10 +397,27 @@ _isLocalExtensionURL (extensionURL) {
         const isLocal = this._isLocalExtensionURL(extensionURL);
         const sandboxMode = isLocal ? 'unsandboxed' : await this.securityManager.getSandboxMode(extensionURL);
         const rewritten = isLocal ? extensionURL : await this.securityManager.rewriteExtensionURL(extensionURL);
+		
+		const blob = (await fetch(rewritten).then(req => req.blob()))
+        const blobURL = URL.createObjectURL(blob)
+        const newHash = await new Promise(resolve => {
+            const reader = new FileReader()
+            reader.onload = async ({ target: { result } }) => {
+                console.log(result);
+                this.extensionsURLCodes[extensionURL] = result;
+                resolve(await sha256(result));
+            }
+            reader.onerror = error => {
+                console.error('Couldn\'t read the contents of url', extensionURL, error);
+            }
+            reader.readAsText(blob);
+        });
+        this.extensionsHashes[extensionURL] = newHash;
+        if (oldHash && oldHash !== newHash && this.securityManager.shouldUseLocal(extensionURL)) return Promise.reject('useLocal'); 
 
         if (sandboxMode === 'unsandboxed') {
             const {load} = require('./tw-unsandboxed-extension-runner');
-            const extensionObjects = await load(rewritten, this.vm, {bypassSecurity: isLocal})
+            const extensionObjects = await load(blobURL, this.vm, {bypassSecurity: isLocal})
                 .catch(error => this._failedLoadingExtensionScript(error));
             const fakeWorkerId = this.nextExtensionWorker++;
             this.workerURLs[fakeWorkerId] = extensionURL;
@@ -725,6 +762,10 @@ _isLocalExtensionURL (extensionURL) {
 
                 // avoid promise latency if we can call direct
                 const serviceObject = dispatch.services[serviceName];
+				if (!serviceObject) {
+                    // Extension was likely removed
+                    return () => {};
+                }
                 if (!serviceObject[funcName]) {
                     // The function might show up later as a dynamic property of the service object
                     log.warn(`Could not find extension block function called ${funcName}`);
@@ -757,18 +798,15 @@ _isLocalExtensionURL (extensionURL) {
         return categoryInfo.blocks.filter(block => block.json).map(block => block.json.type);
     }
 
-    /**
+     /**
      * Prepare to swap out an extension.
      * @param {string} id - the ID of the extension
      */
     prepareSwap (id) {
         const serviceName = this._loadedExtensions.get(id);
-        const serviceProvider = dispatch._getServiceProvider(serviceName);
-        if (serviceProvider) {
-            const {provider, isRemote} = serviceProvider;
-            if (isRemote || typeof provider.dispose === 'function') 
-                dispatch.call(serviceName, 'dispose');
-        }
+        const {provider, isRemote} = dispatch._getServiceProvider(serviceName);
+        if (isRemote || typeof provider.dispose === 'function') 
+            dispatch.call(serviceName, 'dispose');
         delete dispatch.services[serviceName];
         delete this.runtime[`ext_${id}`];
 
