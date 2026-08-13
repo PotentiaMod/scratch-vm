@@ -843,7 +843,7 @@ _isLocalExtensionURL (extensionURL) {
      * @param {*} opcode - the opcode to examine
      * @returns {string} - the extension ID, or empty string if core extension or invalid opcode
      */
-    extensionIdFromOpcode (opcode) {
+     extensionIdFromOpcode (opcode) {
         // Allowed ID characters are those matching the regular expression [\w-]: A-Z, a-z, 0-9, and hyphen ("-").
         if (!(typeof opcode === 'string')) {
             console.error('Invalid opcode', opcode);
