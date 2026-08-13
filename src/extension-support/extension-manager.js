@@ -6,7 +6,7 @@ const BlockType = require('./block-type');
 const SecurityManager = require('./tw-security-manager');
 const urlParams = new URLSearchParams(location.search);
 
-const IsLiveTests = urlParams.has('enabletests');
+const enableCoreEx = urlParams.has('livetest');
 
 // These extensions are currently built into the VM repository but should not be loaded at startup.
 // TODO: move these out into a separate repository?
@@ -269,6 +269,10 @@ class ExtensionManager {
         dispatch.setService('extensions', createExtensionService(this)).catch(e => {
             log.error(`ExtensionManager was unable to register extension service: ${JSON.stringify(e)}`);
         });
+		
+		if (enableCoreEx) {
+            this.loadExtensionIdSync('coreExample');
+        }
     }
 
     /**
