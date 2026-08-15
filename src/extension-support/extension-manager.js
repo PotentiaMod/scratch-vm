@@ -35,8 +35,59 @@ const defaultBuiltinExtensions = {
 	
     appmaker: () => require('../extensions/potentia_appmaker'),
     wonderblocks: () => require('../extensions/gaia_wonderblocks'),
+	
+////////////////// -- penguinmod -- //////////////////
+
+    // expansions
+    pmEventsExpansion: () => require('../extensions/penguinmod/pmEventsExpansion'),
+    pmControlsExpansion: () => require('../extensions/penguinmod/pmControlsExpansion'),
+    pmOperatorsExpansion: () => require('../extensions/penguinmod/pmOperatorsExpansion'),
+    pmMotionExpansion: () => require('../extensions/penguinmod/pmMotionExpansion'),
+
+    // jwklong
+    jwArray: () => require('../extensions/penguinmod/jwArray'),
+    jwTargets: () => require('../extensions/penguinmod/jwTargets'),
+    jwColor: () => require('../extensions/penguinmod/jwColor'),
+    jwVector: () => require('../extensions/penguinmod/jwVector'),
+    jwXML: () => require('../extensions/penguinmod/jwXML'),
+    jwLambda: () => require('../extensions/penguinmod/jwLambda'),
+    jwPointer: () => require('../extensions/penguinmod/jwPointer'),
+    jwScope: () => require('../extensions/penguinmod/jwScope'),
+    jwNum: () => require('../extensions/penguinmod/jwNum'),
+    jwInt: () => require('../extensions/penguinmod/jwInt'),
+    jwPolygon: () => require('../extensions/penguinmod/jwPolygon'),
+    jwFragment: () => require('../extensions/penguinmod/jwFragment'),
+    jwPromise: () => require('../extensions/penguinmod/jwPromise'),
+    jwCamera: () => require('../extensions/penguinmod/jwCamera'),
+    jwClass: () => require('../extensions/penguinmod/jwClass'),
+    jwPsychic: () => require('../extensions/penguinmod/jwPsychic'),
+    jwProto: () => require('../extensions/penguinmod/jwProto'),
+    jwFetch: () => require('../extensions/penguinmod/jwFetch'),
+
+    // dogeiscut
+    dogeiscutObject: () => require('../extensions/penguinmod/dogeiscutObject'),
+
+    // jeremy
+    jgStorage: () => require('../extensions/penguinmod/jgStorage'),
+    jgTween: () => require('../extensions/penguinmod/jgTween'),
+    jgExtendedAudio: () => require('../extensions/penguinmod/jgExtendedAudio'),
+    jgRuntime: () => require('../extensions/penguinmod/jgRuntime'),
+    jgPrism: () => require('../extensions/penguinmod/jgPrism'),
+
+    // gsa
+    tempVars: () => require('../extensions/penguinmod/tempVars'),
+
+    // sharkpool
+    SPjavascriptV2: () => require('../extensions/penguinmod/SPjavascriptV2'),
+
+    // old deprecated extensions
+    jwUnite: () => require('../extensions/penguinmod/jwUnite'),
+    pmCamera: () => require('../extensions/penguinmod/pmCamera'),
+    jgJSON: () => require('../extensions/penguinmod/jgJSON'),
+	
+////////////////// -- penguinmod -- //////////////////
     		
-	// champierre
+	// champierres
     scratch2webserialapi: () => require("../extensions/scratch3_scratch2webserialapi"),
     chatgpt2scratch: () => require("../extensions/scratch3_chatgpt2scratch"),
     facemesh2scratch: () => require("../extensions/scratch3_facemesh2scratch"),
