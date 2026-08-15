@@ -29,13 +29,17 @@ class POTOmega {
          opcode: 'testReporter',
          text: 'testing!',
          blockType: BlockType.REPORTER,
+         blockShape: BlockShape.HEXAGONAL,
          disableMonitor: true,
          allowDropAnywhere: true
-         },
+         },		 
+
+	    {
+         opcode: 'removeExt',
+         blockType: BlockType.COMMAND,
+         text: 'Remove this extension'
+        },
 		///
-		
-		
-		
       ]
     };
   }
@@ -49,13 +53,26 @@ class POTOmega {
         });
   }
   
-  logToConsole() {
+   removeExt(args) {
+            try {
+                vm.extensionManager.removeExtension('omegaex');
+            } catch (e) {
+                console.warn('Failed to remove:', e);
+            }
+        }
+		
+		logToConsole() {
       console.log('Hello world!');
     }
 	
 	testReporter() {
         return "Hello world!";
     }
+	
+	randomBoolean() {
+        return Math.round(Math.random()) === 1;
+    }
+	
  /// 
   
 }
