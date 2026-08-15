@@ -118,13 +118,6 @@ const defaultBuiltinExtensions = {
     voicevox: () => require('../extensions/scratch3_voicevox'),
 	line: () => require('../extensions/scratch3_line'),
 	
-	bricksmotor:() => require('../extensions/bricks_motor'),
-    brickstwomotor:() => require('../extensions/bricks_two_motor'),
-    brickslight:() => require('../extensions/bricks_light'),
-    brickssensors:() => require('../extensions/bricks_sensors'),
-    bricksevent:() => require('../extensions/bricks_event'),
-	matrix:() => require('../extensions/matrix'),
-	
 	playgo: () => require('../extensions/scratch3_playgo'),
     playiot: () => require('../extensions/scratch3_playiot'),
 	ellabsextension: () => require('../extensions/scratch3_ellabs'),
