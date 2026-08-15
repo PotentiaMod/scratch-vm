@@ -101,7 +101,6 @@ const defaultBuiltinExtensions = {
 	echidna: () => require('../extensions/scratch3_echidna'),
 	shredsdk: () => require('../extensions/shredsdk'),
 	utils: () => require('../extensions/scratch3_utils'),
-	line: () => require('../extensions/scratch3_line'),
 	
 	// Mistium
 	patching: () => require('../extensions/mistwarp_patching'),
@@ -115,6 +114,7 @@ const defaultBuiltinExtensions = {
 	newblocks: () => require('../extensions/scratch3_newblocks'),
     chatgpt: () => require('../extensions/scratch3_chatgpt'),
     voicevox: () => require('../extensions/scratch3_voicevox'),
+	line: () => require('../extensions/scratch3_line'),
 	
 	playgo: () => require('../extensions/scratch3_playgo'),
     playiot: () => require('../extensions/scratch3_playiot'),
@@ -166,7 +166,24 @@ const defaultBuiltinExtensions = {
     adavision: () => require('../extensions/scratch3_adavision'),
     adasound: () => require('../extensions/scratch3_adasound'),
     adaruntime: () => require('../extensions/scratch3_adaruntime'),
-    adap5: () => require('../extensions/scratch3_adap5')
+    adap5: () => require('../extensions/scratch3_adap5'),
+	
+	fourLeggedBionicSpider: () => require('../extensions/scratch3_spider_robot'),
+    carMotor: () => require('../extensions/scratch_car_motor'),
+    carMotorV2: () => require('../extensions/scratch_car_motorV2'),
+    LordBot: () => require('../extensions/scratch_LordBot'),
+    mechanicalArm: () => require('../extensions/scratch_mechanical_arm'),
+    bipedRobot: () => require('../extensions/scratch_biped_robot'),
+    ASR: () => require('../extensions/scratch_ASR'),
+    meteorologicalStation: () => require('../extensions/scratch_meteorologicalStation'),
+    smartHome: () => require('../extensions/scratch_smart_home'),
+    smartFarm: () => require('../extensions/scratch_smart_farm'),
+    bluetoothController: () => require('../extensions/scratch_bluetooth_controller'),
+    PAW: () => require('../extensions/scratch_PAW'),
+    sharkbot: () => require('../extensions/scratch_sharkbot'),
+    truckbott: () => require('../extensions/scratch_truckbott'),
+    battleCar: () => require('../extensions/scratch_battle_car'),
+    nineInOne: () => require('../extensions/scratch_nine_in_one'),
 };
 
 // Compute SHA hash of a string (taken from StackOverflow)
