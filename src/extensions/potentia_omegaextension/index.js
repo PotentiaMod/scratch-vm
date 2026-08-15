@@ -9,6 +9,9 @@ const Cast = require('../../util/cast');
 const Swal = require('sweetalert2');
 
 class POTOmega {
+	static get SAY_OR_THINK () {
+            return 'SAY';
+        }
   getInfo() {
     return {
       id: 'omegaex', // change this if you make an actual extension!
@@ -25,6 +28,16 @@ class POTOmega {
          blockType: BlockType.COMMAND,
          text: 'log to console'
         },
+		{
+         opcode: 'scream',
+         text: 'scream [SCREAM]',
+         blockType: BlockType.COMMAND,
+         arguments: {
+         SCREAM: {
+         type: ArgumentType.STRING,
+              }
+            },
+         },
 		{
          opcode: 'testReporter',
          text: 'testing!',
@@ -72,6 +85,10 @@ class POTOmega {
 	randomBoolean() {
         return Math.round(Math.random()) === 1;
     }
+	
+	scream (args, util) {
+            Scratch.vm.runtime.emit(Extension.SAY_OR_THINK, util.target, 'scream', args.SCREAM);
+        }
 	
  /// 
   
