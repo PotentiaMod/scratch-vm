@@ -101,6 +101,7 @@ const defaultBuiltinExtensions = {
 	echidna: () => require('../extensions/scratch3_echidna'),
 	shredsdk: () => require('../extensions/shredsdk'),
 	utils: () => require('../extensions/scratch3_utils'),
+	line: () => require('../extensions/scratch3_line'),
 	
 	// Mistium
 	patching: () => require('../extensions/mistwarp_patching'),
