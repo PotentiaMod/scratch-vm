@@ -19,7 +19,42 @@ const BlockShape = {
     /**
      * Output shape: squared (any/all values; strings).
      */
-    SQUARE: ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE
+    SQUARE: ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE,
+	
+	/**
+    * Output shape: leaf-ed (vectors).
+     */
+    LEAF: ScratchBlocksConstants.OUTPUT_SHAPE_LEAF,
+	
+	/**
+    * Output shape: plus (objects/classes or class instances).
+     */
+    PLUS: ScratchBlocksConstants.OUTPUT_SHAPE_PLUS,
+	
+	/**
+    * Output shape: octagonal (Scratch targets)
+     */
+    OCTAGONAL: ScratchBlocksConstants.OUTPUT_SHAPE_OCTAGONAL,
+	
+	/**
+    * Output shape: indented (Symbols).
+     */
+    INDENTED: ScratchBlocksConstants.OUTPUT_SHAPE_INDENTED,
+	
+	/**
+    * Output shape: scrapped (Maps).
+     */
+    SCRAPPED: ScratchBlocksConstants.OUTPUT_SHAPE_SCRAPPED,
+	
+	/**
+    * Output shape: arrow (Sets).
+     */
+    ARROW: ScratchBlocksConstants.OUTPUT_SHAPE_ARROW,
+	
+	/**
+    * Output shape: ticket (Dates).
+     */
+    TICKET: ScratchBlocksConstants.OUTPUT_SHAPE_TICKET,
 };
 
 module.exports = BlockShape;

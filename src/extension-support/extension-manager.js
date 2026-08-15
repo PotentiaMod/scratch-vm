@@ -31,6 +31,8 @@ const defaultBuiltinExtensions = {
     // tw: core extension
     tw: () => require('../extensions/tw'),
 	
+    omegaex: () => require('../extensions/potentia_omegaextension'),
+	
     appmaker: () => require('../extensions/potentia_appmaker'),
     wonderblocks: () => require('../extensions/gaia_wonderblocks'),
     		
@@ -116,6 +118,13 @@ const defaultBuiltinExtensions = {
     voicevox: () => require('../extensions/scratch3_voicevox'),
 	line: () => require('../extensions/scratch3_line'),
 	
+	bricksmotor:() => require('../extensions/bricks_motor'),
+    brickstwomotor:() => require('../extensions/bricks_two_motor'),
+    brickslight:() => require('../extensions/bricks_light'),
+    brickssensors:() => require('../extensions/bricks_sensors'),
+    bricksevent:() => require('../extensions/bricks_event'),
+	matrix:() => require('../extensions/matrix'),
+	
 	playgo: () => require('../extensions/scratch3_playgo'),
     playiot: () => require('../extensions/scratch3_playiot'),
 	ellabsextension: () => require('../extensions/scratch3_ellabs'),
@@ -132,9 +141,14 @@ const defaultBuiltinExtensions = {
 	//by yj
     lazyAudio: () => require('../extensions/scratch3_lazy_audio'),
     canvas: () => require('../extensions/scratch3_canvas'),
+    battle: () => require('../extensions/scratch3_battle'),
+    js: () => require('../extensions/scratch3_js'),
+    stringExt: () => require('../extensions/scratch3_string_ext'),
     puzzle: () => require('../extensions/scratch3_puzzle'),
     community: () => require('../extensions/scratch3_community'),
+    kinect: () => require('../extensions/scratch3_kinect'),
 	
+    gasoIFTTT: () => require('../extensions/scratch3_ifttt'),
     gasoLASS: () => require('../extensions/scratch3_lass'),
     gasoThingSpeak: () => require('../extensions/scratch3_thingspeak'),
 	
@@ -144,6 +158,10 @@ const defaultBuiltinExtensions = {
     minecraft: () => require('../extensions/scratch3_minecraft'),
     toolbox: () => require('../extensions/scratch3_toolbox'),
     magicBlueUU: () => require('../extensions/scratch3_magic_blue_uu'),
+	spikePrime: () => require('../extensions/scratch3_spike_prime'),
+	iCarPro: () => require('../extensions/scratch3_icar_pro'),
+    snapCircuitsU33: () => require('../extensions/scratch3_snap_circuits_u33'),
+	smartLumies: () => require('../extensions/scratch3_smart_lumies'),
 	
 	network: () => require('../extensions/scratchplusplus_network'),
     impulse: () => require('../extensions/scratchplusplus_impulse'),
@@ -310,6 +328,7 @@ class ExtensionManager {
 		
 		if (enableCoreEx) {
             this.loadExtensionIdSync('coreExample');
+            this.loadExtensionIdSync('omegaex');
         }
     }
 

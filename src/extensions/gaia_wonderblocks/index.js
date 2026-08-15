@@ -38,6 +38,13 @@ class WonderBlocks {
             opcode: 'removeAllExtensions',
             blockType: BlockType.COMMAND,
             text: 'Remove all extensions',
+			isPotentiaMod: true
+          },
+		  {
+            opcode: 'removeUnusedExtensions',
+            blockType: BlockType.COMMAND,
+            text: 'Remove all unused extensions',
+			hideFromPalette: true
           },
                           {
             opcode: "fetch",
@@ -51,6 +58,11 @@ class WonderBlocks {
               },
               },
              },
+			 {
+                    opcode: 'skibidi',
+                    blockType: BlockType.COMMAND,
+                    text: 'Did you like Skibidi Toilet?',
+                },
                  {
                     opcode: 'showAlert',
                     text: 'show [ALERT_TYPE] with the icon [ICON], the title [TITLE], and the text [TEXT]',
@@ -113,6 +125,14 @@ async removeAllExtensions() {
         .catch(() => "");
     }
 	
+	skibidi() {
+        Swal.fire({
+            title: '!!!???',
+            text: 'What on Earth is Skibidi Toilet!?',
+            icon: 'info'
+        });
+    }
+	
 	showAlert (args) {
         Swal.fire({
             toast: args.ALERT_TYPE === 'toast',
@@ -128,6 +148,13 @@ async removeAllExtensions() {
 	
 	replaceURL ({ URL }) {
      	location.replace(URL);
+    }
+	
+	async removeUnusedExtensions() {
+		Swal.fire({
+            text: 'This is not implemented yet.',
+        });
+      //vm.extensionManager.removeUnusedExtensions();
     }
 }
 

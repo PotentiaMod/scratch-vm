@@ -35,9 +35,9 @@ class AppMaker {
         return {
             id: 'appmaker',
             name: 'App Utilities',
-            color1: '#2100D9',
-            color2: '#0E00A3',
-            color3: '#07006E',
+            color1: '#7000d9',
+            color2: '#5400a3',
+            color3: '#39006e',
             menuIconURI: iconURI,
             blockIconURI: iconURI,
             blocks: [
@@ -56,11 +56,11 @@ class AppMaker {
                         },
                         TITLE: {
                             type: ArgumentType.STRING,
-                            defaultValue: 'It works!'
+                            defaultValue: 'It worked!'
                         },
                         TEXT: {
                             type: ArgumentType.STRING,
-                            defaultValue: 'Wahoo!'
+                            defaultValue: 'Yippee!'
                         },
                         ICON: {
                             type: ArgumentType.STRING,
@@ -85,11 +85,11 @@ class AppMaker {
                         },
                         TITLE: {
                             type: ArgumentType.STRING,
-                            defaultValue: 'It works!'
+                            defaultValue: 'It worked!'
                         },
                         TEXT: {
                             type: ArgumentType.STRING,
-                            defaultValue: 'Wahoo!'
+                            defaultValue: 'Yippee!'
                         },
                         ICON: {
                             type: ArgumentType.STRING,
