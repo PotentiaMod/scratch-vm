@@ -27,34 +27,6 @@ class Scratch3LooksBlocks {
         this._onResetBubbles = this._onResetBubbles.bind(this);
         this._onTargetWillExit = this._onTargetWillExit.bind(this);
         this._updateBubble = this._updateBubble.bind(this);
-		
-		this.SAY_BUBBLE_LIMITdefault = 330;
-        this.SAY_BUBBLE_LIMIT = this.SAY_BUBBLE_LIMITdefault;
-        this.defaultBubble = {
-            MAX_LINE_WIDTH: 170, // Maximum width, in Scratch pixels, of a single line of text
-
-            MIN_WIDTH: 50, // Minimum width, in Scratch pixels, of a text bubble
-            STROKE_WIDTH: 4, // Thickness of the stroke around the bubble.
-            // Only half's visible because it's drawn under the fill
-            PADDING: 10, // Padding around the text area
-            CORNER_RADIUS: 16, // Radius of the rounded corners
-            TAIL_HEIGHT: 12, // Height of the speech bubble's "tail". Probably should be a constant.
-
-            FONT: 'Helvetica', // Font to render the text with
-            FONT_SIZE: 14, // Font size, in Scratch pixels
-            FONT_HEIGHT_RATIO: 0.9, // Height, in Scratch pixels, of the text, as a proportion of the font's size
-            LINE_HEIGHT: 16, // Spacing between each line of text
-
-            COLORS: {
-                BUBBLE_FILL: '#FFFFFF', //white
-                BUBBLE_STROKE: '#00000026',//#72aefc50 rgba(0, 0, 0, 0.15)
-                TEXT_FILL: '#575E75'
-            }
-        };
-
-        this.currentBubbleProps = {}
-
-        this.currentlyDisplayingInBubble = {};
 
         // Reset all bubbles on start/stop
         this.runtime.on('PROJECT_STOP_ALL', this._onResetBubbles);
@@ -75,9 +47,7 @@ class Scratch3LooksBlocks {
             skinId: null,
             text: '',
             type: 'say',
-            usageId: null,
-			// @todo make this read from renderer
-            props: this.defaultBubble
+            usageId: null
         };
     }
 
@@ -136,64 +106,6 @@ class Scratch3LooksBlocks {
         }
         return bubbleState;
     }
-	
-	/**
-     * resets the text bubble of a sprite
-     * @param {Target} target the target to reset
-     */
-    _resetBubbles (target) {
-        const state = this._getBubbleState(target);
-        this.SAY_BUBBLE_LIMIT = this.SAY_BUBBLE_LIMITdefault;
-        state.props = structuredClone(this.defaultBubble);
-    }
-
-    /**
-     * set any property of the text bubble of any given target
-     * @param {Target} target the target to modify
-     * @param {array} props the property names to change
-     * @param {array} value the values the set the properties to
-     */
-    _setBubbleProperty (target, props, value) {
-        const object = this._getBubbleState(target);
-        if (!object.props) object.props = structuredClone(this.defaultBubble);
-        if (!this.currentBubbleProps[target]) this.currentBubbleProps[target] = {};
-        if (!this.currentBubbleProps[target].props) this.currentBubbleProps[target].props = this.defaultBubble;
-        props.forEach((prop, index) => {
-            if (prop.startsWith('COLORS')) {
-                object.props.COLORS[prop.split('.')[1]] = value[index];
-                this.currentBubbleProps[target].props.COLORS[prop.split('.')[1]] = value[index];
-            } else {
-                object.props[prop] = value[index];
-                this.currentBubbleProps[target].props[prop] = value[index];
-            }
-        });
-
-        target.setCustomState(Scratch3LooksBlocks.STATE_KEY, object);
-    }
-
-    _getBubbleProperty (target, prop) {
-        let currentBubblePropsObject;
-        if (this.currentBubbleProps[target]) {
-            if (this.currentBubbleProps[target].props) {
-                currentBubblePropsObject = this.currentBubbleProps[target].props;
-            } else {
-                currentBubblePropsObject = this.defaultBubble;
-            }
-        } else {
-            currentBubblePropsObject = this.defaultBubble;
-        }
-        if (prop == 'COLORS') {
-            return currentBubblePropsObject.COLORS;
-        } else {
-            return currentBubblePropsObject[prop];
-        }
-    }
-
-    /**
-     * Handle a target which has moved.
-     * @param {RenderedTarget} target - the target which has moved.
-     * @private
-     */
 
     /**
      * Handle a target which has moved.
@@ -364,14 +276,6 @@ class Scratch3LooksBlocks {
         bubbleState.usageId = uid();
         this._renderBubble(target);
     }
-	
-	_percentToRatio (percent) {
-        return percent / 100;
-    }
-    _doesFontSuport (size, font) {
-        const check = size + 'px ' + font;
-        return document.fonts.check(check);
-    }
 
     /**
      * Retrieve the block primitives implemented by this package.
@@ -383,151 +287,27 @@ class Scratch3LooksBlocks {
             looks_sayforsecs: this.sayforsecs,
             looks_think: this.think,
             looks_thinkforsecs: this.thinkforsecs,
-			looks_setFont: this.setFont,
-            looks_setColor: this.setColor,
-            looks_setShape: this.setShape,
             looks_show: this.show,
             looks_hide: this.hide,
             looks_hideallsprites: () => {}, // legacy no-op block
             looks_switchcostumeto: this.switchCostume,
             looks_switchbackdropto: this.switchBackdrop,
             looks_switchbackdroptoandwait: this.switchBackdropAndWait,
-			looks_getSpriteVisible: this.getSpriteVisible,
-            looks_getOtherSpriteVisible: this.getOtherSpriteVisible,
             looks_nextcostume: this.nextCostume,
             looks_nextbackdrop: this.nextBackdrop,
-			looks_previouscostume: this.previousCostume,
-            looks_previousbackdrop: this.previousBackdrop,
             looks_changeeffectby: this.changeEffect,
             looks_seteffectto: this.setEffect,
             looks_cleargraphiceffects: this.clearEffects,
             looks_changesizeby: this.changeSize,
             looks_setsizeto: this.setSize,
-            //looks_changestretchby: () => {}, // legacy no-op blocks
+            looks_changestretchby: () => {}, // legacy no-op blocks
             looks_setstretchto: () => {},
             looks_gotofrontback: this.goToFrontBack,
             looks_goforwardbackwardlayers: this.goForwardBackwardLayers,
-			looks_goTargetLayer: this.goTargetLayer,
-            looks_layersSetLayer: this.setSpriteLayer,
-            looks_layersGetLayer: this.getSpriteLayer,
             looks_size: this.getSize,
             looks_costumenumbername: this.getCostumeNumberName,
-            looks_backdropnumbername: this.getBackdropNumberName,
-            looks_setStretch: this.stretchSet,
-            looks_changeStretch: this.changeStretch,
-            looks_stretchGetX: this.getStretchX,
-            looks_stretchGetY: this.getStretchY,
-            looks_sayWidth: this.getBubbleWidth,
-            looks_sayHeight: this.getBubbleHeight,
-            looks_changeVisibilityOfSprite: this.showOrHideSprite,
-            looks_changeVisibilityOfSpriteShow: this.showSprite,
-            looks_changeVisibilityOfSpriteHide: this.hideSprite,
-            looks_stoptalking: this.stopTalking,
-            looks_getinputofcostume: this.getCostumeValue,
-            looks_tintColor: this.getTintColor,
-            looks_setTintColor: this.setTintColor,
-
-            looks_hideallsprites: this.hideAllSprites, // not a legacy no-op block anymore :)
-            looks_showallsprites: this.showAllSprites,
-            looks_getAllSpritesVisible: this.getAllSpritesVisible,
-            looks_getcostumelength: this.getCostumeLength,
-            looks_getbackdroplength: this.getBackdropLength,
-            looks_sayColor: this.getColor,
-            looks_sayOther: this.getShape,
-            looks_scream: this.scream,
-            looks_screamforsecs: this.screamforsecs,
-            looks_getWhatBubbleIsDisplaying: this.getWhatBubbleIsDisplaying,
-            looks_getinputofbackdrop: this.getBackdropValue,
+            looks_backdropnumbername: this.getBackdropNumberName
         };
-    }
-	
-	 getSpriteLayer (_, util) {
-        const target = util.target;
-        return target.getLayerOrder();
-    }
-
-    setSpriteLayer (args, util) {
-        const target = util.target;
-        const targetLayer = Cast.toNumber(args.NUM);
-        const currentLayer = target.getLayerOrder();
-        target.goForwardLayers(targetLayer - currentLayer);
-    }
-
-    _getBubbleSize (target) {
-        const bubbleState = this._getBubbleState(target);
-        return this.runtime.renderer.getSkinSize(bubbleState.skinId);
-    }
-
-    getBubbleWidth (_, util) {
-        const target = util.target;
-        let val = 0;
-        try {
-            val = this._getBubbleSize(target)[0];
-        } catch {
-            val = 0;
-        }
-        return val;
-    }
-
-    getBubbleHeight (_, util) {
-        const target = util.target;
-        let val = 0;
-        try {
-            val = this._getBubbleSize(target)[1];
-        } catch {
-            val = 0;
-        }
-        return val;
-    }
-
-    getStretchY (args, util) {
-        return util.target._getRenderedDirectionAndScale().stretch[1];
-    }
-    getStretchX (args, util) {
-        return util.target._getRenderedDirectionAndScale().stretch[0];
-    }
-
-    stretchSet (args, util) {
-        util.target.setStretch(
-            Cast.toNumber(args.X), Cast.toNumber(args.Y)
-        );
-    }
-
-    changeStretch(args, util) {
-        let [x, y] = util.target._getRenderedDirectionAndScale().stretch;
-        let new_x = x + Cast.toNumber(args.X);
-        let new_y = y + Cast.toNumber(args.Y);
-        util.target.setStretch(new_x, new_y);
-    }
-
-    setFont (args, util) {
-        this._setBubbleProperty(
-            util.target,
-            ['FONT', 'FONT_SIZE'],
-            [args.font, args.size]
-        );
-    }
-    setColor (args, util) {
-        const numColor = Number(args.color);
-        if (!isNaN(numColor)) {
-            args.color = Color.decimalToHex(numColor);
-        }
-        this._setBubbleProperty(
-            util.target,
-            ['COLORS.' + args.prop],
-            [args.color]
-        );
-    }
-    setShape (args, util) {
-        if (args.prop === 'texlim') {
-            this.SAY_BUBBLE_LIMIT = Math.max(args.color, 1);
-            return;
-        }
-        this._setBubbleProperty(
-            util.target,
-            [args.prop],
-            [args.color]
-        );
     }
 
     getMonitored () {
@@ -535,42 +315,6 @@ class Scratch3LooksBlocks {
             looks_size: {
                 isSpriteSpecific: true,
                 getId: targetId => `${targetId}_size`
-            },
-			looks_stretchGetX: {
-                isSpriteSpecific: true,
-                getId: targetId => `${targetId}_stretchGetX`
-            },
-            looks_stretchGetY: {
-                isSpriteSpecific: true,
-                getId: targetId => `${targetId}_stretchGetY`
-            },
-            looks_sayWidth: {
-                isSpriteSpecific: true,
-                getId: targetId => `${targetId}_sayWidth`
-            },
-            looks_sayHeight: {
-                isSpriteSpecific: true,
-                getId: targetId => `${targetId}_sayHeight`
-            },
-            looks_getEffectValue: {
-                isSpriteSpecific: true,
-                getId: (targetId, fields) => getMonitorIdForBlockWithArgs(`${targetId}_getEffectValue`, fields)
-            },
-            looks_tintColor: {
-                isSpriteSpecific: true,
-                getId: targetId => `${targetId}_tintColor`
-            },
-            looks_getSpriteVisible: {
-                isSpriteSpecific: true,
-                getId: targetId => `${targetId}_getSpriteVisible`
-            },
-            looks_layersGetLayer: {
-                isSpriteSpecific: true,
-                getId: targetId => `${targetId}_layersGetLayer`
-            },
-            looks_costumenumbername: {
-                isSpriteSpecific: true,
-                getId: (targetId, fields) => getMonitorIdForBlockWithArgs(`${targetId}_costumenumbername`, fields)
             },
             looks_costumenumbername: {
                 isSpriteSpecific: true,
@@ -639,68 +383,6 @@ class Scratch3LooksBlocks {
         util.target.setVisible(false);
         this._renderBubble(util.target);
     }
-	
-	showOrHideSprite (args, util) {
-        const option = args.VISIBLE_OPTION;
-        const visibleOption = Cast.toString(args.VISIBLE_TYPE).toLowerCase();
-        // Set target
-        let target;
-        if (option === '_myself_') {
-            target = util.target;
-        } else if (option === '_stage_') {
-            target = this.runtime.getTargetForStage();
-        } else {
-            target = this.runtime.getSpriteTargetByName(option);
-        }
-        if (!target) return;
-        target.setVisible(visibleOption === 'show');
-        this._renderBubble(target);
-    }
-
-    showSprite (args, util) {
-        this.showOrHideSprite({ VISIBLE_OPTION: args.VISIBLE_OPTION, VISIBLE_TYPE: "show" }, util);
-    }
-    hideSprite (args, util) {
-        this.showOrHideSprite({ VISIBLE_OPTION: args.VISIBLE_OPTION, VISIBLE_TYPE: "hide" }, util);
-    }
-
-    getSpriteVisible (args, util) {
-        return util.target.visible;
-    }
-
-    getOtherSpriteVisible (args, util) {
-        const option = args.VISIBLE_OPTION;
-        // Set target
-        let target;
-        if (option === '_myself_') {
-            target = util.target;
-        } else if (option === '_stage_') {
-            target = this.runtime.getTargetForStage();
-        } else {
-            target = this.runtime.getSpriteTargetByName(option);
-        }
-        if (!target) return;
-        return target.visible;
-    }
-	
-	getEffectValue (args, util) {
-        const effect = Cast.toString(args.EFFECT).toLowerCase();
-        const effects = util.target.effects;
-        if (!effects.hasOwnProperty(effect)) return 0;
-        const value = Cast.toNumber(effects[effect]);
-        return value;
-    }
-
-    getTintColor (_, util) {
-        const effects = util.target.effects;
-        if (typeof effects.tintColor !== 'number') return '#ffffff';
-        return Color.decimalToHex(effects.tintColor - 1);
-    }
-    setTintColor (args, util) { // used by compiler
-        const rgb = Cast.toRgbColorObject(args.color);
-        const decimal = Color.rgbToDecimal(rgb);
-        util.target.setEffect("tintColor", decimal + 1);
-    }
 
     /**
      * Utility function to set the costume of a target.
@@ -734,98 +416,6 @@ class Scratch3LooksBlocks {
 
         // Per 2.0, 'switch costume' can't start threads even in the Stage.
         return [];
-    }
-	
-	costumeValueToDefaultNone (value) {
-        switch (value) {
-            case 'width':
-            case 'height':
-            case 'rotation center x':
-            case 'rotation center y':
-                return 0;
-            default:
-                return '';
-        }
-    }
-    _getCostumeValue (args, util, forceBackdrop = false) {
-        let costumeIndex = 0;
-        const isStage = forceBackdrop;
-        const target = isStage ? this.runtime.getTargetForStage() : util.target
-        const requestedCostume = args.COSTUME;
-        const requestedValue = Cast.toString(args.INPUT);
-        if (typeof requestedCostume === 'number') {
-            // Numbers should be treated as costume indices, always
-            costumeIndex = (requestedCostume === 0) ? 0 : requestedCostume - 1;
-        } else {
-            let noun = isStage ? "backdrop" : "costume";
-            switch (Cast.toString(requestedCostume)) {
-                case "next " + noun:
-                    costumeIndex = target.currentCostume + 1;
-                    if (costumeIndex >= target.sprite.costumes_.length) {
-                        costumeIndex = 0
-                        // loop around to front
-                    }
-                    break;
-                case "previous " + noun:
-                    costumeIndex = target.currentCostume - 1;
-                    if (costumeIndex < 0) {
-                        costumeIndex = target.sprite.costumes_.length - 1;
-                        // Loop around to back
-                    }
-                    break;
-                case "random " + noun:
-                    costumeIndex = MathUtil.inclusiveRandIntWithout(
-                        0,
-                        target.sprite.costumes_.length - 1,
-                        target.currentCostume
-                    )
-                    if (costumeIndex >= target.sprite.costumes_.length) {
-                        costumeIndex = 0;
-                        // This really only accounts for if there's only 1
-                        // costume.
-                    }
-                    break;
-                case "first " + noun:
-                    costumeIndex = 0;
-                    break;
-                case "last " + noun:
-                    costumeIndex = target.sprite.costumes_.length - 1;
-                    if (costumeIndex >= target.sprite.costumes_.length) {
-                        costumeIndex = 0;
-                        // This really only accounts for if there's only 1
-                        // costume.
-                    }
-                    break;
-                default:
-                    costumeIndex = target.getCostumeIndexByName(Cast.toString(requestedCostume));
-            }
-        }
-        if (costumeIndex < 0) return this.costumeValueToDefaultNone(requestedValue);
-        if (!target.sprite) return this.costumeValueToDefaultNone(requestedValue);
-        if (!target.sprite.costumes_) return this.costumeValueToDefaultNone(requestedValue);
-        const costume = target.sprite.costumes_[costumeIndex];
-        if (!costume) return this.costumeValueToDefaultNone(requestedValue);
-        switch (requestedValue) {
-            case 'width':
-                return costume.size[0];
-            case 'height':
-                return costume.size[1];
-            case 'rotation center x':
-                return costume.rotationCenterX;
-            case 'rotation center y':
-                return costume.rotationCenterY;
-            case 'drawing mode':
-                return ((costume.dataFormat === "svg") ? "Vector" : "Bitmap");
-            default:
-                return '';
-        }
-    }
-    getBackdropValue(args, util) {
-        return this._getCostumeValue(args, util, true)
-    }
-
-    getCostumeValue(args, util) {
-        return this._getCostumeValue(args, util, false)
     }
 
     /**
@@ -886,12 +476,6 @@ class Scratch3LooksBlocks {
             util.target, util.target.currentCostume + 1, true
         );
     }
-	
-	previousCostume (args, util) {
-        this._setCostume(
-            util.target, util.target.currentCostume - 1, true
-        );
-    }
 
     switchBackdrop (args) {
         this._setBackdrop(this.runtime.getTargetForStage(), args.BACKDROP);
@@ -939,13 +523,6 @@ class Scratch3LooksBlocks {
         const stage = this.runtime.getTargetForStage();
         this._setBackdrop(
             stage, stage.currentCostume + 1, true
-        );
-    }
-	
-	previousBackdrop() {
-        const stage = this.runtime.getTargetForStage();
-        this._setBackdrop(
-            stage, stage.currentCostume - 1, true
         );
     }
 
@@ -1015,21 +592,6 @@ class Scratch3LooksBlocks {
             }
         }
     }
-	
-	goTargetLayer (args, util) {
-        let target;
-        const option = args.VISIBLE_OPTION;
-        if (option === '_stage_') target = this.runtime.getTargetForStage();
-        else target = this.runtime.getSpriteTargetByName(option);
-        if (!util.target.isStage && target) {
-            if (args.FORWARD_BACKWARD === 'infront') {
-                util.target.goBehindOther(target);
-                util.target.goForwardLayers(1);
-            } else {
-                util.target.goBehindOther(target);
-            }
-        }
-    }
 
     getSize (args, util) {
         return Math.round(util.target.size);
@@ -1050,90 +612,6 @@ class Scratch3LooksBlocks {
         }
         // Else return name
         return util.target.getCostumes()[util.target.currentCostume].name;
-    }
-	
-	hideAllSprites () {
-        const targets = this.runtime.targets;
-        for (const target of targets) {
-            if (!target.isStage) {
-                target.setVisible(false)
-            }
-        }
-    }
-
-    showAllSprites () {
-        const targets = this.runtime.targets;
-        for (const target of targets) {
-            if (!target.isStage) {
-                target.setVisible(true)
-            }
-        }
-    }
-
-    getAllSpritesVisible (args) {
-        const trueOrFalse = []
-        const isVisOrInvis = args.VISIBLE_TYPE;
-        const targets = this.runtime.targets;
-        for (const target of targets) {
-            if (!target.isStage) {
-                trueOrFalse.push(target.visible)
-            }
-        }
-        switch (isVisOrInvis) {
-            case 'show':
-                return !trueOrFalse.includes(false) ? true : false
-            case 'hide':
-                return !trueOrFalse.includes(true) ? true : false
-        }
-    }
-
-    getCostumeLength (_, util) {
-        return util.target.getCostumes().length
-    }
-    getBackdropLength () {
-        const Stage = this.runtime._stageTarget
-        return Stage.getCostumes().length
-    }
-
-    getColor (args, util) {
-        return this._getBubbleProperty(
-            util.target,
-            'COLORS'
-        )[args.prop];
-    }
-    getShape (args, util) {
-        if (args.prop == "texlim") return this.SAY_BUBBLE_LIMIT;
-        return this._getBubbleProperty(
-            util.target,
-            [args.prop]
-        );
-    }
-
-    scream (args, util) {
-        // @TODO in 2.0 calling say/think resets the right/left bias of the bubble
-        const message = args.MESSAGE;
-        this._say(Cast.toString(message).toUpperCase(), util.target, true); // right now all this is, is just the say block but the message is always uppercase
-    }
-
-    screamforsecs (args, util) {
-        this.scream(args, util);
-        const target = util.target;
-        const usageId = this._getBubbleState(target).usageId;
-        return new Promise(resolve => {
-            this._bubbleTimeout = setTimeout(() => {
-                this._bubbleTimeout = null;
-                // Clear say bubble if it hasn't been changed and proceed.
-                if (this._getBubbleState(target).usageId === usageId) {
-                    this._updateBubble(target, 'say', '');
-                    delete(this.currentlyDisplayingInBubble[util.target]);
-                }
-                resolve();
-            }, 1000 * args.SECS);
-        });
-    }
-
-    getWhatBubbleIsDisplaying (_, util) {
-        return this.currentlyDisplayingInBubble[util.target] ?? ''
     }
 }
 

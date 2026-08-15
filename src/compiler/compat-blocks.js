@@ -6,30 +6,13 @@
  */
 
 // Please keep these lists alphabetical.
-// OH REALLY!? >8(
-// What's with this big fat idea about these?
 
 const stacked = [
-    'looks_changeStretch',
     'looks_changestretchby',
-	'looks_changeVisibilityOfSpriteShow',
-    'looks_changeVisibilityOfSpriteHide',
     'looks_hideallsprites',
-	'looks_layersSetLayer',
-    'looks_previousbackdrop',
-	'looks_previouscostume',
-    'looks_say',
     'looks_sayforsecs',
-    'looks_scream',
-    'looks_screamforsecs',
-	'looks_setHorizTransform',
-	'looks_setStretch',
     'looks_setstretchto',
-    'looks_setVertTransform',
-	'looks_showallsprites',
-	'looks_stoptalking',
     'looks_switchbackdroptoandwait',
-    'looks_think',
     'looks_thinkforsecs',
     'motion_align_scene',
     'motion_glidesecstoxy',
@@ -51,22 +34,6 @@ const stacked = [
 ];
 
 const inputs = [
-    'looks_getAllSpritesVisible',
-    'looks_getbackdroplength',
-	'looks_getcostumelength',
-    'looks_getEffectValue',
-    'looks_getinputofbackdrop',
-	'looks_getinputofcostume',
-	'looks_getOtherSpriteVisible',
-    'looks_getSpriteVisible',
-	'looks_getWhatBubbleIsDisplaying',
-    'looks_layersGetLayer',
-	'looks_sayColor',
-    'looks_sayHeight',
-    'looks_sayOther',
-    'looks_sayWidth',
-    'looks_stretchGetX',
-    'looks_stretchGetY',
     'motion_xscroll',
     'motion_yscroll',
     'sensing_loud',
