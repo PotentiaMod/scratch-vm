@@ -1,0 +1,1 @@
+Some code from this mod and LibreKitten was backported from OmniBlocks' port of this web server. See https://github.com/OmniBlocks/scratch-vm/pull/48 and https://github.com/OmniBlocks/scratch-vm/tree/develop/src/server for the code.

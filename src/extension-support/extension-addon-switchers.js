@@ -1,6 +1,6 @@
 const log = require("../util/log");
 const switches = {};
-const parser = new DOMParser();
+const parser = typeof DOMParser === 'undefined' ? null : new DOMParser();
 
 const define_error_noop = (msg) => {
     log.warn(msg);
@@ -12,6 +12,19 @@ const define_error_noop = (msg) => {
 };
 
 function get_extension_switches(id, blocks) {
+	// Monkeypatched Blockly via the DOM from
+    // the VM; but, it is blocking server support. If it breaks, help me!
+    if (typeof process !== 'undefined') return {
+        opcode: 'un_supported',
+        msg: 'unsupported',
+
+        mapFieldValues: {},
+        remapInputName: {},
+
+        createInputs: {},
+        splitInputs: [],
+        remapShadowType: {},
+    };
     let _switches = {};
     for (let block of blocks) {
         var blockswitches = block.info.switches;
