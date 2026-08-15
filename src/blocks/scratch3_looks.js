@@ -27,6 +27,34 @@ class Scratch3LooksBlocks {
         this._onResetBubbles = this._onResetBubbles.bind(this);
         this._onTargetWillExit = this._onTargetWillExit.bind(this);
         this._updateBubble = this._updateBubble.bind(this);
+		
+		this.SAY_BUBBLE_LIMITdefault = 330;
+        this.SAY_BUBBLE_LIMIT = this.SAY_BUBBLE_LIMITdefault;
+        this.defaultBubble = {
+            MAX_LINE_WIDTH: 170, // Maximum width, in Scratch pixels, of a single line of text
+
+            MIN_WIDTH: 50, // Minimum width, in Scratch pixels, of a text bubble
+            STROKE_WIDTH: 4, // Thickness of the stroke around the bubble.
+            // Only half's visible because it's drawn under the fill
+            PADDING: 10, // Padding around the text area
+            CORNER_RADIUS: 16, // Radius of the rounded corners
+            TAIL_HEIGHT: 12, // Height of the speech bubble's "tail". Probably should be a constant.
+
+            FONT: 'Helvetica', // Font to render the text with
+            FONT_SIZE: 14, // Font size, in Scratch pixels
+            FONT_HEIGHT_RATIO: 0.9, // Height, in Scratch pixels, of the text, as a proportion of the font's size
+            LINE_HEIGHT: 16, // Spacing between each line of text
+
+            COLORS: {
+                BUBBLE_FILL: '#FFFFFF', //white
+                BUBBLE_STROKE: '#00000026',//#72aefc50 rgba(0, 0, 0, 0.15)
+                TEXT_FILL: '#575E75'
+            }
+        };
+
+        this.currentBubbleProps = {}
+
+        this.currentlyDisplayingInBubble = {};
 
         // Reset all bubbles on start/stop
         this.runtime.on('PROJECT_STOP_ALL', this._onResetBubbles);
@@ -47,7 +75,9 @@ class Scratch3LooksBlocks {
             skinId: null,
             text: '',
             type: 'say',
-            usageId: null
+            usageId: null,
+			// @todo make this read from renderer
+            props: this.defaultBubble
         };
     }
 
@@ -106,6 +136,64 @@ class Scratch3LooksBlocks {
         }
         return bubbleState;
     }
+	
+	/**
+     * resets the text bubble of a sprite
+     * @param {Target} target the target to reset
+     */
+    _resetBubbles (target) {
+        const state = this._getBubbleState(target);
+        this.SAY_BUBBLE_LIMIT = this.SAY_BUBBLE_LIMITdefault;
+        state.props = structuredClone(this.defaultBubble);
+    }
+
+    /**
+     * set any property of the text bubble of any given target
+     * @param {Target} target the target to modify
+     * @param {array} props the property names to change
+     * @param {array} value the values the set the properties to
+     */
+    _setBubbleProperty (target, props, value) {
+        const object = this._getBubbleState(target);
+        if (!object.props) object.props = structuredClone(this.defaultBubble);
+        if (!this.currentBubbleProps[target]) this.currentBubbleProps[target] = {};
+        if (!this.currentBubbleProps[target].props) this.currentBubbleProps[target].props = this.defaultBubble;
+        props.forEach((prop, index) => {
+            if (prop.startsWith('COLORS')) {
+                object.props.COLORS[prop.split('.')[1]] = value[index];
+                this.currentBubbleProps[target].props.COLORS[prop.split('.')[1]] = value[index];
+            } else {
+                object.props[prop] = value[index];
+                this.currentBubbleProps[target].props[prop] = value[index];
+            }
+        });
+
+        target.setCustomState(Scratch3LooksBlocks.STATE_KEY, object);
+    }
+
+    _getBubbleProperty (target, prop) {
+        let currentBubblePropsObject;
+        if (this.currentBubbleProps[target]) {
+            if (this.currentBubbleProps[target].props) {
+                currentBubblePropsObject = this.currentBubbleProps[target].props;
+            } else {
+                currentBubblePropsObject = this.defaultBubble;
+            }
+        } else {
+            currentBubblePropsObject = this.defaultBubble;
+        }
+        if (prop == 'COLORS') {
+            return currentBubblePropsObject.COLORS;
+        } else {
+            return currentBubblePropsObject[prop];
+        }
+    }
+
+    /**
+     * Handle a target which has moved.
+     * @param {RenderedTarget} target - the target which has moved.
+     * @private
+     */
 
     /**
      * Handle a target which has moved.
@@ -275,6 +363,14 @@ class Scratch3LooksBlocks {
         bubbleState.text = this._formatBubbleText(text);
         bubbleState.usageId = uid();
         this._renderBubble(target);
+    }
+	
+	_percentToRatio (percent) {
+        return percent / 100;
+    }
+    _doesFontSuport (size, font) {
+        const check = size + 'px ' + font;
+        return document.fonts.check(check);
     }
 
     /**
