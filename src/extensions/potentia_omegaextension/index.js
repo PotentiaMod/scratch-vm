@@ -7,6 +7,13 @@ const ArgumentType = require('../../extension-support/argument-type');
 const Cast = require('../../util/cast');
 
 const Swal = require('sweetalert2');
+const axios = require('axios').default;
+
+//Why ClipCC!?
+const config = {
+    baseURL: 'https://data.codingclip.com/',
+    timeout: 10000
+};
 
 class POTOmega {
 	static get SAY_OR_THINK () {
@@ -29,24 +36,43 @@ class POTOmega {
          text: 'log to console'
         },
 		{
-         opcode: 'scream',
-         text: 'scream [SCREAM]',
-         blockType: BlockType.COMMAND,
-         arguments: {
-         SCREAM: {
-         type: ArgumentType.STRING,
-              }
-            },
-         },
-		{
          opcode: 'testReporter',
          text: 'testing!',
          blockType: BlockType.REPORTER,
          blockShape: BlockShape.HEXAGONAL,
          disableMonitor: true,
          allowDropAnywhere: true
-         },		 
-
+         },
+	    {
+         opcode: 'dave',
+         blockType: BlockType.REPORTER,
+         blockShape: BlockShape.SQUARE,
+         text: 'Dave'
+        },		 
+	    {
+         opcode: 'the',
+         blockType: BlockType.REPORTER,
+         blockShape: BlockShape.SQUARE,
+         text: 'The'
+        },		 
+	    {
+         opcode: 'magical',
+         blockType: BlockType.REPORTER,
+         blockShape: BlockShape.SQUARE,
+         text: 'Magical'
+        },		 
+	    {
+         opcode: 'cheese',
+         blockType: BlockType.REPORTER,
+         blockShape: BlockShape.SQUARE,
+         text: 'Cheese'
+        },		 
+	    {
+         opcode: 'wizard',
+         blockType: BlockType.REPORTER,
+         blockShape: BlockShape.SQUARE,
+         text: 'Wizard'
+        },		 
 	    {
          opcode: 'removeExt',
          blockType: BlockType.COMMAND,
@@ -82,13 +108,25 @@ class POTOmega {
         return "Hello world!";
     }
 	
+	dave() {
+        return "Dave";
+    }
+	the() {
+        return "the";
+    }
+	magical() {
+        return "Magical";
+    }
+	cheese() {
+        return "Cheese";
+    }
+	wizard() {
+        return "Wizard";
+    }
+	
 	randomBoolean() {
         return Math.round(Math.random()) === 1;
     }
-	
-	scream (args, util) {
-            Scratch.vm.runtime.emit(Extension.SAY_OR_THINK, util.target, 'scream', args.SCREAM);
-        }
 	
  /// 
   
