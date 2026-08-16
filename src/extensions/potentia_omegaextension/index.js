@@ -77,7 +77,43 @@ class POTOmega {
          blockShape: BlockShape.SQUARE,
 		 disableMonitor: true,
          text: 'Wizard'
-        },		 
+        },
+		{
+          opcode: 'wait',
+          text: 'wait [TIME] seconds',
+          blockType: BlockType.COMMAND,
+          arguments: {
+            TIME: {
+              type: ArgumentType.NUMBER,
+              defaultValue: 1
+            }
+          }
+        },
+		{
+          opcode: 'waitmin',
+          text: 'wait [TIME] minutes',
+          blockType: BlockType.COMMAND,
+          arguments: {
+            TIME: {
+              type: ArgumentType.NUMBER,
+              defaultValue: 1
+            }
+          }
+        },
+       {
+          opcode: 'strictlyEquals',
+          blockType: BlockType.BOOLEAN,
+          text: '[ONE] strictly equals [TWO]',
+          arguments: {
+            ONE: {
+              type: ArgumentType.STRING
+            },
+            TWO: {
+              type: ArgumentType.STRING,
+              defaultValue: 'Second value'
+            }
+          }
+        },		
 	    {
          opcode: 'removeExt',
          blockType: BlockType.COMMAND,
@@ -129,9 +165,31 @@ class POTOmega {
         return "Wizard";
     }
 	
+	strictlyEquals(args) {
+    return args.ONE === args.TWO;
+  }
+	
 	randomBoolean() {
         return Math.round(Math.random()) === 1;
     }
+	
+	  wait (args) {
+    return new Promise((resolve, reject) => {
+      const timeInMilliseconds = args.TIME * 1000;
+      setTimeout(() => {
+        resolve();
+      }, timeInMilliseconds);
+    });
+  }
+  
+  waitmin (args) {
+    return new Promise((resolve, reject) => {
+      const timeInMilliseconds = args.TIME * 60000;
+      setTimeout(() => {
+        resolve();
+      }, timeInMilliseconds);
+    });
+  }
 	
  /// 
   
