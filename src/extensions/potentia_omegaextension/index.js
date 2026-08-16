@@ -47,30 +47,35 @@ class POTOmega {
          opcode: 'dave',
          blockType: BlockType.REPORTER,
          blockShape: BlockShape.SQUARE,
+		 disableMonitor: true,
          text: 'Dave'
         },		 
 	    {
          opcode: 'the',
          blockType: BlockType.REPORTER,
          blockShape: BlockShape.SQUARE,
+		 disableMonitor: true,
          text: 'The'
         },		 
 	    {
          opcode: 'magical',
          blockType: BlockType.REPORTER,
          blockShape: BlockShape.SQUARE,
+		 disableMonitor: true,
          text: 'Magical'
         },		 
 	    {
          opcode: 'cheese',
          blockType: BlockType.REPORTER,
          blockShape: BlockShape.SQUARE,
+		 disableMonitor: true,
          text: 'Cheese'
         },		 
 	    {
          opcode: 'wizard',
          blockType: BlockType.REPORTER,
          blockShape: BlockShape.SQUARE,
+		 disableMonitor: true,
          text: 'Wizard'
         },		 
 	    {
