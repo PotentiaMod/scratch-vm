@@ -59,6 +59,7 @@ const defaultBuiltinExtensions = {
     jgPrism: () => require('../extensions/penguinmod/jgPrism'),
     jwUnite: () => require('../extensions/penguinmod/jwUnite'),
     jgJSON: () => require('../extensions/penguinmod/jgJSON'),
+    jgScratchAuthenticate: () => require('../extensions/jg_scratchAuth'),
 ////////////////// -- penguinmod -- //////////////////
     		
 	// champierres
@@ -201,6 +202,18 @@ const defaultBuiltinExtensions = {
     snapCircuitsU33: () => require('../extensions/scratch3_snap_circuits_u33'),
 	smartLumies: () => require('../extensions/scratch3_smart_lumies'),
 	kori: () => require('../extensions/scratch3_kori'),
+	
+	piCarX: () => require('../extensions/piCarX'),
+    zeusCar: () => require('../extensions/zeusCar'),
+    galaxyRVR: () => require('../extensions/galaxyRVR'),
+    kaka: () => require('../extensions/mammoth_kaka'),
+	ros: () => require('../extensions/scratch3_ros'),
+    pr2Robot: () => require('../extensions/scratch3_pr2robot'),
+    fetchRobot: () => require('../extensions/scratch3_fetchrobot'),
+    spotRobot: () => require('../extensions/scratch3_spotrobot'),
+    go1Robot: () => require('../extensions/scratch3_go1robot'),
+	pepperRobot: () => require('../extensions/scratch3_pepperrobot'),
+	
 	
 	scratchpro: () => require('../extensions/scratch3_scratchpro'),
     scratchpro_tool: () => require('../extensions/scratchpro_tool'),
