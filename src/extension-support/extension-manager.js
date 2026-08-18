@@ -40,6 +40,7 @@ const defaultBuiltinExtensions = {
 	
 	// Cognimates
     typescratch: () => require('../extensions/typescratch'),
+    cognimate: () => require('../extensions/scratch3_cognimate'),
     muse: () => require('../extensions/scratch3_muse'),
     cozmo: () => require('../extensions/scratch3_cozmo'),
     wemo: () => require('../extensions/scratch3_wemo'),
