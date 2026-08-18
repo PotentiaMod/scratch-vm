@@ -1,4 +1,3 @@
-require('regenerator-runtime/runtime');
 const Runtime = require('../../engine/runtime');
 
 const ArgumentType = require('../../extension-support/argument-type');
@@ -463,7 +462,7 @@ class Scratch3PoseNetBlocks {
             id: EXTENSION_ID,
             name: formatMessage({
                 id: 'face.categoryName',
-                default: 'Face Sensing',
+                default: 'Face Emotion Sensing',
                 description: 'Label for PoseNet category'
             }),
             showStatusButton: true,

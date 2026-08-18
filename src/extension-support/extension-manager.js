@@ -36,6 +36,21 @@ const defaultBuiltinExtensions = {
     appmaker: () => require('../extensions/potentia_appmaker'),
     wonderblocks: () => require('../extensions/gaia_wonderblocks'),
 	
+    poseFace: () => require("../extensions/scratch3_pose_face"),
+	
+	// Cognimates
+    typescratch: () => require('../extensions/typescratch'),
+    muse: () => require('../extensions/scratch3_muse'),
+    cozmo: () => require('../extensions/scratch3_cozmo'),
+    wemo: () => require('../extensions/scratch3_wemo'),
+    alexa: () => require('../extensions/scratch3_alexa'),
+    ergo: () => require('../extensions/scratch3_ergo'),
+    twitter: () => require('../extensions/scratch3_twitter'),
+    sentiment: () => require('../extensions/scratch3_sentiment'),
+    textClass: () => require('../extensions/scratch3_textClassify'),
+    vision: () => require('../extensions/scratch3_vision'),
+    hue: () => require('../extensions/scratch3_hue'),
+	
 ////////////////// -- penguinmod -- //////////////////
     pmMotionExpansion: () => require('../extensions/penguinmod/pmMotionExpansion'),
     jgStorage: () => require('../extensions/penguinmod/jgStorage'),
@@ -71,9 +86,6 @@ const defaultBuiltinExtensions = {
 	dialogs: () => require('../extensions/scratch3_dialog'),
 	projectsound: () => require('../extensions/gm2_projectsound'),
 	websites: () => require('../extensions/scratch3_websites'),
-	
-	// Cognimates
-    typescratch: () => require('../extensions/typescratch'),
 	
 	//other
     poweredUp: () => require('../extensions/scratch3_powered_up'),
