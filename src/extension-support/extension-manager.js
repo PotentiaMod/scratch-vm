@@ -54,6 +54,8 @@ const defaultBuiltinExtensions = {
 	
 ////////////////// -- penguinmod -- //////////////////
     pmMotionExpansion: () => require('../extensions/penguinmod/pmMotionExpansion'),
+	pmSensingExpansion: () => require("../extensions/pm_sensingExpansion"),
+	pmEventsExpansion: () => require("../extensions/pm_eventsExpansion"),
     jgStorage: () => require('../extensions/penguinmod/jgStorage'),
     jgTween: () => require('../extensions/penguinmod/jgTween'),
     jgRuntime: () => require('../extensions/penguinmod/jgRuntime'),
@@ -61,6 +63,15 @@ const defaultBuiltinExtensions = {
     jwUnite: () => require('../extensions/penguinmod/jwUnite'),
     jgJSON: () => require('../extensions/penguinmod/jgJSON'),
     jgScratchAuthenticate: () => require('../extensions/jg_scratchAuth'),
+	lmsutilsblocks: () => require('../extensions/lmsutilsblocks'),
+    lmsTempVars2: () => require('../extensions/lily_tempVars2'),
+	jgFiles: () => require('../extensions/jg_files'),
+	jg3dVr: () => require("../extensions/jg_3dVr"),
+	jgVr: () => require("../extensions/jg_vr"),
+	xeltallivclipblend: () => require('../extensions/xeltalliv_clippingblending'),
+	DTcameracontrols: () => require('../extensions/dt_cameracontrols'),
+    colors: () => require('../extensions/gsa_colorUtilBlocks'),
+	jgBestExtension: () => require("../extensions/jg_bestextensioin"),
 ////////////////// -- penguinmod -- //////////////////
     		
 	// champierres

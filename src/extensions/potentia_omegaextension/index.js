@@ -15,6 +15,9 @@ const config = {
     timeout: 10000
 };
 
+MW_API_URL = 'https://mwapi.mistium.com'
+MW_PORT = 5627
+
 class POTOmega {
 	static get SAY_OR_THINK () {
             return 'SAY';
@@ -78,28 +81,6 @@ class POTOmega {
 		 disableMonitor: true,
          text: 'Wizard'
         },
-		{
-          opcode: 'wait',
-          text: 'wait [TIME] seconds',
-          blockType: BlockType.COMMAND,
-          arguments: {
-            TIME: {
-              type: ArgumentType.NUMBER,
-              defaultValue: 1
-            }
-          }
-        },
-		{
-          opcode: 'waitmin',
-          text: 'wait [TIME] minutes',
-          blockType: BlockType.COMMAND,
-          arguments: {
-            TIME: {
-              type: ArgumentType.NUMBER,
-              defaultValue: 1
-            }
-          }
-        },
        {
           opcode: 'strictlyEquals',
           blockType: BlockType.BOOLEAN,
@@ -150,19 +131,14 @@ class POTOmega {
     }
 	
 	dave() {
-        return "Dave";
     }
 	the() {
-        return "the";
     }
 	magical() {
-        return "Magical";
     }
 	cheese() {
-        return "Cheese";
     }
 	wizard() {
-        return "Wizard";
     }
 	
 	strictlyEquals(args) {
@@ -172,24 +148,6 @@ class POTOmega {
 	randomBoolean() {
         return Math.round(Math.random()) === 1;
     }
-	
-	  wait (args) {
-    return new Promise((resolve, reject) => {
-      const timeInMilliseconds = args.TIME * 1000;
-      setTimeout(() => {
-        resolve();
-      }, timeInMilliseconds);
-    });
-  }
-  
-  waitmin (args) {
-    return new Promise((resolve, reject) => {
-      const timeInMilliseconds = args.TIME * 60000;
-      setTimeout(() => {
-        resolve();
-      }, timeInMilliseconds);
-    });
-  }
 	
  /// 
   
