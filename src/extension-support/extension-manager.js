@@ -215,10 +215,6 @@ const defaultBuiltinExtensions = {
 	smartLumies: () => require('../extensions/scratch3_smart_lumies'),
 	kori: () => require('../extensions/scratch3_kori'),
 	
-	piCarX: () => require('../extensions/piCarX'),
-    zeusCar: () => require('../extensions/zeusCar'),
-    galaxyRVR: () => require('../extensions/galaxyRVR'),
-    kaka: () => require('../extensions/mammoth_kaka'),
 	ros: () => require('../extensions/scratch3_ros'),
     pr2Robot: () => require('../extensions/scratch3_pr2robot'),
     fetchRobot: () => require('../extensions/scratch3_fetchrobot'),
