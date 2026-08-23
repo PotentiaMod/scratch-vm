@@ -36,7 +36,10 @@ const defaultBuiltinExtensions = {
     appmaker: () => require('../extensions/potentia_appmaker'),
     wonderblocks: () => require('../extensions/gaia_wonderblocks'),
 	
+    kidsboard: () => require('../extensions/scratch3_kidsboard'),
+    eim: () => require('../extensions/scratch3_eim'),
     poseFace: () => require("../extensions/scratch3_pose_face"),
+    arduino: () => require("../extensions/scratch3_arduino"),
 	
 	// Cognimates
     typescratch: () => require('../extensions/typescratch'),
