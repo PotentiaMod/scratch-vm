@@ -64,6 +64,13 @@ class Scratch3SensingBlocks {
             sensing_mousey: this.getMouseY,
             sensing_setdragmode: this.setDragMode,
             sensing_mousedown: this.getMouseDown,
+			sensing_mobile: this.mobile,
+			sensing_fingerdown: this.fingerDown,
+            sensing_fingertapped: this.fingerTapped,
+            sensing_fingerx: this.getFingerX,
+            sensing_fingery: this.getFingerY,
+            sensing_setclipboard: this.setClipboard,
+            sensing_getclipboard: this.getClipboard,
             sensing_keypressed: this.getKeyPressed,
             sensing_current: this.current,
             sensing_dayssince2000: this.daysSince2000,
@@ -90,6 +97,18 @@ class Scratch3SensingBlocks {
             },
             sensing_mousey: {
                 getId: () => 'mousey'
+            },
+			sensing_fingerdown: {
+                getId: () => 'fingerdown'
+            },
+			sensing_fingertapped: {
+                getId: () => 'fingertapped'
+            },
+            sensing_fingerx: {
+                getId: () => 'fingerx'
+            },
+            sensing_fingery: {
+                getId: () => 'fingery'
             },
             sensing_loudness: {
                 getId: () => 'loudness'
@@ -183,6 +202,27 @@ class Scratch3SensingBlocks {
     getAnswer () {
         return this._answer;
     }
+	
+	
+	setClipboard (args) {
+        const text = Cast.toString(args.ITEM);
+        if (!navigator) return;
+        if (('clipboard' in navigator) && ('writeText' in navigator.clipboard)) {
+            navigator.clipboard.writeText(text);
+        }
+    }
+    getClipboard () {
+        if (!navigator) return '';
+        if (('clipboard' in navigator) && ('readText' in navigator.clipboard)) {
+            return navigator.clipboard.readText();
+        } else {
+            return '';
+        }
+    }
+	
+	mobile () {
+        return typeof window !== 'undefined' && 'ontouchstart' in window;
+    }
 
     touchingObject (args, util) {
         return util.target.isTouchingObject(args.TOUCHINGOBJECTMENU);
@@ -244,6 +284,22 @@ class Scratch3SensingBlocks {
 
     getMouseDown (args, util) {
         return util.ioQuery('mouse', 'getIsDown');
+    }
+	
+	getFingerX (args, util) {
+        return util.ioQuery('touch', 'getScratchX', [Cast.toNumber(args.FINGER_OPTION) - 1]);
+    }
+
+    getFingerY (args, util) {
+        return util.ioQuery('touch', 'getScratchY', [Cast.toNumber(args.FINGER_OPTION) - 1]);
+    }
+
+    fingerDown (args, util) {
+        return util.ioQuery('touch', 'getIsDown', [Cast.toNumber(args.FINGER_OPTION) - 1]);
+    }
+
+    fingerTapped (args, util) {
+        return util.ioQuery('touch', 'getIsTapped', [Cast.toNumber(args.FINGER_OPTION) - 1]);
     }
 
     current (args) {

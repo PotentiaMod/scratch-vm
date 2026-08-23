@@ -36,8 +36,14 @@ const stacked = [
 const inputs = [
     'motion_xscroll',
     'motion_yscroll',
+	'sensing_fingerdown',
+    'sensing_fingertapped',
+    'sensing_fingerx',
+    'sensing_fingery',
+    'sensing_getclipboard',
     'sensing_loud',
     'sensing_loudness',
+	"sensing_mobile",
     'sensing_online',
     'sensing_userid',
     'sound_volume'
