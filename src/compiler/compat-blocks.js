@@ -41,6 +41,7 @@ const inputs = [
     'sensing_fingerx',
     'sensing_fingery',
     'sensing_getclipboard',
+    'sensing_setclipboard',
     'sensing_loud',
     'sensing_loudness',
 	"sensing_mobile",
