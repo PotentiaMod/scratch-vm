@@ -52,22 +52,6 @@ const defaultBuiltinExtensions = {
     objectdetection: () => require('../extensions/scratch3_objectdetection'),
     teachableMachine: () => require('../extensions/scratch3_teachablemachine'),
     qrcode: () => require('../extensions/scratch3_qrcode'),
-	 
-	 envX: () => require('../extensions/scratch3_devices/envX.js'),
-	 loadVMD: () => require('../extensions/scratch3_devices/loadVMD.js'),
-    loadMID: () => require('../extensions/scratch3_devices/loadMID.js'),
-    uiParts: () => require('../extensions/scratch3_devices/uiParts.js'),
-    exeScript: () => require('../extensions/scratch3_devices/exeScript.js'),
-    genericIO: () => require('../extensions/scratch3_devices/genericIO.js'),
-    TempHumSht3x: () => require('../extensions/scratch3_devices/TempHumSht3x.js'),
-    BMP280: () => require('../extensions/scratch3_devices/BMP280.js'),
-    servoCar: () => require('../extensions/scratch3_devices/servoCar.js'),
-    motorCar: () => require('../extensions/scratch3_devices/motorCar.js'),
-    M5RoverC: () => require('../extensions/scratch3_devices/M5RoverC.js'),
-    folo: () => require('../extensions/scratch3_devices/folo.js'),
-    foloCamera: () => require('../extensions/scratch3_devices/foloCamera.js'),
-    tracking: () => require('../extensions/scratch3_devices/trackingBlock.js'),
-    i2cLCD: () => require('../extensions/scratch3_devices/i2cLCD.js'),
 
 	
 	// Cognimates
