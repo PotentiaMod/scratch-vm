@@ -68,27 +68,6 @@ const defaultBuiltinExtensions = {
     foloCamera: () => require('../extensions/scratch3_devices/foloCamera.js'),
     tracking: () => require('../extensions/scratch3_devices/trackingBlock.js'),
     i2cLCD: () => require('../extensions/scratch3_devices/i2cLCD.js'),
-	
-	M5Series: () => require('../extensions/scratch3_tukurutch/M5Series.js'),
-    M5Camera: () => require('../extensions/scratch3_tukurutch/M5Camera.js'),
-    M5CameraCar: () => require('../extensions/scratch3_tukurutch/M5CameraCar.js'),
-    uno: () => require('../extensions/scratch3_tukurutch/uno.js'),
-    GroveBeginnerKit: () => require('../extensions/scratch3_tukurutch/GroveBeginnerKit.js'),
-    cameratch32: () => require('../extensions/scratch3_tukurutch/cameratch32.js'),
-    QuadCrawlerAI: () => require('../extensions/scratch3_tukurutch/QuadCrawlerAI.js'),
-    RemoconRobo: () => require('../extensions/scratch3_tukurutch/RemoconRobo_.js'),
-    QuadCrawler: () => require('../extensions/scratch3_tukurutch/QuadCrawler.js'),
-    DevkitC: () => require('../extensions/scratch3_tukurutch/DevkitC.js'),
-    lovyanGFX: () => require('../extensions/scratch3_tukurutch/lovyanGFX.js'),
-    AtomMateForToio: () => require('../extensions/scratch3_tukurutch/AtomMateForToio.js'),
-    M5Unified: () => require('../extensions/scratch3_tukurutch/M5Unified.js'),
-    M5CoreS3: () => require('../extensions/scratch3_tukurutch/M5CoreS3.js'),
-    esp32camlcd: () => require('../extensions/scratch3_tukurutch/esp32camlcd.js'),
-    bCore: () => require('../extensions/scratch3_tukurutch/bCore.js'),
-    bCore2: () => require('../extensions/scratch3_tukurutch/bCore2.js'),
-    maBeee: () => require('../extensions/scratch3_tukurutch/maBeee.js'),
-    SetupCamera: () => require('../extensions/scratch3_tukurutch/SetupCamera.js'),
-    CrSDK: () => require('../extensions/scratch3_tukurutch/CrSDK.js'),
 
 	
 	// Cognimates
