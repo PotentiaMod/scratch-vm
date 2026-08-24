@@ -40,8 +40,8 @@ const defaultBuiltinExtensions = {
     eim: () => require('../extensions/scratch3_eim'),
 	
     poseFace: () => require("../extensions/scratch3_pose_face"),
-	posebody: () => require('../extensions/scratch3_posebody'),
-    posehand: () => require('../extensions/scratch3_posehand'),
+	poseBody: () => require('../extensions/scratch3_posebody'),
+    poseHand: () => require('../extensions/scratch3_posehand'),
 	
     arduino: () => require("../extensions/scratch3_arduino"),
     legoBLE: () => require("../extensions/scratch3_legoble"),
@@ -49,9 +49,10 @@ const defaultBuiltinExtensions = {
     legoLuigi: () => require("../extensions/scratch3_legoluigi"),
     legoPeach: () => require("../extensions/scratch3_legopeach"),
 	
-    objectdetection: () => require('../extensions/scratch3_objectdetection'),
+    objectDetection: () => require('../extensions/scratch3_objectdetection'),
     teachableMachine: () => require('../extensions/scratch3_teachablemachine'),
     qrcode: () => require('../extensions/scratch3_qrcode'),
+	dataviewer: () => require('../extensions/scratch3_dataviewer'),
 
 	
 	// Cognimates
