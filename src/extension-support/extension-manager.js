@@ -38,12 +38,19 @@ const defaultBuiltinExtensions = {
 	
     kidsboard: () => require('../extensions/scratch3_kidsboard'),
     eim: () => require('../extensions/scratch3_eim'),
+	
     poseFace: () => require("../extensions/scratch3_pose_face"),
+	posebody: () => require('../extensions/scratch3_posebody'),
+    posehand: () => require('../extensions/scratch3_posehand'),
+	
     arduino: () => require("../extensions/scratch3_arduino"),
     legoBLE: () => require("../extensions/scratch3_legoble"),
     legoMario: () => require("../extensions/scratch3_legomario"),
     legoLuigi: () => require("../extensions/scratch3_legoluigi"),
     legoPeach: () => require("../extensions/scratch3_legopeach"),
+	
+    objectdetection: () => require('../extensions/scratch3_objectdetection'),
+    teachableMachine: () => require('../extensions/scratch3_teachablemachine'),
 
 	
 	// Cognimates
