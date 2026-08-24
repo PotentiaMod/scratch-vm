@@ -52,7 +52,6 @@ const defaultBuiltinExtensions = {
     objectdetection: () => require('../extensions/scratch3_objectdetection'),
     teachableMachine: () => require('../extensions/scratch3_teachablemachine'),
     qrcode: () => require('../extensions/scratch3_qrcode'),
-	toio: () => require('../extensions/scratch3_toio/'),
 	 mesh: () => require('../extensions/scratch3_mesh/meshBlocks.js'),
 	 
 	 envX: () => require('../extensions/scratch3_devices/envX.js'),
