@@ -120,6 +120,18 @@ const defaultBuiltinExtensions = {
 	websites: () => require('../extensions/scratch3_websites'),
 	betteraudio: () => require('../extensions/scratch3_better_audio'),
 	
+	//underdog
+	udblockUDPi: () => require('../extensions/udblock_udpi'),
+    udblockUDPiPlus: () => require('../extensions/udblock_udpi_plus'),
+    udblockUDPiV2: () => require('../extensions/udblock_udpi_v2'),
+    udblockUDPiPlusV2: () => require('../extensions/udblock_udpi_plus_v2'),
+    udblockEXTBMFV2: () => require("../extensions/udblock_extb_mf_v2"),
+    udblockEXTBSMV2: () => require("../extensions/udblock_extb_sm_v2"),
+    udblockEXTBIOV2: ()=> require("../extensions/udblock_extb_io_v2"),
+    udblockMQTT: ()=> require("../extensions/udblock-mqtt"),
+    udblockMicrobit: ()=> require("../extensions/udblock_microbit"),
+    udblockUtils : ()=> require("../extensions/udblock-utils"),
+	
 	//other
     poweredUp: () => require('../extensions/scratch3_powered_up'),
     duploTrain: () => require('../extensions/scratch3_duplo_train'),
