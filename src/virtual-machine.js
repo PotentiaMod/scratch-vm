@@ -29,6 +29,7 @@ const {exportCostume} = require('./serialization/tw-costume-import-export');
 const Base64Util = require('./util/base64-util');
 
 const RESERVED_NAMES = ['_mouse_', '_stage_', '_edge_', '_myself_', '_random_'];
+const POT_LIBRARY_SITE = "https://potentiamod.github.io/scratch-library/";
 
 const CORE_EXTENSIONS = [
     // 'motion',
@@ -949,6 +950,36 @@ class VirtualMachine extends EventEmitter {
         const target = optTargetId ? this.runtime.getTargetById(optTargetId) :
             this.editingTarget;
         if (target) {
+			if (costumeObject.fromPotentiaMod === true) {
+                return new Promise((resolve, reject) => {
+                    fetch(`${POT_LIBRARY_SITE}files/${costumeObject.libraryId}`)
+                        .then((r) => r.arrayBuffer())
+                        .then((arrayBuffer) => {
+                            const dataFormat = costumeObject.dataFormat;
+                            const storage = this.runtime.storage;
+                            const asset = new storage.Asset(
+                                storage.AssetType[dataFormat === 'svg' ? "ImageVector" : "ImageBitmap"],
+                                null,
+                                storage.DataFormat[dataFormat.toUpperCase()],
+                                new Uint8Array(arrayBuffer),
+                                true
+                            );
+                            const newCostumeObject = {
+                                md5: asset.assetId + '.' + asset.dataFormat,
+                                asset: asset,
+                                name: costumeObject.name
+                            }
+                            loadCostume(newCostumeObject.md5, newCostumeObject, this.runtime, optVersion).then(costumeAsset => {
+                                target.addCostume(newCostumeObject);
+                                target.setCostume(
+                                    target.getCostumes().length - 1
+                                );
+                                this.runtime.emitProjectChanged();
+                                resolve(costumeAsset, newCostumeObject);
+                            })
+                        }).catch(reject);
+                });
+            }
             return loadCostume(md5ext, costumeObject, this.runtime, optVersion).then(() => {
                 target.addCostume(costumeObject);
                 target.setCostume(
@@ -1049,6 +1080,32 @@ class VirtualMachine extends EventEmitter {
         const target = optTargetId ? this.runtime.getTargetById(optTargetId) :
             this.editingTarget;
         if (target) {
+			if (soundObject.fromPotentiaMod === true) {
+                return new Promise((resolve, reject) => {
+                    fetch(`${POT_LIBRARY_SITE}files/${soundObject.libraryId}`)
+                        .then((r) => r.arrayBuffer())
+                        .then((arrayBuffer) => {
+                            const storage = this.runtime.storage;
+                            const asset = new storage.Asset(
+                                storage.AssetType.Sound,
+                                null,
+                                storage.DataFormat.MP3,
+                                new Uint8Array(arrayBuffer),
+                                true
+                            );
+                            const newSoundObject = {
+                                md5: asset.assetId + '.' + asset.dataFormat,
+                                asset: asset,
+                                name: soundObject.name
+                            }
+                            loadSound(newSoundObject, this.runtime, target.sprite.soundBank).then(soundAsset => {
+                                target.addSound(newSoundObject);
+                                this.emitTargetsUpdate();
+                                resolve(soundAsset, newSoundObject);
+                            });
+                        }).catch(reject);
+                });
+            }
             return loadSound(soundObject, this.runtime, target.sprite.soundBank).then(() => {
                 target.addSound(soundObject);
                 this.emitTargetsUpdate();
@@ -1305,6 +1362,35 @@ class VirtualMachine extends EventEmitter {
      * @returns {?Promise} - a promise that resolves when the backdrop has been added
      */
     addBackdrop (md5ext, backdropObject) {
+		if (backdropObject.fromPotentiaMod === true) {
+            return new Promise((resolve, reject) => {
+                fetch(`${POT_LIBRARY_SITE}files/${backdropObject.libraryId}`)
+                    .then((r) => r.arrayBuffer())
+                    .then((arrayBuffer) => {
+                        const dataFormat = backdropObject.dataFormat;
+                        const storage = this.runtime.storage;
+                        const asset = new storage.Asset(
+                            storage.AssetType[dataFormat === 'svg' ? "ImageVector" : "ImageBitmap"],
+                            null,
+                            storage.DataFormat[dataFormat.toUpperCase()],
+                            new Uint8Array(arrayBuffer),
+                            true
+                        );
+                        const newCostumeObject = {
+                            md5: asset.assetId + '.' + asset.dataFormat,
+                            asset: asset,
+                            name: backdropObject.name
+                        }
+                        loadCostume(newCostumeObject.md5, newCostumeObject, this.runtime).then(costumeAsset => {
+                            const stage = this.runtime.getTargetForStage();
+                            stage.addCostume(newCostumeObject);
+                            stage.setCostume(stage.getCostumes().length - 1);
+                            this.runtime.emitProjectChanged();
+                            resolve(costumeAsset, newCostumeObject);
+                        })
+                    }).catch(reject);
+            });
+        }
         return loadCostume(md5ext, backdropObject, this.runtime).then(() => {
             const stage = this.runtime.getTargetForStage();
             stage.addCostume(backdropObject);
