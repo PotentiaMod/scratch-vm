@@ -187,6 +187,9 @@ const defaultBuiltinExtensions = {
 	// Mistium
 	patching: () => require('../extensions/mistwarp_patching'),
 	
+	//Not mine. This goes to KyleKart.
+	frog: () => require('../extensions/kylekart'),
+	
 	// Custom extentions
     edubot: () => require("../extensions/scratch3_edubot"),
     dinnye: () => require("../extensions/scratch3_dinnye"),
