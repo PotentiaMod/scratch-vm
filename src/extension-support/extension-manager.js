@@ -7,6 +7,7 @@ const SecurityManager = require('./tw-security-manager');
 const urlParams = new URLSearchParams(location.search);
 
 const enableCoreEx = urlParams.has('livetest');
+const local = String(window.location.href).startsWith(`http://localhost:`);
 
 // These extensions are currently built into the VM repository but should not be loaded at startup.
 // TODO: move these out into a separate repository?
@@ -431,7 +432,7 @@ class ExtensionManager {
             log.error(`ExtensionManager was unable to register extension service: ${JSON.stringify(e)}`);
         });
 		
-		if (enableCoreEx) {
+		if (enableCoreEx || local) {
             this.loadExtensionIdSync('coreExample');
             this.loadExtensionIdSync('omegaex');
         }
