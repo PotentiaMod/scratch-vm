@@ -18,14 +18,14 @@ const config = {
 MW_API_URL = 'https://mwapi.mistium.com'
 MW_PORT = 5627
 
-class POTOmega {
+class POTTest {
 	static get SAY_OR_THINK () {
             return 'SAY';
         }
   getInfo() {
     return {
-      id: 'omegaex', // change this if you make an actual extension!
-      name: 'Omega Extension',
+      id: 'test', // change this if you make an actual extension!
+      name: 'Test Extension',
       blocks: [
 	  ///
         {
@@ -152,5 +152,5 @@ class POTOmega {
  /// 
   
 }
-module.exports = POTOmega;
+module.exports = POTTest;
 

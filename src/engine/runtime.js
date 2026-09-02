@@ -456,7 +456,9 @@ class Runtime extends EventEmitter {
         this.runtimeOptions = {
             maxClones: Runtime.MAX_CLONES,
             miscLimits: true,
-            fencing: true
+            fencing: true,
+            disableOffscreenRendering: false,
+            disableDirectionClamping: false
         };
 
         this.compilerOptions = {
@@ -1491,8 +1493,10 @@ class Runtime extends EventEmitter {
             }
             break;
         }
+		
+		if (blockInfo.tooltip) blockJSON.tooltip = blockInfo.tooltip; // Allow extensions to add a tooltip
 
-        // Allow extensiosn to override outputShape
+        // Allow extensions to override outputShape
         if (blockInfo.blockShape) {
             blockJSON.outputShape = blockInfo.blockShape;
         }
@@ -2005,6 +2009,7 @@ class Runtime extends EventEmitter {
         this.renderer = renderer;
         this.renderer.setLayerGroupOrdering(StageLayering.LAYER_GROUPS);
         this.renderer.offscreenTouching = !this.runtimeOptions.fencing;
+		this.renderer.renderOffscreen = this.runtimeOptions.disableOffscreenRendering;
         this.updatePrivacy();
     }
 
@@ -2748,6 +2753,10 @@ class Runtime extends EventEmitter {
         this.emit(Runtime.RUNTIME_OPTIONS_CHANGED, this.runtimeOptions);
         if (this.renderer) {
             this.renderer.offscreenTouching = !this.runtimeOptions.fencing;
+			// If these mismatch then update (do full rerender as the state drastically changes output).
+            if (this.runtimeOptions.disableOffscreenRendering === this.renderer.renderOffscreen) {
+                this.renderer.setRenderOffscreen(!this.runtimeOptions.disableOffscreenRendering);
+            }
         }
     }
 

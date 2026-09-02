@@ -17,6 +17,7 @@ const defaultBuiltinExtensions = {
     // This is an example that isn't loaded with the other core blocks,
     // but serves as a reference for loading core blocks as extensions.
     coreExample: () => require('../blocks/scratch3_core_example'),
+	test: () => require('../extensions/potentia_testextension'),
     // These are the non-core built-in extensions.
     pen: () => require('../extensions/scratch3_pen'),
     wedo2: () => require('../extensions/scratch3_wedo2'),
@@ -31,9 +32,7 @@ const defaultBuiltinExtensions = {
     gdxfor: () => require('../extensions/scratch3_gdx_for'),
     // tw: core extension
     tw: () => require('../extensions/tw'),
-	
-    omegaex: () => require('../extensions/potentia_omegaextension'),
-	
+		
     appmaker: () => require('../extensions/potentia_appmaker'),
     wonderblocks: () => require('../extensions/gaia_wonderblocks'),
 	
@@ -434,7 +433,7 @@ class ExtensionManager {
 		
 		if (enableCoreEx || local) {
             this.loadExtensionIdSync('coreExample');
-            this.loadExtensionIdSync('omegaex');
+            this.loadExtensionIdSync('test');
         }
     }
 
