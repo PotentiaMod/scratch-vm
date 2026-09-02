@@ -1061,6 +1061,42 @@ class Runtime extends EventEmitter {
     compilerRegisterExtension (name, extensionObject) {
         this[`ext_${name}`] = extensionObject;
     }
+	
+    registerCompiledExtensionBlocks (extensionId, information) {
+        if (!information) return;
+        if (!information.ir) return;
+        if (!information.js) return;
+
+        // Used for extension's compiled blocks.
+        // Importing the generators here avoids circular dependency issues
+        const JSGenerator = require('../compiler/jsgen');
+        const IRGenerator = require('../compiler/irgen');
+
+        IRGenerator.setExtensionIr(extensionId, information.ir);
+        JSGenerator.setExtensionJs(extensionId, information.js);
+    }
+	
+	/**
+     * Allows AudioContexts and GainNodes from an extension to respect addons and runtime pausing by default.
+     * If audioContext is not supplied, recording addon + pause button will not work with the extension this way.
+     * If gainNode is not supplied, recording addon + volume slider will not work with the extension this way.
+     * @param {string} extensionId The extension's ID. May be used internally in the future, or by other extensions.
+     * @param {AudioContext} audioContext The AudioContext being used in the extension.
+     * @param {GainNode} gainNode The GainNode that is connected to the AudioContext. All other nodes in the extension should be connected to this GainNode, and this GainNode should be connected to the destination of the AudioContext.
+     */
+    registerExtensionAudioContext(extensionId, audioContext, gainNode) {
+        if (typeof extensionId !== "string") throw new TypeError('Extension ID must be string');
+        if (!extensionId) throw new Error('No extension ID specified'); // empty string
+
+        const obj = {};
+        if (audioContext) {
+            obj.audioContext = audioContext;
+        }
+        if (gainNode) {
+            obj.gainNode = gainNode;
+        }
+        this._extensionAudioObjects.set(extensionId, obj);
+    }
 
     getMonitorState () {
         return this._monitorState;
@@ -1500,6 +1536,21 @@ class Runtime extends EventEmitter {
         if (blockInfo.blockShape) {
             blockJSON.outputShape = blockInfo.blockShape;
         }
+		
+		 // Allow extensions to define mutations
+        const mutationHandler = blockInfo.mutations;
+        if (
+            typeof mutationHandler === 'object' &&
+            typeof mutationHandler.serialize === 'function' &&
+            typeof mutationHandler.deserialize === 'function'
+        ) {
+            blockJSON.mutations = {
+                serialize: mutationHandler.serialize,
+                deserialize: mutationHandler.deserialize,
+                init: typeof mutationHandler.init === 'function' ? mutationHandler.init : undefined // optional
+            };
+        }
+
 
         const blockText = Array.isArray(blockInfo.text) ? blockInfo.text : [blockInfo.text];
         let inTextNum = 0; // text for the next block "arm" is blockText[inTextNum]

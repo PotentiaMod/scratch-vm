@@ -19,6 +19,14 @@ MW_API_URL = 'https://mwapi.mistium.com'
 MW_PORT = 5627
 
 class POTTest {
+	constructor(runtime) {
+        /**
+         * The runtime instantiating this block package.
+         * @type {Runtime}
+         */
+        this.runtime = runtime;
+    }
+	
 	static get SAY_OR_THINK () {
             return 'SAY';
         }
@@ -26,6 +34,9 @@ class POTTest {
     return {
       id: 'test', // change this if you make an actual extension!
       name: 'Test Extension',
+      color1: '#784CD1',
+      color2: '#5F34B5',
+      color3: '#490FA6',
       blocks: [
 	  ///
         {
@@ -38,6 +49,12 @@ class POTTest {
          blockType: BlockType.COMMAND,
          text: 'log to console'
         },
+		{
+          opcode: 'daysSincePokemonScarletViolet',
+          blockType: BlockType.REPORTER,
+          text: 'Days since Pokémon Scarlet and Violet',
+		  disableMonitor: true //This also shows up in the PotentiaMod Stuff extension.
+           },
 		{
          opcode: 'testReporter',
          text: 'testing!',
@@ -81,6 +98,25 @@ class POTTest {
 		 disableMonitor: true,
          text: 'Wizard'
         },
+		{
+         opcode: 'labeltest',
+         blockType: BlockType.REPORTER,
+		 disableMonitor: false,
+         text: 'Look! A label!'
+        },
+		{
+         opcode: 'labeltest2',
+         blockType: BlockType.REPORTER,
+		 disableMonitor: false,
+         text: 'There\'s a label for [TYPE]!',
+		 labelFn: "labeltestLabel",
+                    arguments: {
+                        TYPE: {
+                            type: ArgumentType.STRING,
+                            menu: 'labeltestMenu',
+                        }
+                    }
+        },
        {
           opcode: 'strictlyEquals',
           blockType: BlockType.BOOLEAN,
@@ -101,7 +137,16 @@ class POTTest {
          text: 'Remove this extension'
         },
 		///
-      ]
+      ],
+	  ///menus
+	  menus: {
+                labeltestMenu: {
+                    items: [
+                        { text: "this block", value: "block" },
+                        { text: "function", value: "function" },
+                    ]
+                }
+            }
     };
   }
   
@@ -147,6 +192,45 @@ class POTTest {
 	
 	randomBoolean() {
         return Math.round(Math.random()) === 1;
+    }
+	
+	getPrimitives () {
+        return {
+            looks_setVertTransform: this.setVerticalTransform,
+            looks_setHorizTransform: this.setHorizontalTransform
+        };
+    }
+	
+	setVerticalTransform (args, {target}) {
+        const percent = Cast.toNumber(args.PERCENT);
+        target.setTransform([percent, target.transform[1]]);
+    }
+	
+	daysSincePokemonScarletViolet (args, util){
+const msPerDay = 24 * 60 * 60 * 1000;
+        const start = new Date(2022, 10, 18); // Months are 0-indexed.
+        const today = new Date();
+        const dstAdjust = today.getTimezoneOffset() - start.getTimezoneOffset();
+        let mSecsSinceStart = today.valueOf() - start.valueOf();
+        mSecsSinceStart += ((today.getTimezoneOffset() - dstAdjust) * 60 * 1000);
+        return mSecsSinceStart / msPerDay;
+      }
+
+    setHorizontalTransform (args, {target}) {
+        const percent = Cast.toNumber(args.PERCENT);
+        target.setTransform([target.transform[0], percent]);
+    }
+	
+labeltest() {
+        return "(Insert test here)";
+    }
+labeltest2() {
+        return "Take That, PenguinMod!";
+    }
+    labeltestLabel(params) {
+        return params.TYPE === "block" ?
+            "I took this block from PenguinMod!"
+            : "You gotta activate functions, kid, not slap your keyboard like your blind uncle— what?";
     }
 	
  /// 
