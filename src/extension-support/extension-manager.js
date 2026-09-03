@@ -178,8 +178,7 @@ const defaultBuiltinExtensions = {
 	cubroidProximity: () => require('../extensions/scratch3_cubroid_proximity'),
 	echidna: () => require('../extensions/scratch3_echidna'),
 	tello2: () => require('../extensions/scratch3_tello2'),
-	cubroidDCMotor: () => require('../extensions/scratch3_cubroid_dc_motor'),
-	cubroidProximity: () => require('../extensions/scratch3_cubroid_proximity'),
+	tello3: () => require('../extensions/scratch3_tello3'),
 	reqRep: () => require('../extensions/scratch3_req_rep'),
 	shredsdk: () => require('../extensions/shredsdk'),
 	utils: () => require('../extensions/scratch3_utils'),
@@ -191,6 +190,7 @@ const defaultBuiltinExtensions = {
 	
 	//Not mine. This goes to KyleKart.
 	frog: () => require('../extensions/kylekart'),
+	
 	
 	// Custom extentions
     edubot: () => require("../extensions/scratch3_edubot"),
