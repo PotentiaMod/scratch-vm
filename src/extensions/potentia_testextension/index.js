@@ -161,7 +161,7 @@ class POTTest {
   
    removeExt(args) {
             try {
-                vm.extensionManager.removeExtension('omegaex');
+                vm.extensionManager.removeExtension('test');
             } catch (e) {
                 console.warn('Failed to remove:', e);
             }
