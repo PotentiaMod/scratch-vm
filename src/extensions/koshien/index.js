@@ -2,12 +2,17 @@ const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const TargetType = require('../../extension-support/target-type');
 const Variable = require('../../engine/variable');
+const log = require('../../util/log');
+const mapUtils = require('./map-utils');
+const {MockGame, ACT_LIMIT} = require('./mock-game');
+const {findMockMap} = require('./mock-maps');
+const {playRivalTurn} = require('./mock-rival');
 
 /**
  * Icon svg to be displayed at the left edge of each extension block, encoded as a data URI.
  * @type {string}
  */
-// eslint-disable-next-line max-len
+ 
 const blockIconURI = 'data:image/png;base64,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';
 
 let formatMessage = require('format-message');
@@ -86,7 +91,30 @@ const KoshienObjectName = {
 };
 
 /**
- * A client of Smalruby Koshien game server.
+ * Runtime event emitted whenever the mock game's state changes. The GUI's
+ * Koshien panel listens for it to redraw the board, scores and error log.
+ * The latest snapshot is also kept on `runtime.koshienMockState`.
+ * @type {string}
+ */
+const MOCK_STATE_EVENT = 'KOSHIEN_MOCK_STATE';
+
+/**
+ * Rival strategies the mock game accepts (see mock-rival.js).
+ * @type {Array<string>}
+ */
+const RIVAL_STRATEGIES = ['goal', 'item', 'stop', 'random'];
+
+/**
+ * How many entries the mock journal keeps (actions, errors, turn events).
+ * @type {number}
+ */
+const JOURNAL_LIMIT = 300;
+
+/**
+ * Base class describing the surface a Koshien client must implement.
+ *
+ * Block methods talk to the game only through this interface, keeping the
+ * game simulation itself swappable and independently testable.
  */
 class KoshienClient {
     /**
@@ -114,7 +142,6 @@ class KoshienClient {
 
     isConnected () {
         return this._isConnected;
-
     }
 
     connect (playerName) {
@@ -122,20 +149,465 @@ class KoshienClient {
         this._isConnected = true;
     }
 
-    // eslint-disable-next-line no-unused-vars
-    moveTo (position) {
-        return new Promise(resolve => resolve());
+    // --- Interface (overridden by concrete clients) ---
+
+    getMapArea () {}
+
+    moveTo () {
+        return Promise.resolve();
     }
 
-    // eslint-disable-next-line no-unused-vars
-    setMessage (message) {
-        return new Promise(resolve => resolve());
+    setItem () {}
+
+    setMessage () {
+        return Promise.resolve();
     }
 
+    turnOver () {}
+
+    map () {
+        return -1;
+    }
+
+    mapAll () {
+        return '';
+    }
+
+    mapFrom () {
+        return -1;
+    }
+
+    calcRoute () {
+        return [];
+    }
+
+    locateObjects () {
+        return [];
+    }
+
+    targetCoordinate () {
+        return null;
+    }
+}
+
+/**
+ * Client for the built-in mock game (mock-game.js).
+ *
+ * It behaves like the real Koshien player library: readers (map / map_all /
+ * calc_route / locate_objects / player position) work off a client-side cache
+ * that only updates when the game answers an action, moves are reservations
+ * that resolve on turn over, and the two-actions/one-move per turn limits are
+ * enforced on the client side too (an over-limit block call is suppressed and
+ * reported instead of silently working). Every state change is journaled and
+ * broadcast on the runtime so the GUI panel can visualize the whole game.
+ */
+class MockClient extends KoshienClient {
+    /**
+     * @param {Runtime} runtime - the Scratch 3.0 runtime.
+     * @param {string} extensionId - the id of the extension.
+     */
+    constructor (runtime, extensionId) {
+        super(runtime, extensionId);
+        // Injectable sleep so tests can avoid real timers. Returns a promise
+        // that resolves after `ms` milliseconds.
+        this._sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+        this.reset();
+    }
+
+    /**
+     * Drop the current game session (a new one starts on connect).
+     */
+    reset () {
+        this._session = null;
+        this._isConnected = false;
+        this._playerName = null;
+        this._side = 1;
+        this._strategy = 'goal';
+        this._turnInterval = 0;
+        this._myMap = [];
+        this._pos = null;
+        this._goal = null;
+        this._rivalPos = null;
+        this._fiend = null;
+        this._sent = 0;
+        this._stepped = false;
+        this._finished = false;
+        this._journal = [];
+        this._emitState();
+    }
+
+    /**
+     * Start a fresh mock game using the GUI-provided settings (map, side,
+     * rival strategy) when available.
+     * @param {string} playerName - the player name from the connect block.
+     */
+    connect (playerName) {
+        this.reset();
+        super.connect(playerName);
+        const config =
+            this.runtime && typeof this.runtime.getKoshienMockConfig === 'function'
+                ? this.runtime.getKoshienMockConfig() || {}
+                : {};
+        const map = findMockMap(config.mapId);
+        this._side = Number(config.side) === 2 ? 2 : 1;
+        this._strategy = RIVAL_STRATEGIES.includes(config.rival) ? config.rival : 'goal';
+        // Seconds to sleep after each turn is resolved so the path can be
+        // followed by eye. The GUI config defaults this to 3s; a missing value
+        // here (non-GUI runtime) keeps the legacy no-wait behavior.
+        this._turnInterval = Number(config.turnInterval) > 0 ? Number(config.turnInterval) : 0;
+        this._session = new MockGame({
+            map,
+            userSide: this._side,
+            seed: config.seed
+        });
+        this._session.join(this._rivalSide(), 'rival');
+        const {info} = this._session.join(this._side, playerName);
+        this._absorb(info);
+        this._journalPush('event', `ゲーム開始: マップ「${map.name}」 / プレイヤー${this._side} / 相手AI: ${this._strategy}`);
+        this._emitState();
+    }
+
+    /**
+     * @returns {number} - the rival's side (the one the user did not take).
+     */
+    _rivalSide () {
+        return this._side === 1 ? 2 : 1;
+    }
+
+    /**
+     * Update the client cache from a player state answer.
+     * @param {object} info - the state returned by the mock game.
+     */
+    _absorb (info) {
+        this._pos = {x: info.x, y: info.y};
+        this._goal = info.goal.slice();
+        this._myMap = info.map;
+        if (info.status !== 'playing') {
+            this._finished = true;
+        }
+    }
+
+    /**
+     * Append an entry to the visible journal.
+     * @param {string} kind - action | error | event.
+     * @param {string} text - the human-readable entry.
+     */
+    _journalPush (kind, text) {
+        this._journal.push({
+            turn: this._session ? this._session.turn : 0,
+            kind,
+            text
+        });
+        if (this._journal.length > JOURNAL_LIMIT) {
+            this._journal.splice(0, this._journal.length - JOURNAL_LIMIT);
+        }
+    }
+
+    /**
+     * Broadcast the full state so the GUI panel can redraw.
+     */
+    _emitState () {
+        if (!this.runtime || typeof this.runtime.emit !== 'function') {
+            return;
+        }
+        const snapshot = {
+            connected: this._isConnected,
+            playerName: this._playerName,
+            side: this._side,
+            strategy: this._strategy,
+            finished: this._finished,
+            game: this._session ? this._session.snapshot() : null,
+            // What the user's AI actually knows: its own (fog-of-war) map —
+            // cells keep the value from when they were last scanned — and
+            // the rival/fiend positions as of the last look-around.
+            myMap: this._myMap,
+            myRival: this._rivalPos,
+            myFiend: this._fiend,
+            journal: this._journal.slice()
+        };
+        this.runtime.koshienMockState = snapshot;
+        this.runtime.emit(MOCK_STATE_EVENT, snapshot);
+    }
+
+    /**
+     * Report and refuse a block executed before connecting.
+     * @param {string} label - the attempted operation (for the journal).
+     * @returns {boolean} - true when connected.
+     */
+    _requireSession (label) {
+        if (this._session) {
+            return true;
+        }
+        this._journalPush('error', `${label}: さきに「プレイヤー名を◯◯にしてゲームサーバーへ接続する」を実行してください`);
+        this._emitState();
+        return false;
+    }
+
+    /**
+     * Enforce the two-actions-per-turn limit on the client side, like the
+     * real player library (the over-limit call is suppressed and reported).
+     * @param {string} label - the attempted operation (for the journal).
+     * @returns {boolean} - true when the action may be sent.
+     */
+    _spendClientAct (label) {
+        if (this._sent >= ACT_LIMIT) {
+            this._journalPush('error', `${label}: このターンではもう行動できません（行動は1ターンに${ACT_LIMIT}回まで。「ターンを終了する」を実行してください）`);
+            this._emitState();
+            return false;
+        }
+        this._sent += 1;
+        return true;
+    }
+
+    /**
+     * Journal a rule violation answered by the game.
+     * @param {string} label - the attempted operation.
+     * @param {object} error - {code, message} from the mock game.
+     */
+    _journalRefusal (label, error) {
+        this._journalPush('error', `${label}: ${error.message}`);
+    }
+
+    /**
+     * Look around a position (counts as one of the two actions per turn).
+     * @param {string} position - the "x:y" center of the area to reveal.
+     */
+    getMapArea (position) {
+        if (!this._requireSession('マップ取得')) {
+            return;
+        }
+        if (!this._spendClientAct('マップ取得')) {
+            return;
+        }
+        const p = mapUtils.parsePosition(position);
+        const res = this._session.scan(this._side, p.x, p.y);
+        if (res.error) {
+            this._journalRefusal(`マップ取得 (${position})`, res.error);
+        } else {
+            this._myMap = res.map;
+            this._rivalPos = res.rivalSeen;
+            this._fiend = res.fiend;
+            this._journalPush('action', `マップ取得 (${position})`);
+        }
+        this._emitState();
+    }
+
+    /**
+     * @param {string} position - the queried "x:y" position.
+     * @returns {(number|string)} - the my-map cell (-1 when unexplored).
+     */
+    map (position) {
+        const p = mapUtils.parsePosition(position);
+        return mapUtils.cellAt(this._myMap, p.x, p.y);
+    }
+
+    /**
+     * @returns {string} - the player's my map as a "row,row,..." string
+     *     ('-' marks cells not yet revealed by getMapArea).
+     */
+    mapAll () {
+        if (this._myMap.length === 0) {
+            return '';
+        }
+        return mapUtils.gridToMapString(this._myMap);
+    }
+
+    /**
+     * Read a cell out of a map string previously obtained from {@link mapAll}.
+     * @param {string} position - the queried "x:y" position.
+     * @param {string} mapString - a map string ("row,row,...", '-' = unexplored).
+     * @returns {(number|string)} - the cell value (-1 when it cannot be resolved).
+     */
+    mapFrom (position, mapString) {
+        if (typeof mapString !== 'string' || mapString.length === 0) {
+            return -1;
+        }
+        const grid = mapUtils.parseMapString(mapString);
+        const p = mapUtils.parsePosition(position);
+        return mapUtils.cellAt(grid, p.x, p.y);
+    }
+
+    /**
+     * @param {object} props - {src, dst, exceptCells}; src/dst default to the
+     *     current player/goal positions when omitted. Routes over the my map,
+     *     so unexplored cells are crossable at a cost (like the real game).
+     * @returns {Array<string>} - the route as "x:y" strings (single element
+     *     when unreachable, empty before connecting).
+     */
     calcRoute (props) {
-        // eslint-disable-next-line no-unused-vars
-        const {src, dst, exceptCells, result} = props;
-        return new Promise(resolve => resolve());
+        if (!this._session || !this._pos || !this._goal) {
+            return [];
+        }
+        const {src, dst, exceptCells} = props || {};
+        const start = src && String(src).includes(':')
+            ? src
+            : mapUtils.formatPosition(this._pos.x, this._pos.y);
+        const goal = dst && String(dst).includes(':')
+            ? dst
+            : mapUtils.formatPosition(this._goal[0], this._goal[1]);
+        return mapUtils.calcRoute(this._myMap, start, goal, exceptCells || []);
+    }
+
+    /**
+     * @param {object} props - {position, sqSize, objects}; position defaults to
+     *     the current player position when omitted. Scans the my map, so only
+     *     already-revealed items are found (like the real game).
+     * @returns {Array<string>} - the "x:y" positions of the matching objects.
+     */
+    locateObjects (props) {
+        if (!this._session || !this._pos) {
+            return [];
+        }
+        const {position, sqSize, objects} = props || {};
+        const center = position && String(position).includes(':')
+            ? position
+            : mapUtils.formatPosition(this._pos.x, this._pos.y);
+        return mapUtils.locateObjects(this._myMap, center, sqSize, objects);
+    }
+
+    /**
+     * @param {string} target - one of player/goal/other_player/enemy.
+     * @param {string} coordinate - one of position/x/y.
+     * @returns {string|number|null} - the requested coordinate, or null when
+     *     that target has not been seen yet (like the real game).
+     */
+    targetCoordinate (target, coordinate) {
+        let pair = null;
+        if (target === 'player' && this._pos) {
+            pair = [this._pos.x, this._pos.y];
+        } else if (target === 'goal' && this._goal) {
+            pair = this._goal;
+        } else if (target === 'other_player' && this._rivalPos) {
+            pair = this._rivalPos;
+        } else if (target === 'enemy' && this._fiend) {
+            pair = [this._fiend.x, this._fiend.y];
+        }
+        if (!pair) {
+            return null;
+        }
+        if (coordinate === 'x') {
+            return pair[0];
+        }
+        if (coordinate === 'y') {
+            return pair[1];
+        }
+        return mapUtils.formatPosition(pair[0], pair[1]);
+    }
+
+    /**
+     * Reserve a move; the position only changes when the turn is over,
+     * exactly like a real match.
+     * @param {string} position - the destination "x:y".
+     * @returns {Promise} - resolved once the reservation is recorded.
+     */
+    moveTo (position) {
+        if (!this._requireSession('移動')) {
+            return Promise.resolve();
+        }
+        if (this._stepped) {
+            this._journalPush('error', `移動 (${position}): 移動は1ターンに一度しかできません（「ターンを終了する」を実行してください）`);
+            this._emitState();
+            return Promise.resolve();
+        }
+        if (!this._spendClientAct('移動')) {
+            return Promise.resolve();
+        }
+        this._stepped = true;
+        const p = mapUtils.parsePosition(position);
+        const res = this._session.step(this._side, p.x, p.y);
+        if (res.error) {
+            this._journalRefusal(`移動 (${position})`, res.error);
+        } else {
+            this._absorb(res.info);
+            this._journalPush('action', `移動よやく (${position}) — ターンを終了すると移動します`);
+        }
+        this._emitState();
+        return Promise.resolve();
+    }
+
+    /**
+     * Place dynamite or a bomb (counts as one of the two actions per turn).
+     * @param {string} item - the item kind (dynamite/bomb).
+     * @param {string} position - the "x:y" position.
+     */
+    setItem (item, position) {
+        const kind = item === 'bomb' ? 'bomb' : 'dynamite';
+        const label = kind === 'bomb' ? 'ばくだん設置' : 'ダイナマイト設置';
+        if (!this._requireSession(label)) {
+            return;
+        }
+        if (!this._spendClientAct(label)) {
+            return;
+        }
+        const p = mapUtils.parsePosition(position);
+        const res = this._session.plant(this._side, kind, p.x, p.y);
+        if (res.error) {
+            this._journalRefusal(`${label} (${position})`, res.error);
+        } else {
+            this._journalPush('action', `${label}よやく (${position}) — ターンを終了すると置かれます`);
+        }
+        this._emitState();
+    }
+
+    /**
+     * Set the player's message (does not count as an action).
+     * @param {string} message - the message.
+     * @returns {Promise} - resolved once recorded.
+     */
+    setMessage (message) {
+        if (!this._requireSession('メッセージ')) {
+            return Promise.resolve();
+        }
+        const res = this._session.say(this._side, message);
+        if (res.error) {
+            this._journalRefusal('メッセージ', res.error);
+        } else {
+            this._journalPush('action', `メッセージ「${res.ok ? String(message) : ''}」`);
+        }
+        this._emitState();
+        return Promise.resolve();
+    }
+
+    /**
+     * End the turn: the rival AI takes its turn and the whole turn resolves
+     * (moves apply, items are picked up, the fiend moves, scores update).
+     * @returns {?Promise} - a delay promise when a per-turn sleep is
+     *   configured and the game is still running; null otherwise (no wait,
+     *   the legacy synchronous behavior).
+     */
+    turnOver () {
+        if (!this._requireSession('ターン終了')) {
+            return null;
+        }
+        if (!this._finished && !this._session.over) {
+            playRivalTurn(this._session, this._rivalSide(), this._strategy);
+        }
+        const {info} = this._session.finishTurn(this._side);
+        this._absorb(info);
+        this._sent = 0;
+        this._stepped = false;
+        const snapshot = this._session.snapshot();
+        this._journalPush('event', `ターン終了 → ターン${snapshot.turn} (じぶん: ${info.x}:${info.y} / スコア ${info.score})`);
+        for (const [name, mark, x, y] of snapshot.events) {
+            if (name === 'got_item') {
+                this._journalPush('event', `アイテム「${mark}」を取得 (${x}:${y})`);
+            }
+        }
+        if (info.status === 'completed') {
+            this._journalPush('event', `ゴールしました！ さいしゅうスコア ${info.score}`);
+        } else if (info.status === 'timeup') {
+            this._journalPush('event', `50ターンをすぎました（タイムアップ、スコア ${info.score}）`);
+        }
+        this._emitState();
+        // Sleep between turns so the path can be followed by eye. Only when a
+        // positive interval is configured and the game is still running (no
+        // next turn once it is over). interval=0 keeps the legacy no-wait
+        // behavior (returns null). A pending timer after the promise
+        // resolves has no side effect (the thread is discarded on stop).
+        if (this._turnInterval > 0 && !this._session.over) {
+            return this._sleep(this._turnInterval * 1000);
+        }
+        return null;
     }
 }
 
@@ -146,7 +618,7 @@ class KoshienBlocks {
 
     /**
      * A translation object which is used in this class.
-     * @param {FormatObject} formatter - translation object
+     * @param {FormatMessage} formatter - translation object
      */
     static set formatMessage (formatter) {
         formatMessage = formatter;
@@ -154,7 +626,7 @@ class KoshienBlocks {
     }
 
     /**
-     * @return {string} - the name of this extension.
+     * @returns {string} - the name of this extension.
      */
     static get EXTENSION_NAME () {
         return formatMessage({
@@ -165,10 +637,17 @@ class KoshienBlocks {
     }
 
     /**
-     * @return {string} - the ID of this extension.
+     * @returns {string} - the ID of this extension.
      */
     static get EXTENSION_ID () {
         return EXTENSION_ID;
+    }
+
+    /**
+     * @returns {string} - the runtime event emitted on mock state changes.
+     */
+    static get MOCK_STATE_EVENT () {
+        return MOCK_STATE_EVENT;
     }
 
     get ITEMS_MENU () {
@@ -412,7 +891,50 @@ class KoshienBlocks {
             formatMessage = runtime.formatMessage;
         }
 
-        this._client = new KoshienClient(this.runtime, KoshienBlocks.EXTENSION_ID);
+        // Backend: the built-in mock game runs everything locally, so an AI can
+        // be built and debugged without any game server.
+        this._mockClient = new MockClient(this.runtime, KoshienBlocks.EXTENSION_ID);
+        this._client = this._mockClient;
+
+        // Reset the mock world back to its initial state at the natural "new
+        // game" moments, so a teacher can demonstrate the blocks, then start
+        // over cleanly:
+        //   - green flag (PROJECT_START): re-run the AI from the beginning
+        //   - stop (PROJECT_STOP_ALL): leave a clean slate for the next run
+        // (connect_game also resets, see MockClient.connect.)
+        // The green flag also fires the connect-game hat: the AI script under
+        // "connect to game server" runs from the start, like a real match.
+        this._resetMockWorld = this._resetMockWorld.bind(this);
+        this._handleProjectStart = this._handleProjectStart.bind(this);
+        if (this.runtime && typeof this.runtime.on === 'function') {
+            this.runtime.on('PROJECT_START', this._handleProjectStart);
+            this.runtime.on('PROJECT_STOP_ALL', this._resetMockWorld);
+        }
+    }
+
+    /**
+     * Green flag: start a fresh mock world and run the connect-game hats.
+     *
+     * Note: runtime.startHats executes each started hat block immediately, so
+     * the connection is already made when this returns; the blocks under the
+     * hat run on the following runtime steps. Extra connect-game hats find
+     * the client already connected, report false and retire their thread.
+     */
+    _handleProjectStart () {
+        this._resetMockWorld();
+        if (this.runtime && typeof this.runtime.startHats === 'function') {
+            const threads = this.runtime.startHats(`${EXTENSION_ID}_connectGame`) || [];
+            log.info(`koshien: green flag started ${threads.length} connect-game thread(s)`);
+        }
+    }
+
+    /**
+     * Reset the mock world.
+     */
+    _resetMockWorld () {
+        if (this._client && typeof this._client.reset === 'function') {
+            this._client.reset();
+        }
     }
 
     /**
@@ -513,7 +1035,7 @@ class KoshienBlocks {
                     blockType: BlockType.COMMAND,
                     text: formatMessage({
                         id: 'koshien.calcRoute',
-                        // eslint-disable-next-line max-len
+                         
                         default: 'store shortest path (begin [SRC] end x: [DST] except list: [EXCEPT_CELLS]) to list: [RESULT]',
                         description: 'store shortest path between two points to list'
                     }),
@@ -596,7 +1118,7 @@ class KoshienBlocks {
                     blockType: BlockType.COMMAND,
                     text: formatMessage({
                         id: 'koshien.locateObjects',
-                        // eslint-disable-next-line max-len
+                         
                         default: 'store terrain and items within range (center [POSITION] range [SQ_SIZE] terrain/items [OBJECTS]) to list: [RESULT]',
                         description: 'store terrain and items within range to list'
                     }),
@@ -782,75 +1304,151 @@ class KoshienBlocks {
      * connect game server with the player name
      * @param {object} args - the block's arguments.
      * @param {string} args.NAME - name of the player.
-     * @return {boolean} - true if the event raised.
+     * @returns {boolean} - true if the event raised.
      */
-    // eslint-disable-next-line no-unused-vars
+     
     connectGame (args) {
         if (this._client.isConnected()) {
             return false;
         }
 
+        // Start a fresh mock game session.
         this._client.connect(args.NAME);
         return true;
     }
 
     /**
+     * Resolve the target used to read/write variables.
+     * @param {object} util - the block utility (may be undefined).
+     * @returns {?object} - the target, or null.
+     */
+    _resolveTarget (util) {
+        if (util && util.target) {
+            return util.target;
+        }
+        if (this.runtime && this.runtime.getEditingTarget) {
+            return this.runtime.getEditingTarget();
+        }
+        return null;
+    }
+
+    /**
+     * Replace the contents of a list variable (looked up by name) with values.
+     * No-op when the name is empty or the list cannot be found.
+     * @param {object} util - the block utility.
+     * @param {string} listName - the list variable name.
+     * @param {Array} values - the new list contents.
+     */
+    _writeListByName (util, listName, values) {
+        if (typeof listName !== 'string' || listName.trim() === '') {
+            return;
+        }
+        const target = this._resolveTarget(util);
+        if (!target || !target.lookupVariableByNameAndType) {
+            return;
+        }
+        const list = target.lookupVariableByNameAndType(listName, Variable.LIST_TYPE);
+        if (!list) {
+            return;
+        }
+        list.value = values.slice();
+        list._monitorUpToDate = false;
+    }
+
+    /**
+     * Read a scalar variable's value by name.
+     * @param {object} util - the block utility.
+     * @param {string} name - the variable name.
+     * @returns {(string|number|Array|null)} - the value, or null when not found.
+     */
+    _readVariableByName (util, name) {
+        if (typeof name !== 'string' || name.trim() === '') {
+            return null;
+        }
+        const target = this._resolveTarget(util);
+        if (!target || !target.lookupVariableByNameAndType) {
+            return null;
+        }
+        const variable = target.lookupVariableByNameAndType(name, Variable.SCALAR_TYPE);
+        return variable ? variable.value : null;
+    }
+
+    /**
+     * Read a list variable's contents by name.
+     * @param {object} util - the block utility.
+     * @param {string} name - the list variable name.
+     * @returns {Array} - the list contents, or [] when not found.
+     */
+    _readListByName (util, name) {
+        if (typeof name !== 'string' || name.trim() === '') {
+            return [];
+        }
+        const target = this._resolveTarget(util);
+        if (!target || !target.lookupVariableByNameAndType) {
+            return [];
+        }
+        const list = target.lookupVariableByNameAndType(name, Variable.LIST_TYPE);
+        return list && Array.isArray(list.value) ? list.value.slice() : [];
+    }
+
+    /**
      * get map information around position
      * @param {object} args - the block's arguments.
-     * @param {number} args.POSITION - position
+     * @param {string} args.POSITION - position
+     * @returns {(Promise|undefined)} - resolves when fetched (remote); undefined for mock.
      */
-    // eslint-disable-next-line no-unused-vars
     getMapArea (args) {
-        // wip
+        return this._client.getMapArea(args.POSITION);
     }
 
     /**
      * map at position
      * @param {object} args - the block's arguments.
      * @param {string} args.POSITION - position.
-     * @return {number} - map information.
+     * @returns {number} - map information.
      */
-    // eslint-disable-next-line no-unused-vars
     map (args) {
-        // wip
-        return -1;
+        return this._client.map(args.POSITION);
     }
 
     /**
      * move to x, y
      * @param {object} args - the block's arguments.
-     * @param {number} args.POSITION - position.
-     * @return {Promise} - promise
+     * @param {string} args.POSITION - position.
+     * @returns {Promise} - promise
      */
     moveTo (args) {
         return this._client.moveTo(args.POSITION);
     }
 
     /**
-     * shortest path between player and goal
+     * shortest path between player and goal, stored into the result list
      * @param {object} args - the block's arguments.
-     * @param {string} args.RESULT - result.
-     * @return {Promise} - promise
+     * @param {string} args.RESULT - result list name.
+     * @param {object} util - the block utility.
      */
-    // eslint-disable-next-line no-unused-vars
-    calcGoalRoute (args) {
-        return this._client.calcRoute({result: args.RESULT});
+    calcGoalRoute (args, util) {
+        const route = this._client.calcRoute({});
+        this._writeListByName(util, args.RESULT, route);
     }
 
     /**
-     * shortest path between two points
+     * shortest path between two points, stored into the result list
      * @param {object} args - the block's arguments.
      * @param {string} args.SRC - src.
      * @param {string} args.DST - dst.
      * @param {string} args.EXCEPT_CELLS - except cells.
-     * @param {string} args.RESULT - result.
-     * @return {Promise} - promise
+     * @param {string} args.RESULT - result list name.
+     * @param {object} util - the block utility.
      */
-    // eslint-disable-next-line no-unused-vars
-    calcRoute (args) {
-        return this._client.calcRoute(
-            {src: args.SRC, dst: args.DST, exceptCells: args.EXCEPT_CELLS, result: args.RESULT}
-        );
+    calcRoute (args, util) {
+        const exceptCells = this._readListByName(util, args.EXCEPT_CELLS);
+        const route = this._client.calcRoute({
+            src: args.SRC,
+            dst: args.DST,
+            exceptCells
+        });
+        this._writeListByName(util, args.RESULT, route);
     }
 
     /**
@@ -858,43 +1456,49 @@ class KoshienBlocks {
      * @param {object} args - the block's arguments.
      * @param {string} args.ITEM - item.
      * @param {string} args.POSITION - position.
-          */
-    // eslint-disable-next-line no-unused-vars
+     * @returns {(Promise|undefined)} - resolves when placed (remote); undefined for mock.
+     */
     setItem (args) {
-        // wip
+        return this._client.setItem(args.ITEM, args.POSITION);
     }
 
     /**
      * map from location at position
      * @param {object} args - the block's arguments.
-     * @param {string} args.MAP - map.
+     * @param {string} args.MAP - map variable name.
      * @param {string} args.POSITION - position.
-     * @return {number} - map information.
+     * @param {object} util - the block utility.
+     * @returns {number} - map information.
      */
-    // eslint-disable-next-line no-unused-vars
-    mapFrom (args) {
-        // wip
-        return -1;
+    mapFrom (args, util) {
+        const mapString = this._readVariableByName(util, args.MAP);
+        return this._client.mapFrom(args.POSITION, mapString);
     }
 
     /**
      * all map information
+     * @returns {string} - the whole map as a string.
      */
     mapAll () {
-        // wip
+        return this._client.mapAll();
     }
 
     /**
-     * terrain and items within range
+     * terrain and items within range, stored into the result list
      * @param {object} args - the block's arguments.
      * @param {string} args.POSITION - position.
      * @param {number} args.SQ_SIZE - size.
      * @param {string} args.OBJECTS - item.
-     * @param {string} args.RESULT - result.
+     * @param {string} args.RESULT - result list name.
+     * @param {object} util - the block utility.
      */
-    // eslint-disable-next-line no-unused-vars
-    locateObjects (args) {
-        // wip
+    locateObjects (args, util) {
+        const positions = this._client.locateObjects({
+            position: args.POSITION,
+            sqSize: args.SQ_SIZE,
+            objects: args.OBJECTS
+        });
+        this._writeListByName(util, args.RESULT, positions);
     }
 
     /**
@@ -902,18 +1506,19 @@ class KoshienBlocks {
      * @param {object} args - the block's arguments.
      * @param {string} args.TARGET - target.
      * @param {string} args.COORDINATE - coordinate.
+     * @returns {string|number|null} - the requested coordinate.
      */
-    // eslint-disable-next-line no-unused-vars
     targetCoordinate (args) {
-        // wip
+        return this._client.targetCoordinate(args.TARGET, args.COORDINATE);
     }
 
     /**
      * turn over
+     * @returns {?Promise} - resolves on next turn (remote / mock with a
+     *   per-turn sleep); null when there is no wait.
      */
-    // eslint-disable-next-line no-unused-vars
-    turnOver (args) {
-        // wip
+    turnOver () {
+        return this._client.turnOver();
     }
 
     /**
@@ -921,9 +1526,9 @@ class KoshienBlocks {
      * @param {object} args - the block's arguments.
      * @param {number} args.X - x.
      * @param {number} args.Y - y.
-     * @return {string} - position
+     * @returns {string} - position
      */
-    // eslint-disable-next-line no-unused-vars
+     
     position (args) {
         return `${args.X}:${args.Y}`;
     }
@@ -933,7 +1538,7 @@ class KoshienBlocks {
      * @param {object} args - the block's arguments.
      * @param {string} args.POSITION - position.
      * @param {string} args.COORDINATE - coordinate.
-     * @return {number} - position of x or y
+     * @returns {number} - position of x or y
      */
     positionOf (args) {
         const position = args.POSITION.split(':');
@@ -944,7 +1549,7 @@ class KoshienBlocks {
      * object of code
      * @param {object} args - the block's arguments.
      * @param {string} args.OBJECT - object.
-     * @return {number} - object of code
+     * @returns {number} - object of code
      */
     object (args) {
         switch (args.OBJECT) {
@@ -990,7 +1595,7 @@ class KoshienBlocks {
      * @param {object} args - the block's arguments.
      * @param {string} args.MESSAGE - message.
      */
-    // eslint-disable-next-line no-unused-vars
+     
     setMessage (args) {
         return this._client.setMessage(args.MESSAGE);
     }

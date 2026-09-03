@@ -1,10 +1,14 @@
+/* global process */
 const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const formatMessage = require('format-message');
 const log = require('../../util/log');
+const debugLogger = require('../../util/debug-logger');
+const debug = debugLogger(process.env.DEBUG);
 const {v4: uuidv4} = require('uuid');
 const Variable = require('../../engine/variable');
 const {getDomain, saveDomainToLocalStorage} = require('./utils');
+const {hiraganaToHex} = require('./name-search-utils');
 const {createClient} = require('./mesh-client');
 const MeshV2Service = require('./mesh-service');
 
@@ -12,7 +16,7 @@ const MeshV2Service = require('./mesh-service');
  * Icon svg to be displayed at the left edge of each extension block, encoded as a data URI.
  * @type {string}
  */
-/* istanbul ignore next */ // eslint-disable-next-line max-len
+/* istanbul ignore next */  
 const blockIconURI = 'data:image/png;base64,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';
 
 const MESH_V2_HOST_ID = 'meshV2_host';
@@ -38,7 +42,7 @@ const MESH_ID_LABEL_CHARACTERS = {
 
 class Scratch3MeshV2Blocks {
     /**
-     * @return {string} - the name of this extension.
+     * @returns {string} - the name of this extension.
      */
     static get EXTENSION_NAME () {
         return 'Mesh V2';
@@ -50,7 +54,7 @@ class Scratch3MeshV2Blocks {
 
     /* istanbul ignore next */
     constructor (runtime) {
-        log.info('Loading NEW Mesh V2 extension (GraphQL)');
+        debug(() => 'Loading NEW Mesh V2 extension (GraphQL)');
         this.runtime = runtime;
         try {
             this.domain = getDomain();
@@ -66,8 +70,16 @@ class Scratch3MeshV2Blocks {
             createClient();
             this.meshService = new MeshV2Service(this, this.nodeId, this.domain);
             this.meshService.setDisconnectCallback(reason => {
+                // Check if error is caused by network filter (HTTP 503 from proxy like i-Filter)
+                const errorType = this.meshService &&
+                    this.meshService.lastError &&
+                    this.meshService.isNetworkFilterError(this.meshService.lastError) ?
+                    'networkFilter' :
+                    null;
+
                 if (reason === 'GroupNotFound' || reason === 'expired') {
-                    this.setConnectionState('error');
+                    // Pass errorType to setConnectionState for network filter error handling
+                    this.setConnectionState('error', errorType);
                 } else {
                     this.setConnectionState('disconnected');
                 }
@@ -103,7 +115,7 @@ class Scratch3MeshV2Blocks {
         if (this.meshService) {
             this.meshService.domain = domain;
         }
-        log.info(`Mesh V2: Domain set to ${domain || 'null (auto)'}`);
+        debug(() => `Mesh V2: Domain set to ${domain || 'null (auto)'}`);
         return null;
     }
 
@@ -139,7 +151,11 @@ class Scratch3MeshV2Blocks {
     getInfo () {
         return {
             id: Scratch3MeshV2Blocks.EXTENSION_ID,
-            name: Scratch3MeshV2Blocks.EXTENSION_NAME,
+            name: formatMessage({
+                id: 'meshV2.categoryName',
+                default: 'Mesh',
+                description: 'Label for the meshV2 extension category'
+            }),
             blockIconURI: blockIconURI,
             showStatusButton: true,
             blocks: [
@@ -178,9 +194,13 @@ class Scratch3MeshV2Blocks {
     /* istanbul ignore next */
     getVariableNamesMenuItems () {
         if (!this.meshService) return [' '];
-        const names = Object.values(this.meshService.remoteData)
+        // Include this project's own global variables so the dropdown is useful
+        // immediately (e.g. the preset variable) before any network round-trip,
+        // in addition to names received from other nodes.
+        const ownNames = this.meshService.getGlobalVariables().map(v => v.key);
+        const remoteNames = Object.values(this.meshService.remoteData)
             .reduce((acc, nodeData) => acc.concat(Object.keys(nodeData)), []);
-        return [' '].concat([...new Set(names)]);
+        return [' '].concat([...new Set([...ownNames, ...remoteNames])]);
     }
 
     /* istanbul ignore next */
@@ -188,6 +208,7 @@ class Scratch3MeshV2Blocks {
         if (!this.meshService) return;
         this.meshService.listGroups().then(groups => {
             this.discoveredGroups = groups;
+            debug(() => `Mesh V2: Listed ${groups.length} groups`);
 
             // Filter out expired groups
             const now = Date.now();
@@ -208,32 +229,68 @@ class Scratch3MeshV2Blocks {
 
             const peripherals = validGroups.map(group => ({
                 peripheralId: group.id,
-                name: formatMessage({
-                    id: 'mesh.clientPeripheralName',
-                    default: 'Join Mesh [{ MESH_ID }]',
-                    description: 'label for "Join Mesh" in connect modal for Mesh extension'
-                }, {MESH_ID: this.makeMeshIdLabel(group.name)}),
+                name: `【${this.makeMeshIdLabel(group.name)}】`,
                 rssi: this.calculateRssi(group),
                 domain: group.domain
             }));
-
-            // Add 'Become Host' option
-            peripherals.unshift({
-                peripheralId: MESH_V2_HOST_ID,
-                name: formatMessage({
-                    id: 'mesh.hostPeripheralName',
-                    default: 'Become Mesh Host [{ MESH_ID }]',
-                    description: 'label for becoming Host Mesh in connect modal for Mesh extension'
-                }, {MESH_ID: this.makeMeshIdLabel(this.nodeId)}),
-                rssi: 0
-            });
 
             this.runtime.emit(this.runtime.constructor.PERIPHERAL_LIST_UPDATE, peripherals);
         })
             /* istanbul ignore next */
             .catch(err => {
                 log.error(`Mesh V2: Scan failed: ${err}`);
+                // Check if error is caused by network filter (HTTP 503)
+                debug(() => `Mesh V2: Checking lastError: ${this.meshService?.lastError}`);
+                const errorType = this.meshService &&
+                    this.meshService.lastError &&
+                    this.meshService.isNetworkFilterError(this.meshService.lastError) ?
+                    'networkFilter' :
+                    null;
+                debug(() => `Mesh V2: Setting error state with errorType: ${errorType}`);
+                // Set error state to trigger error UI
+                this.setConnectionState('error', errorType);
             });
+    }
+
+    /**
+     * Search groups by hiragana name prefix across all domains.
+     * @param {string} hiraganaStr - Hiragana string (6 chars).
+     * @returns {Promise} Resolves when search results are emitted.
+     */
+    /* istanbul ignore next */
+    searchByName (hiraganaStr) {
+        if (!this.meshService) return Promise.reject(new Error('No mesh service'));
+
+        const hexPrefix = hiraganaToHex(hiraganaStr);
+        if (!hexPrefix) return Promise.reject(new Error('Invalid hiragana input'));
+
+        return this.meshService.searchGroupsByNamePrefix(hexPrefix).then(groups => {
+            debug(() => `Mesh V2: Name search found ${groups.length} groups for prefix ${hexPrefix}`);
+
+            // Merge into discoveredGroups (avoid duplicates)
+            const existingIds = new Set((this.discoveredGroups || []).map(g => g.id));
+            groups.forEach(group => {
+                if (!existingIds.has(group.id)) {
+                    this.discoveredGroups = (this.discoveredGroups || []).concat([group]);
+                }
+            });
+
+            // Filter expired and emit
+            const now = Date.now();
+            const validGroups = groups.filter(group => {
+                if (!group.expiresAt) return true;
+                return new Date(group.expiresAt).getTime() > now;
+            });
+
+            const peripherals = validGroups.map(group => ({
+                peripheralId: group.id,
+                name: `【${this.makeMeshIdLabel(group.name)}】`,
+                rssi: this.calculateRssi(group),
+                domain: group.domain
+            }));
+
+            return peripherals;
+        });
     }
 
     /* istanbul ignore next */
@@ -283,10 +340,12 @@ class Scratch3MeshV2Blocks {
     /**
      * Set the connection state and emit appropriate events.
      * @param {string} state - The new connection state ('disconnected', 'scanning', 'connecting', 'connected', 'error')
+     * @param {string|null} errorType - Optional error type ('networkFilter' when blocked by proxy like i-Filter)
      */
-    setConnectionState (state) {
+    setConnectionState (state, errorType = null) {
         const prevState = this.connectionState;
-        log.info(`Mesh V2: Connection state transition: ${prevState} -> ${state}`);
+        const errorInfo = errorType ? ` (errorType: ${errorType})` : '';
+        log.info(`Mesh V2: Connection state transition: ${prevState} -> ${state}${errorInfo}`);
         this.connectionState = state;
 
         if (state !== 'disconnected') {
@@ -298,9 +357,10 @@ class Scratch3MeshV2Blocks {
             this.runtime.emit(this.runtime.constructor.PERIPHERAL_CONNECTED);
             break;
         case 'error':
-            // Emit error event only, do not emit PERIPHERAL_DISCONNECTED
+            // Emit error event with errorType for GUI to handle network filter errors
             this.runtime.emit(this.runtime.constructor.PERIPHERAL_REQUEST_ERROR, {
-                extensionId: Scratch3MeshV2Blocks.EXTENSION_ID
+                extensionId: Scratch3MeshV2Blocks.EXTENSION_ID,
+                errorType: errorType // 'networkFilter' when blocked by proxy (e.g., i-Filter)
             });
             if (prevState === 'connected' && !this.isExplicitDisconnect) {
                 this.runtime.emit(this.runtime.constructor.PERIPHERAL_CONNECTION_LOST_ERROR, {
@@ -383,34 +443,32 @@ class Scratch3MeshV2Blocks {
 
     /* istanbul ignore next */
     menuMessage () {
+        const domainDisplay = this.domain || formatMessage({
+            id: 'mesh.domainNotSet',
+            default: 'Not set',
+            description: 'label for domain not set in mesh menu'
+        });
+
         if (this.meshService && this.meshService.groupId) {
             const meshIdLabel = this.makeMeshIdLabel(this.meshService.groupName);
             const expiresAt = this.formatExpiresAt(this.meshService.expiresAt);
 
-            if (this.meshService.isHost) {
-                return formatMessage({
-                    id: 'mesh.registeredHostMenu',
-                    default: '{ MESH_ID } ({ EXPIRES_AT })',
-                    description: 'concise label for registered Host Mesh in menu bar'
-                }, {
-                    MESH_ID: meshIdLabel,
-                    EXPIRES_AT: expiresAt
-                });
-            }
-            return formatMessage({
-                id: 'mesh.joinedMeshMenu',
-                default: '{ MESH_ID } ({ EXPIRES_AT })',
-                description: 'concise label for joined Mesh in menu bar'
-            }, {
-                MESH_ID: meshIdLabel,
-                EXPIRES_AT: expiresAt
-            });
+            return {
+                domain: domainDisplay,
+                group: `✔【${meshIdLabel}】`,
+                expiresAt: `⏳ ${expiresAt}`
+            };
         }
-        return formatMessage({
-            id: 'mesh.notConnectedMenu',
-            default: 'Not connected',
-            description: 'concise label for not connected in menu bar'
-        });
+
+        return {
+            domain: domainDisplay,
+            group: formatMessage({
+                id: 'mesh.notJoined',
+                default: '!Not joined',
+                description: 'label for not joined group in mesh menu'
+            }),
+            expiresAt: null
+        };
     }
 
     // HOC logic
@@ -470,7 +528,7 @@ class Scratch3MeshV2Blocks {
         }
         if (variable && variable.type === Variable.SCALAR_TYPE) {
             // Send as array of SensorDataInput
-            this.meshService.sendData([{key: variable.name, value: String(variable.value)}]);
+            this.meshService.sendData([{key: variable.name, value: String(variable.value)}], {force: true});
         }
     }
 
@@ -502,7 +560,7 @@ class Scratch3MeshV2Blocks {
     createNewGlobalVariable (variableName, optVarId, optVarType) {
         const variable = this.variableFunctions.runtime.createNewGlobalVariable(variableName, optVarId, optVarType);
         if (this.meshService && variable.type === Variable.SCALAR_TYPE) {
-            this.meshService.sendData([{key: variable.name, value: String(variable.value)}]);
+            this.meshService.sendData([{key: variable.name, value: String(variable.value)}], {force: true});
         }
         return variable;
     }
@@ -519,7 +577,7 @@ class Scratch3MeshV2Blocks {
         const newVariable = new Variable(id, name, Variable.SCALAR_TYPE, false);
         stage.variables[id] = newVariable;
         if (this.meshService) {
-            this.meshService.sendData([{key: newVariable.name, value: String(newVariable.value)}]);
+            this.meshService.sendData([{key: newVariable.name, value: String(newVariable.value)}], {force: true});
         }
         return newVariable;
     }
@@ -531,7 +589,7 @@ class Scratch3MeshV2Blocks {
             this.variableFunctions.stage.createVariable(id, name, type, isCloud);
             if (this.meshService && type === Variable.SCALAR_TYPE) {
                 const variable = stage.variables[id];
-                this.meshService.sendData([{key: variable.name, value: String(variable.value)}]);
+                this.meshService.sendData([{key: variable.name, value: String(variable.value)}], {force: true});
             }
         }
     }
@@ -543,7 +601,7 @@ class Scratch3MeshV2Blocks {
             const variable = stage.variables[id];
             this.variableFunctions.stage.setVariableValue(id, newValue);
             if (this.meshService && variable.type === Variable.SCALAR_TYPE) {
-                this.meshService.sendData([{key: variable.name, value: String(newValue)}]);
+                this.meshService.sendData([{key: variable.name, value: String(newValue)}], {force: true});
             }
         }
     }
@@ -555,7 +613,7 @@ class Scratch3MeshV2Blocks {
             const variable = stage.variables[id];
             this.variableFunctions.stage.renameVariable(id, newName);
             if (this.meshService && variable.type === Variable.SCALAR_TYPE) {
-                this.meshService.sendData([{key: newName, value: String(variable.value)}]);
+                this.meshService.sendData([{key: newName, value: String(variable.value)}], {force: true});
             }
         }
     }

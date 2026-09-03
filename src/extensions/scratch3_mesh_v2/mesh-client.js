@@ -1,3 +1,4 @@
+/* global process */
 const AWSAppSyncClient = require('aws-appsync').default;
 const gqlTag = require('graphql-tag');
 const gql = gqlTag.default || gqlTag;

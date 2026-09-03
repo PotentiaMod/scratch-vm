@@ -1,4 +1,6 @@
-const log = require('../../util/log');
+/* global process */
+const debugLogger = require('../../util/debug-logger');
+const debug = debugLogger(process.env.DEBUG);
 
 /* istanbul ignore next */
 class RateLimiter {
@@ -29,8 +31,8 @@ class RateLimiter {
 
     /**
      * Add a request to the queue.
-     * @param {any} data - Data to send.
-     * @param {Function} sendFunction - Asynchronous function to send data.
+     * @param {object} data - Data to send.
+     * @param {function(object): Promise} sendFunction - Asynchronous function to send data.
      * @returns {Promise} - Resolves with the result of sendFunction.
      */
     send (data, sendFunction) {
@@ -43,7 +45,7 @@ class RateLimiter {
                 this.queue.push({data, resolve, reject, sendFunction});
             }
 
-            log.debug(`RateLimiter: ${this.enableMerge ? 'Processed' : 'Added'} to queue ` +
+            debug(() => `RateLimiter: ${this.enableMerge ? 'Processed' : 'Added'} to queue ` +
                 `(size: ${this.queue.length}, enableMerge: ${this.enableMerge})`);
 
             this.processQueue();
@@ -53,9 +55,9 @@ class RateLimiter {
     /**
      * Merge data into existing queue item if possible.
      * @param {Array} dataArray - New data to merge.
-     * @param {Function} sendFunction - Function associated with the data.
-     * @param {Function} resolve - Promise resolve callback.
-     * @param {Function} reject - Promise reject callback.
+     * @param {function(object): Promise} sendFunction - Function associated with the data.
+     * @param {function(object)} resolve - Promise resolve callback.
+     * @param {function(object)} reject - Promise reject callback.
      */
     mergeIntoQueue (dataArray, sendFunction, resolve, reject) {
         let merged = false;
@@ -68,7 +70,7 @@ class RateLimiter {
                 const existingData = queueItem.data;
                 const mergedData = this.mergeData(existingData, dataArray);
 
-                log.debug(`RateLimiter: Merging data - ` +
+                debug(() => `RateLimiter: Merging data - ` +
                     `before: ${JSON.stringify(existingData)}, ` +
                     `after: ${JSON.stringify(mergedData)}`);
 
@@ -116,7 +118,7 @@ class RateLimiter {
 
         // Output statistics every 10 seconds
         if (elapsed >= 10000) {
-            log.info(`RateLimiter Stats (last ${(elapsed / 1000).toFixed(1)}s): ` +
+            debug(() => `RateLimiter Stats (last ${(elapsed / 1000).toFixed(1)}s): ` +
                 `sent=${this.stats.totalSent}, merged=${this.stats.totalMerged}, ` +
                 `queue=${this.queue.length}`);
 
@@ -195,7 +197,7 @@ class RateLimiter {
 
             const item = this.queue.shift();
             this.requestCount++;
-            log.debug(`RateLimiter: Sending request #${this.requestCount} ` +
+            debug(() => `RateLimiter: Sending request #${this.requestCount} ` +
                 `(queue remaining: ${this.queue.length})`);
 
             try {

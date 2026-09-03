@@ -1,3 +1,4 @@
+/* global process */
 /* istanbul ignore file */
 const MeshService = require('./mesh-service');
 

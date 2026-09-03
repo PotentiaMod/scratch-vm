@@ -184,6 +184,15 @@ const defaultBuiltinExtensions = {
 	utils: () => require('../extensions/scratch3_utils'),
 	gameutils: () => require('../extensions/scratch3_gameutils'),
 	se: () => require('../extensions/se'),
+	thingDemo: () => require('../extensions/scratch3_thingDemo'),
+	tinkibot: () => require('../extensions/tinkimo_tinkibot'),
+	mcremote: () => require('../extensions/scratch3_mcremote'),
+	// === Smalruby: Start of builtin extension entries ===
+	ruby: () => require('../extensions/smalruby_ruby'),
+    //mesh: () => require('../extensions/scratch3_mesh'),
+    //meshV2: () => require('../extensions/scratch3_mesh_v2'),
+    //smalrubotS1: () => require('../extensions/scratch3_smalrubot_s1'),
+    // === Smalruby: End of builtin extension entries ===
 	
 	// Mistium
 	patching: () => require('../extensions/mistwarp_patching'),

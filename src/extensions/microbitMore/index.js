@@ -12,7 +12,7 @@ import WebSerial from './serial-web';
  * Icon svg to be displayed at the left edge of each extension block, encoded as a data URI.
  * @type {string}
  */
-// eslint-disable-next-line max-len
+ 
 const blockIconURI = 'data:image/png;base64,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';
 
 const uint8ArrayToBase64 = array => window.btoa(String.fromCharCode(...array));
@@ -52,10 +52,10 @@ let extensionURL = 'https://microbit-more.github.io/dist/microbitMore.mjs';
  * @enum {number}
  */
 const MbitMoreHardwareVersion =
-{
-    MICROBIT_V1: 1,
-    MICROBIT_V2: 2
-};
+    {
+        MICROBIT_V1: 1,
+        MICROBIT_V2: 2
+    };
 
 /**
  * Communication route between Scratch and micro:bit
@@ -86,13 +86,13 @@ const BLECommand = {
  * @enum {number}
  */
 const MbitMorePinCommand =
-{
-    SET_OUTPUT: 0x01,
-    SET_PWM: 0x02,
-    SET_SERVO: 0x03,
-    SET_PULL: 0x04,
-    SET_EVENT: 0x05
-};
+    {
+        SET_OUTPUT: 0x01,
+        SET_PWM: 0x02,
+        SET_SERVO: 0x03,
+        SET_PULL: 0x04,
+        SET_EVENT: 0x05
+    };
 
 /**
  * Enum for command about gpio pins.
@@ -100,12 +100,12 @@ const MbitMorePinCommand =
  * @enum {number}
  */
 const MbitMoreDisplayCommand =
-{
-    CLEAR: 0x00,
-    TEXT: 0x01,
-    PIXELS_0: 0x02,
-    PIXELS_1: 0x03
-};
+    {
+        CLEAR: 0x00,
+        TEXT: 0x01,
+        PIXELS_0: 0x02,
+        PIXELS_1: 0x03
+    };
 
 /**
  * Enum for name of pull mode.
@@ -252,20 +252,20 @@ const MbitMoreButtonEventID = {
  * @enum {string}
  */
 const MbitMoreGestureName =
-{
-    TILT_UP: 'TILT_UP',
-    TILT_DOWN: 'TILT_DOWN',
-    TILT_LEFT: 'TILT_LEFT',
-    TILT_RIGHT: 'TILT_RIGHT',
-    FACE_UP: 'FACE_UP',
-    FACE_DOWN: 'FACE_DOWN',
-    FREEFALL: 'FREEFALL',
-    G3: 'G3',
-    G6: 'G6',
-    G8: 'G8',
-    SHAKE: 'SHAKE',
-    JUMPED: 'JUMPED'
-};
+    {
+        TILT_UP: 'TILT_UP',
+        TILT_DOWN: 'TILT_DOWN',
+        TILT_LEFT: 'TILT_LEFT',
+        TILT_RIGHT: 'TILT_RIGHT',
+        FACE_UP: 'FACE_UP',
+        FACE_DOWN: 'FACE_DOWN',
+        FREEFALL: 'FREEFALL',
+        G3: 'G3',
+        G6: 'G6',
+        G8: 'G8',
+        SHAKE: 'SHAKE',
+        JUMPED: 'JUMPED'
+    };
 
 /**
  * Enum for ID of gesture.
@@ -273,19 +273,19 @@ const MbitMoreGestureName =
  * @enum {string}
  */
 const MbitMoreGestureID =
-{
-    1: 'TILT_DOWN',
-    2: 'TILT_UP',
-    3: 'TILT_LEFT',
-    4: 'TILT_RIGHT',
-    5: 'FACE_UP',
-    6: 'FACE_DOWN',
-    7: 'FREEFALL',
-    8: 'G3',
-    9: 'G6',
-    10: 'G8',
-    11: 'SHAKE'
-};
+    {
+        1: 'TILT_DOWN',
+        2: 'TILT_UP',
+        3: 'TILT_LEFT',
+        4: 'TILT_RIGHT',
+        5: 'FACE_UP',
+        6: 'FACE_DOWN',
+        7: 'FREEFALL',
+        8: 'G3',
+        9: 'G6',
+        10: 'G8',
+        11: 'SHAKE'
+    };
 
 /**
  * Enum for name of tilt direction.
@@ -293,13 +293,13 @@ const MbitMoreGestureID =
  * @enum {string}
  */
 const MbitMoreTiltDirectionName =
-{
-    FRONT: 'FRONT',
-    BACK: 'BACK',
-    LEFT: 'LEFT',
-    RIGHT: 'RIGHT',
-    ANY: 'ANY'
-};
+    {
+        FRONT: 'FRONT',
+        BACK: 'BACK',
+        LEFT: 'LEFT',
+        RIGHT: 'RIGHT',
+        ANY: 'ANY'
+    };
 
 /**
  * Tilt direction to gesture name mapping
@@ -352,10 +352,10 @@ const MbitMoreSendingDataType = {
  * @enum {number}
  */
 const MbitMoreConfig =
-{
-    MIC: 0x01,
-    TOUCH: 0x02
-};
+    {
+        MIC: 0x01,
+        TOUCH: 0x02
+    };
 
 /**
  * Enum for sub-command about audio.
@@ -363,10 +363,10 @@ const MbitMoreConfig =
  * @enum {number}
  */
 const MbitMoreAudioCommand =
-{
-    STOP_TONE: 0x00,
-    PLAY_TONE: 0x01
-};
+    {
+        STOP_TONE: 0x00,
+        PLAY_TONE: 0x01
+    };
 
 /**
  * A time interval to wait (in milliseconds) before reporting to the BLE socket
@@ -468,7 +468,7 @@ class MbitMore {
 
         /**
          * The most recently received button events for each buttons.
-         * @type {Object}
+         * @type {object}
          * @private
          */
         this.buttonEvents = {};
@@ -478,7 +478,7 @@ class MbitMore {
 
         /**
          * The most recently received gesture events.
-         * @type {Object.<number, number>}
+         * @type {object}
          * @private
          */
         this.gestureEvents = {};
@@ -486,14 +486,14 @@ class MbitMore {
 
         /**
          * The most recently received events for each pin.
-         * @type {Object}
+         * @type {object}
          * @private
          */
         this._pinEvents = {};
 
         /**
          * The most recently received data from micro:bit.
-         * @type {Object}
+         * @type {object}
          * @private
          */
         this.receivedData = {};
@@ -611,7 +611,7 @@ class MbitMore {
      * @param {string} text - the text to display.
      * @param {number} delay - The time to delay between characters, in milliseconds.
      * @param {object} util - utility object provided by the runtime.
-     * @return {?Promise} a Promise that resolves when command sending done or undefined if this process was yield.
+     * @returns {?Promise} a Promise that resolves when command sending done or undefined if this process was yield.
      */
     displayText (text, delay, util) {
         const textLength = Math.min(18, text.length);
@@ -635,7 +635,7 @@ class MbitMore {
      * Send display pixcels command to micro:bit.
      * @param {Array.<Array.<number>>} matrix - pattern to display.
      * @param {object} util - utility object provided by the runtime.
-     * @return {?Promise} a Promise that resolves when command sending done or undefined if this process was yield.
+     * @returns {?Promise} a Promise that resolves when command sending done or undefined if this process was yield.
      */
     displayPixels (matrix, util) {
         const cmdSet = [
@@ -663,7 +663,7 @@ class MbitMore {
      * @param {number} pinIndex - index of the pin
      * @param {MbitMorePullModeID} pullMode - pull mode to set
      * @param {BlockUtility} util - utility object provided from the runtime
-     * @return {?Promise} a Promise that resolves when command sending done or undefined if this process was yield.
+     * @returns {?Promise} a Promise that resolves when command sending done or undefined if this process was yield.
      */
     setPullMode (pinIndex, pullMode, util) {
         this.config.pinMode[pinIndex] = MbitMorePinMode.INPUT;
@@ -684,7 +684,7 @@ class MbitMore {
      * @param {number} pinIndex - Index of pin.
      * @param {boolean} level - Value in digital (true = High)
      * @param {BlockUtility} util - utility object provided by the runtime.
-     * @return {?Promise} a Promise that resolves when command sending done or undefined if this process was yield.
+     * @returns {?Promise} a Promise that resolves when command sending done or undefined if this process was yield.
      */
     setPinOutput (pinIndex, level, util) {
         this.config.pinMode[pinIndex] = MbitMorePinMode.OUTPUT;
@@ -707,7 +707,7 @@ class MbitMore {
      * @param {number} pinIndex - index of the pin
      * @param {number} level - value of analog output [0..1024].
      * @param {BlockUtility} util - utility object provided by the runtime.
-     * @return {?Promise} a Promise that resolves when command sending done or undefined if this process was yield.
+     * @returns {?Promise} a Promise that resolves when command sending done or undefined if this process was yield.
      */
     setPinPWM (pinIndex, level, util) {
         this.config.pinMode[pinIndex] = MbitMorePinMode.PWM;
@@ -737,7 +737,7 @@ class MbitMore {
      * @param {number} center - the center point from which to calculate the lower and upper bounds.
      *                          '0' means default(1500).
      * @param {BlockUtility} util - utility object provided by the runtime.
-     * @return {?Promise} a Promise that resolves when command sending done or undefined if this process was yield.
+     * @returns {?Promise} a Promise that resolves when command sending done or undefined if this process was yield.
      */
     setPinServo (pinIndex, angle, range, center, util) {
         this.config.pinMode[pinIndex] = MbitMorePinMode.SERVO;
@@ -767,8 +767,7 @@ class MbitMore {
 
     /**
      * Read light level from the light sensor.
-     * @param {object} util - utility object provided by the runtime.
-     * @return {number} - value of the light level [0..255].
+     * @returns {number} - value of the light level [0..255].
      */
     readLightLevel () {
         if (!this.isConnected()) {
@@ -781,7 +780,7 @@ class MbitMore {
      * Update data of the analog input.
      * @param {number} pinIndex - index of the pin to get value.
      * @param {object} util - utility object provided by the runtime.
-     * @return {?Promise} a Promise that resolves value of analog input or undefined if this process was yield.
+     * @returns {?Promise} a Promise that resolves value of analog input or undefined if this process was yield.
      */
     readAnalogIn (pinIndex, util) {
         if (!this.isConnected()) {
@@ -822,7 +821,7 @@ class MbitMore {
 
     /**
      * Update data of digital level, light level, temperature, sound level.
-     * @return {Promise} - a Promise that resolves updated data holder.
+     * @returns {Promise} - a Promise that resolves updated data holder.
      */
     updateState () {
         if (!this.isConnected()) return Promise.resolve(this);
@@ -870,7 +869,7 @@ class MbitMore {
 
     /**
      * Read temperature (integer in celsius) from the micro:bit cpu.
-     * @return {number} - degrees of temperature [centigrade].
+     * @returns {number} - degrees of temperature [centigrade].
      */
     readTemperature () {
         if (!this.isConnected()) {
@@ -883,7 +882,7 @@ class MbitMore {
      * Configure microphone.
      * @param {boolean} use - true to use microphone.
      * @param {object} util - utility object provided by the runtime.
-     * @return {?Promise} - a Promise that resolves state of the microphone or undefined if the process was yield.
+     * @returns {?Promise} - a Promise that resolves state of the microphone or undefined if the process was yield.
      */
     configMic (use, util) {
         use = (use === true);
@@ -915,7 +914,7 @@ class MbitMore {
      * @param {number} frequency - wave frequency to play [Hz]
      * @param {number} volume laudness of tone [%]
      * @param {object} util - utility object provided by the runtime.
-     * @return {?Promise} - a Promise that resolves to send command or undefined if this process was yield.
+     * @returns {?Promise} - a Promise that resolves to send command or undefined if this process was yield.
      */
     playTone (frequency, volume, util) {
         if (!this.isConnected()) {
@@ -942,7 +941,7 @@ class MbitMore {
     /**
      * Stop playing tone on the speaker.
      * @param {object} util - utility object provided by the runtime.
-     * @return {?Promise} - a Promise that resolves to send command or undefined if this process was yield.
+     * @returns {?Promise} - a Promise that resolves to send command or undefined if this process was yield.
      */
     stopTone (util) {
         if (!this.isConnected()) {
@@ -959,7 +958,7 @@ class MbitMore {
 
     /**
      * Read sound level.
-     * @return {number} - level of loudness (0 .. 255).
+     * @returns {number} - level of loudness (0 .. 255).
      */
     readSoundLevel () {
         if (!this.isConnected()) {
@@ -970,7 +969,7 @@ class MbitMore {
 
     /**
      * Update data of acceleration, magnetic force.
-     * @return {Promise} - a Promise that resolves updated data holder.
+     * @returns {Promise} - a Promise that resolves updated data holder.
      */
     updateMotion () {
         if (!this.isConnected()) return Promise.resolve(this);
@@ -1017,7 +1016,7 @@ class MbitMore {
 
     /**
      * Read pitch [degrees] of the micro:bit heading direction.
-     * @return {number} - degree of pitch.
+     * @returns {number} - degree of pitch.
      */
     readPitch () {
         if (!this.isConnected()) {
@@ -1028,7 +1027,7 @@ class MbitMore {
 
     /**
      * Read roll [degrees] of the micro:bit heading direction.
-     * @return {number} - degree of roll.
+     * @returns {number} - degree of roll.
      */
     readRoll () {
         if (!this.isConnected()) {
@@ -1040,7 +1039,7 @@ class MbitMore {
     /**
      * Read the value of gravitational acceleration [milli-g] for the axis.
      * @param {AxisSymbol} axis - direction of acceleration.
-     * @return {number} - value of acceleration.
+     * @returns {number} - value of acceleration.
      */
     readAcceleration (axis) {
         if (!this.isConnected()) {
@@ -1060,7 +1059,7 @@ class MbitMore {
 
     /**
      * Read the angle (degrees) of heading direction from the north.
-     * @return {number} - degree of compass heading.
+     * @returns {number} - degree of compass heading.
      */
     readCompassHeading () {
         if (!this.isConnected()) {
@@ -1073,7 +1072,7 @@ class MbitMore {
     /**
      * Read value of magnetic force [micro teslas] for the axis.
      * @param {AxisSymbol} axis - direction of magnetic force.
-     * @return {number} - value of magnetic force.
+     * @returns {number} - value of magnetic force.
      */
     readMagneticForce (axis) {
         if (!this.isConnected()) {
@@ -1186,7 +1185,7 @@ class MbitMore {
 
     /**
      * Return true if connected to the micro:bit.
-     * @return {boolean} - whether the micro:bit is connected.
+     * @returns {boolean} - whether the micro:bit is connected.
      */
     isConnected () {
         let connected = false;
@@ -1201,7 +1200,7 @@ class MbitMore {
      * @param {object} command command to send.
      * @param {number} command.id ID of the command.
      * @param {Uint8Array} command.message Contents of the command.
-     * @return {Promise} a Promise that resolves when the data was sent and after send command interval.
+     * @returns {Promise} a Promise that resolves when the data was sent and after send command interval.
      */
     sendCommand (command) {
         const data = uint8ArrayToBase64(
@@ -1226,7 +1225,7 @@ class MbitMore {
      * Send multiple commands sequentially.
      * @param {Array.<{id: number, message: Uint8Array}>} commands array of command.
      * @param {BlockUtility} util - utility object provided by the runtime.
-     * @return {?Promise} a Promise that resolves when the all commands was sent.
+     * @returns {?Promise} a Promise that resolves when the all commands was sent.
      */
     sendCommandSet (commands, util) {
         if (!this.isConnected()) return Promise.resolve();
@@ -1337,24 +1336,24 @@ class MbitMore {
             }
             const event = dataView.getUint8(1);
             this._pinEvents[pinIndex][event] =
-            {
-                value: dataView.getUint32(2, true), // timesamp of the edge or duration of the pulse
-                timestamp: Date.now() // received time
-            };
+                {
+                    value: dataView.getUint32(2, true), // timesamp of the edge or duration of the pulse
+                    timestamp: Date.now() // received time
+                };
         } else if (dataFormat === MbitMoreDataFormat.DATA_NUMBER) {
             const label = new TextDecoder().decode(data.slice(0, 8).filter(char => (char !== 0)));
             this.receivedData[label] =
-            {
-                content: dataView.getFloat32(8, true),
-                timestamp: Date.now()
-            };
+                {
+                    content: dataView.getFloat32(8, true),
+                    timestamp: Date.now()
+                };
         } else if (dataFormat === MbitMoreDataFormat.DATA_TEXT) {
             const label = new TextDecoder().decode(data.slice(0, 8).filter(char => (char !== 0)));
             this.receivedData[label] =
-            {
-                content: new TextDecoder().decode(data.slice(8, 20).filter(char => (char !== 0))),
-                timestamp: Date.now()
-            };
+                {
+                    content: new TextDecoder().decode(data.slice(8, 20).filter(char => (char !== 0))),
+                    timestamp: Date.now()
+                };
         }
         this.resetConnectionTimeout();
     }
@@ -1370,7 +1369,7 @@ class MbitMore {
     /**
      * Return whether the pin value is high.
      * @param {number} pin - the pin to check.
-     * @return {boolean} - whether the pin is high or not.
+     * @returns {boolean} - whether the pin is high or not.
      */
     isPinHigh (pin) {
         const level = this.readDigitalLevel(pin);
@@ -1380,7 +1379,7 @@ class MbitMore {
     /**
      * Read digital input from the pin.
      * @param {number} pin - the pin to read.
-     * @return {number} - digital input value of the pin [0|1].
+     * @returns {number} - digital input value of the pin [0|1].
      */
     readDigitalLevel (pin) {
         if (!this.isConnected()) {
@@ -1392,7 +1391,7 @@ class MbitMore {
     /**
      * Return whether the button is pressed.
      * @param {string} buttonName - name of the button
-     * @return {boolean} - true when it is pressed
+     * @returns {boolean} - true when it is pressed
      */
     isButtonPressed (buttonName) {
         if (!this.isConnected()) {
@@ -1404,7 +1403,7 @@ class MbitMore {
     /**
      * Return whether the pin is touch-mode.
      * @param {number} pinIndex - indesx of the pin
-     * @return {boolean} - true when it is touch-mode
+     * @returns {boolean} - true when it is touch-mode
      */
     isPinTouchMode (pinIndex) {
         return this.config.pinMode[pinIndex] === MbitMorePinMode.TOUCH;
@@ -1414,7 +1413,7 @@ class MbitMore {
      * Configurate touch mode of the pin.
      * @param {number} pinIndex - index of the pin as a button.
      * @param {object} util - utility object provided by the runtime.
-     * @return {?Promise} - a Promise that resolves when configured or undefined if the process was yield.
+     * @returns {?Promise} - a Promise that resolves when configured or undefined if the process was yield.
      */
     configTouchPin (pinIndex, util) {
         if (!this.isConnected()) {
@@ -1445,7 +1444,7 @@ class MbitMore {
     /**
      * Return whether the touche-pin is touched.
      * @param {string} buttonName - ID to check.
-     * @return {boolean} - whether the id is high or not.
+     * @returns {boolean} - whether the id is high or not.
      */
     isTouched (buttonName) {
         if (!this.isConnected()) {
@@ -1458,7 +1457,7 @@ class MbitMore {
      * Return the last timestamp of the button event or undefined if the event is not received.
      * @param {MbitMoreButtonName} buttonName - name of the button to get the event.
      * @param {MbitMoreButtonEventName} eventName - name of event to get.
-     * @return {?number} Timestamp of the last event or null.
+     * @returns {?number} Timestamp of the last event or null.
      */
     getButtonEventTimestamp (buttonName, eventName) {
         if (this.buttonEvents[buttonName] && this.buttonEvents[buttonName][eventName]) {
@@ -1470,7 +1469,7 @@ class MbitMore {
     /**
      * Return the last timestamp of the gesture event or undefined if the event is not received.
      * @param {MbitMoreGestureName} gestureName - name of the event.
-     * @return {?number} Timestamp of the last event or null.
+     * @returns {?number} Timestamp of the last event or null.
      */
     getGestureEventTimestamp (gestureName) {
         if (this.gestureEvents[gestureName]) {
@@ -1483,7 +1482,7 @@ class MbitMore {
      * Return the last value of the pin event or undefined if the event was not received.
      * @param {number} pinIndex - index of the pin to get the event.
      * @param {MbitMorePinEvent} event - event to get.
-     * @return {?number} Timestamp of the last event or null.
+     * @returns {?number} Timestamp of the last event or null.
      */
     getPinEventValue (pinIndex, event) {
         if (this._pinEvents[pinIndex] && this._pinEvents[pinIndex][event]) {
@@ -1496,7 +1495,7 @@ class MbitMore {
      * Return the last timestamp of the pin event or undefined if the event was not received.
      * @param {number} pinIndex - index of the pin to get the event.
      * @param {MbitMorePinEvent} event - event to get.
-     * @return {?number} Timestamp of the last event or null.
+     * @returns {?number} Timestamp of the last event or null.
      */
     getPinEventTimestamp (pinIndex, event) {
         if (this._pinEvents[pinIndex] && this._pinEvents[pinIndex][event]) {
@@ -1510,7 +1509,7 @@ class MbitMore {
      * @param {number} pinIndex - Index of the pin to set.
      * @param {MbitMorePinEventType} eventType - Event type to set.
      * @param {BlockUtility} util - utility object provided by the runtime.
-     * @return {?Promise} a Promise that resolves when command sending done or undefined if this process was yield.
+     * @returns {?Promise} a Promise that resolves when command sending done or undefined if this process was yield.
      */
     listenPinEventType (pinIndex, eventType, util) {
         return this.sendCommandSet(
@@ -1530,7 +1529,7 @@ class MbitMore {
      * @param {string} label - label of the data [ascii]
      * @param {string} content - content of the data [ascii | number]
      * @param {BlockUtility} util - utility object provided by the runtime.
-     * @return {?Promise} a Promise that resolves when sending done or undefined if this process was yield.
+     * @returns {?Promise} a Promise that resolves when sending done or undefined if this process was yield.
      */
     sendData (label, content, util) {
         const labelData = new Array(8)
@@ -1569,7 +1568,7 @@ class MbitMore {
     /**
      * Return the last data with the label or undefined if no data received with the label.
      * @param {string} label - label to get.
-     * @return {?(number | string)} data of the label or null.
+     * @returns {?(number | string)} data of the label or null.
      */
     getDataLabeled (label) {
         if (this.receivedData[label]) {
@@ -1581,7 +1580,7 @@ class MbitMore {
     /**
      * Return the last timestamp of the data or undefined if the data is not received.
      * @param {string} label - label of the data.
-     * @return {?number} Timestamp of the last data or null.
+     * @returns {?number} Timestamp of the last data or null.
      */
     getDataTimestamp (label) {
         if (this.receivedData[label]) {
@@ -1598,7 +1597,7 @@ class MbitMoreBlocks {
 
     /**
      * A translation object which is used in this class.
-     * @param {FormatObject} formatter - translation object
+     * @param {FormatMessage} formatter - translation object
      */
     static set formatMessage (formatter) {
         formatMessage = formatter;
@@ -1606,7 +1605,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {string} - the name of this extension.
+     * @returns {string} - the name of this extension.
      */
     static get EXTENSION_NAME () {
         return formatMessage({
@@ -1617,7 +1616,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {string} - the ID of this extension.
+     * @returns {string} - the ID of this extension.
      */
     static get EXTENSION_ID () {
         return EXTENSION_ID;
@@ -1640,7 +1639,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {array} - text and values for each gestures menu element
+     * @returns {Array} - text and values for each gestures menu element
      */
     get GESTURES_MENU () {
         return [
@@ -1760,7 +1759,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {array} - text and values for each tilt direction menu element
+     * @returns {Array} - text and values for each tilt direction menu element
      */
     get TILT_DIRECTION_MENU () {
         return [
@@ -1808,7 +1807,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {array} - text and values for each tilt angle direction menu element
+     * @returns {Array} - text and values for each tilt angle direction menu element
      */
     get TILT_ANGLE_DIRECTION_MENU () {
         return [
@@ -1848,7 +1847,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {array} - text and values for each buttons menu element
+     * @returns {Array} - text and values for each buttons menu element
      */
     get BUTTON_ID_MENU () {
         return [
@@ -1872,7 +1871,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {array} - Menu items for button event selector.
+     * @returns {Array} - Menu items for button event selector.
      */
     get BUTTON_EVENT_MENU () {
         return [
@@ -1929,7 +1928,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {array} - text and values for each buttons menu element
+     * @returns {Array} - text and values for each buttons menu element
      */
     get TOUCH_ID_MENU () {
         return [
@@ -1957,7 +1956,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {array} - Menu items for touch pin selector (P0, P1, P2).
+     * @returns {Array} - Menu items for touch pin selector (P0, P1, P2).
      */
     get TOUCH_PIN_ID_MENU () {
         return [
@@ -1977,7 +1976,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {array} - Menu items for touch event selector.
+     * @returns {Array} - Menu items for touch event selector.
      */
     get TOUCH_EVENT_MENU () {
         return [
@@ -2113,7 +2112,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {array} - text and values for each pin mode menu element
+     * @returns {Array} - text and values for each pin mode menu element
      */
     get PIN_MODE_MENU () {
         return [
@@ -2145,7 +2144,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {array} - Menu items for event selector.
+     * @returns {Array} - Menu items for event selector.
      */
     get PIN_EVENT_MENU () {
         return [
@@ -2185,7 +2184,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {array} - Menu items for event selector.
+     * @returns {Array} - Menu items for event selector.
      */
     get PIN_EVENT_TIMESTAMP_MENU () {
         return [
@@ -2225,7 +2224,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {array} - Menu items for event listening.
+     * @returns {Array} - Menu items for event listening.
      */
     get PIN_EVENT_TYPE_MENU () {
         return [
@@ -2257,7 +2256,7 @@ class MbitMoreBlocks {
     }
 
     /**
-     * @return {array} - Menu items for connection state.
+     * @returns {Array} - Menu items for connection state.
      */
     get CONNECTION_STATE_MENU () {
         return [
@@ -2300,13 +2299,13 @@ class MbitMoreBlocks {
 
         /**
          * The previous timestamps of button events.
-         * @type {Object.<number, Object.<number, number>>}
+         * @type {object}
          */
         this.prevButtonEvents = {};
 
         /**
          * The previous timestamps of gesture events.
-         * @type {Object.<number, number>}
+         * @type {object}
          */
         this.prevGestureEvents = {};
 
@@ -2336,13 +2335,13 @@ class MbitMoreBlocks {
 
         /**
          * The previous timestamps of pin events.
-         * @type {Object.<number, Object.<number, number>>}
+         * @type {object}
          */
         this.prevPinEvents = {};
 
         /**
          * The previous timestamps of messages.
-         * @type {Object.<number, Object>}
+         * @type {object}
          */
         this.prevReceivedData = {};
 
@@ -3053,7 +3052,7 @@ class MbitMoreBlocks {
      * @param {object} args - the block's arguments.
      * @param {string} args.NAME - name of the button.
      * @param {string} args.EVENT - name of event to catch.
-     * @return {boolean} - true if the event raised.
+     * @returns {boolean} - true if the event raised.
      */
     whenButtonEvent (args) {
         if (!this.updateLastButtonEventTimer) {
@@ -3075,8 +3074,7 @@ class MbitMoreBlocks {
      * Test whether the A or B button is pressed
      * @param {object} args - the block's arguments.
      * @param {string} args.NAME - name of the button.
-     * @param {object} util - utility object provided by the runtime.
-     * @return {boolean} - whether the button is pressed or not.
+     * @returns {boolean} - whether the button is pressed or not.
      */
     isButtonPressed (args) {
         const buttonName = args.NAME;
@@ -3089,7 +3087,7 @@ class MbitMoreBlocks {
      * @param {object} args - the block's arguments.
      * @param {string} args.PIN - name of the pin.
      * @param {object} util - utility object provided by the runtime.
-     * @return {boolean|Promise<boolean>|undefined} - true if the event raised or promise that or undefinde if yield.
+     * @returns {boolean|Promise<boolean>|undefined} - true if the event raised or promise that or undefinde if yield.
      */
     whenPinConnected (args, util) {
         return this.whenTouchEvent({
@@ -3104,7 +3102,7 @@ class MbitMoreBlocks {
      * @param {string} args.NAME - name of the pin to catch.
      * @param {string} args.EVENT - event to catch.
      * @param {object} util - utility object provided by the runtime.
-     * @return {boolean|Promise<boolean>|undefined} - true if the event raised or promise that or undefinde if yield.
+     * @returns {boolean|Promise<boolean>|undefined} - true if the event raised or promise that or undefinde if yield.
      */
     whenTouchEvent (args, util) {
         const buttonName = args.NAME;
@@ -3124,7 +3122,7 @@ class MbitMoreBlocks {
      * @param {object} args - the block's arguments.
      * @param {string} args.NAME - name of the pin.
      * @param {object} util - utility object provided by the runtime.
-     * @return {boolean|Promise<boolean>|undefined} - true if touched or promise that or undefinde if yield.
+     * @returns {boolean|Promise<boolean>|undefined} - true if touched or promise that or undefinde if yield.
      */
     isPinTouched (args, util) {
         const buttonName = args.NAME;
@@ -3155,7 +3153,7 @@ class MbitMoreBlocks {
      * Test whether the gesture event raised.
      * @param {object} args - the block's arguments.
      * @param {string} args.GESTURE - name of the gesture.
-     * @return {boolean} - true if the event raised.
+     * @returns {boolean} - true if the event raised.
      */
     whenGesture (args) {
         if (this.updateLastGestureEventTimer === null) {
@@ -3274,7 +3272,7 @@ class MbitMoreBlocks {
      * Test whether the micro:bit is tilted to the selected direction.
      * @param {object} args - the block's arguments.
      * @param {string} args.DIRECTION - direction of tilt.
-     * @return {boolean} - true if the condition is met.
+     * @returns {boolean} - true if the condition is met.
      */
     whenTilted (args) {
         if (!this.updateLastGestureEventTimer) {
@@ -3309,7 +3307,7 @@ class MbitMoreBlocks {
      * Test whether the micro:bit is tilted to the selected direction.
      * @param {object} args - the block's arguments.
      * @param {string} args.DIRECTION - direction of tilt.
-     * @return {boolean} - true if the micro:bit is tilted.
+     * @returns {boolean} - true if the micro:bit is tilted.
      */
     isTilted (args) {
         switch (args.DIRECTION) {
@@ -3332,7 +3330,7 @@ class MbitMoreBlocks {
      * Get the tilt angle of the selected direction.
      * @param {object} args - the block's arguments.
      * @param {string} args.DIRECTION - direction of tilt.
-     * @return {number} - the tilt angle.
+     * @returns {number} - the tilt angle.
      */
     getTiltAngle (args) {
         switch (args.DIRECTION) {
@@ -3354,7 +3352,7 @@ class MbitMoreBlocks {
      * @param {object} args - the block's arguments.
      * @param {string} args.MATRIX - the pattern of the pixels.
      * @param {object} util - utility object provided by the runtime.
-     * @return {?Promise} - a Promise that resolves after a tick or undefinde if yield.
+     * @returns {?Promise} - a Promise that resolves after a tick or undefinde if yield.
      */
     displayMatrix (args, util) {
         const matrixString = Cast.toString(args.MATRIX)
@@ -3370,7 +3368,7 @@ class MbitMoreBlocks {
             // 0|1 pattern.
             matrixData = matrixString.replace(/\s/g, '')
                 .split('');
-            // eslint-disable-next-line no-confusing-arrow
+             
             matrixData = matrixData.map(level => (level === '0' ? 0 : 100));
         }
         matrixData = matrixData.map(brightness =>
@@ -3392,7 +3390,7 @@ class MbitMoreBlocks {
      * @param {object} args - the block's arguments.
      * @param {string} args.TEXT - the text to display.
      * @param {object} util - utility object provided by the runtime.
-     * @return {?Promise} - a Promise that resolves after a tick or undefined if yield.
+     * @returns {?Promise} - a Promise that resolves after a tick or undefined if yield.
      */
     display (args, util) {
         const text = Cast.toString(args.TEXT);
@@ -3407,6 +3405,7 @@ class MbitMoreBlocks {
                 return new Promise(resolve => setTimeout(resolve, delay * (textLength + 5)));
             });
         }
+        return null;
     }
 
     /**
@@ -3416,7 +3415,7 @@ class MbitMoreBlocks {
      * @param {string} args.TEXT - The contents to display.
      * @param {number} args.DELAY - The time to delay between characters, in milliseconds.
      * @param {object} util - utility object provided by the runtime.
-     * @return {Promise} - a Promise that resolves after the text is done printing or undefinde if yield.
+     * @returns {Promise} - a Promise that resolves after the text is done printing or undefinde if yield.
      * Note the limit is 18 characters
      * The print time is calculated by multiplying the number of horizontal pixels
      * by the default scroll delay of 120ms.
@@ -3437,7 +3436,7 @@ class MbitMoreBlocks {
         let delay = parseInt(args.DELAY, 10);
         delay = isNaN(delay) ? 120 : delay; // Use default delay if NaN.
         const resultPromise = this._peripheral.displayText(text, delay, util);
-        if (!resultPromise) return; // This thread was yielded.
+        if (!resultPromise) return null; // This thread was yielded.
         const yieldDelay = delay * ((6 * text.length) + 6);
         return new Promise(resolve => {
             setTimeout(() => {
@@ -3450,7 +3449,7 @@ class MbitMoreBlocks {
      * Turn all 5x5 matrix LEDs off.
      * @param {object} args - the block's arguments.
      * @param {object} util - utility object provided by the runtime.
-     * @return {Promise} - a Promise that resolves after a tick or undefinde if yield.
+     * @returns {Promise} - a Promise that resolves after a tick or undefinde if yield.
      */
     displayClear (args, util) {
         const matrix = [
@@ -3467,7 +3466,7 @@ class MbitMoreBlocks {
      * Test the selected pin is high as digital.
      * @param {object} args - the block's arguments.
      * @param {number} args.PIN - pin ID.
-     * @return {boolean} - true if the pin is high.
+     * @returns {boolean} - true if the pin is high.
      */
     isPinHigh (args) {
         return this._peripheral.isPinHigh(parseInt(args.PIN, 10));
@@ -3475,8 +3474,7 @@ class MbitMoreBlocks {
 
     /**
      * Get amount of light (0 - 255) on the LEDs.
-     * @param {object} args - the block's arguments.
-     * @return {number} - light level.
+     * @returns {number} - light level.
      */
     getLightLevel () {
         const level = this._peripheral.readLightLevel();
@@ -3485,8 +3483,7 @@ class MbitMoreBlocks {
 
     /**
      * Get temperature (integer in celsius) of micro:bit.
-     * @param {object} args - the block's arguments.
-     * @return {number} - value of temperature [centigrade].
+     * @returns {number} - value of temperature [centigrade].
      */
     getTemperature () {
         return this._peripheral.readTemperature();
@@ -3496,11 +3493,11 @@ class MbitMoreBlocks {
      * Get loudness of the sound from microphone on micro:bit.
      * @param {object} args - the block's arguments.
      * @param {object} util - utility object provided by the runtime.
-     * @return {Promise} - a Promise that resolves digital input value of the pin or undefinde if yield.
+     * @returns {Promise} - a Promise that resolves digital input value of the pin or undefinde if yield.
      */
     getSoundLevel (args, util) {
         const resultPromise = this._peripheral.configMic(true, util);
-        if (!resultPromise) return; // This thread was yielded.
+        if (!resultPromise) return null; // This thread was yielded.
         return resultPromise
             .then(micState => {
                 if (micState) {
@@ -3512,7 +3509,7 @@ class MbitMoreBlocks {
 
     /**
      * Return angle from the north to the micro:bit heading direction.
-     * @return {number} - degree of compass heading angle from the north (0 - 359 degrees).
+     * @returns {number} - degree of compass heading angle from the north (0 - 359 degrees).
      */
     getCompassHeading () {
         return this._peripheral.readCompassHeading();
@@ -3523,12 +3520,12 @@ class MbitMoreBlocks {
      * @param {object} args - the block's arguments.
      * @param {number} args.PIN - pin ID.
      * @param {object} util - utility object provided by the runtime.
-     * @return {?Promise} a Promise that resolves analog input value of the pin or undefined if this process was yield.
+     * @returns {?Promise} a Promise that resolves analog input value of the pin or undefined if this process was yield.
      */
     getAnalogValue (args, util) {
         const pinIndex = parseInt(args.PIN, 10);
         const resultPromise = this._peripheral.readAnalogIn(pinIndex, util);
-        if (!resultPromise) return;
+        if (!resultPromise) return null;
         return resultPromise.then(level => Math.round(level * 100 * 10 / 1024) / 10);
     }
 
@@ -3536,7 +3533,7 @@ class MbitMoreBlocks {
      * Return digital value of the pin.
      * @param {object} args - the block's arguments.
      * @param {number} args.PIN - pin ID.
-     * @return {number} - digital input value of the pin.
+     * @returns {number} - digital input value of the pin.
      */
     getDigitalValue (args) {
         return this._peripheral.readDigitalLevel(parseInt(args.PIN, 10));
@@ -3545,14 +3542,14 @@ class MbitMoreBlocks {
     /**
      * Send data with label.
      * @param {object} args - the block's arguments.
-     * @property {string} args.LABEL - label of the data.
-     * @property {string} args.DATA - content of the data.
+     * @param {string} args.LABEL - label of the data.
+     * @param {string} args.DATA - content of the data.
      * @param {object} util - utility object provided by the runtime.
-     * @return {?Promise} - a Promise that resolves when the process was done or undefined if this process was yield.
+     * @returns {?Promise} - a Promise that resolves when the process was done or undefined if this process was yield.
      */
     sendData (args, util) {
         if (args.LABEL.length <= 0) {
-            return;
+            return null;
         }
         return this._peripheral.sendData(args.LABEL, args.DATA, util);
     }
@@ -3563,7 +3560,7 @@ class MbitMoreBlocks {
      * @param {number} args.PIN - pin ID.
      * @param {MbitMorePullModeName} args.MODE - mode to set.
      * @param {BlockUtility} util - utility object provided by the runtime.
-     * @return {promise | undefined} - a Promise that resolves when the command was sent
+     * @returns {Promise | undefined} - a Promise that resolves when the command was sent
      *                                 or undefined if this process was yield.
      */
     setPullMode (args, util) {
@@ -3576,7 +3573,7 @@ class MbitMoreBlocks {
      * @param {number} args.PIN - pin ID.
      * @param {boolean | string | number} args.LEVEL - value to be set.
      * @param {object} util - utility object provided by the runtime.
-     * @return {promise | undefined} - a Promise that resolves when the command was sent
+     * @returns {Promise | undefined} - a Promise that resolves when the command was sent
      *                                 or undefined if this process was yield.
      */
     setDigitalOut (args, util) {
@@ -3597,7 +3594,7 @@ class MbitMoreBlocks {
      * @param {number} args.PIN - pin ID.
      * @param {number} args.LEVEL - value[%] for PWM.
      * @param {BlockUtility} util - utility object provided by the runtime.
-     * @return {promise | undefined} - a Promise that resolves when the command was sent
+     * @returns {Promise | undefined} - a Promise that resolves when the command was sent
      *                                 or undefined if this process was yield.
      */
     setAnalogOut (args, util) {
@@ -3619,7 +3616,7 @@ class MbitMoreBlocks {
      * @param {object} args - the block's arguments.
      * @param {number} args.PIN - pin ID.
      * @param {BlockUtility} util - utility object provided by the runtime.
-     * @return {promise | undefined} - a Promise that resolves when the command was sent
+     * @returns {Promise | undefined} - a Promise that resolves when the command was sent
      *                                 or undefined if this process was yield.
      */
     setServo (args, util) {
@@ -3640,7 +3637,7 @@ class MbitMoreBlocks {
      * Return the value of magnetic force [micro tesla] on axis.
      * @param {object} args - the block's arguments.
      * @property {AxisSymbol} AXIS - the axis (X, Y, Z, Absolute).
-     * @return {number} - value of magnetic force.
+     * @returns {number} - value of magnetic force.
      */
     getMagneticForce (args) {
         return this._peripheral.readMagneticForce(args.AXIS);
@@ -3650,7 +3647,7 @@ class MbitMoreBlocks {
      * Return the value of acceleration on the specified axis.
      * @param {object} args - the block's arguments.
      * @param {AxisSymbol} args.AXIS - direction to get.
-     * @return {number} - value of acceleration.
+     * @returns {number} - value of acceleration.
      */
     getAcceleration (args) {
         return this._peripheral.readAcceleration(args.AXIS);
@@ -3658,7 +3655,7 @@ class MbitMoreBlocks {
 
     /**
      * Return pitch [degrees] of the micro:bit heading direction.
-     * @return {number} - degree of pitch.
+     * @returns {number} - degree of pitch.
      */
     getPitch () {
         return this._peripheral.readPitch();
@@ -3666,7 +3663,7 @@ class MbitMoreBlocks {
 
     /**
      * Read roll [degrees] of the micro:bit heading direction.
-     * @return {number} - degree of roll.
+     * @returns {number} - degree of roll.
      */
     getRoll () {
         return this._peripheral.readRoll();
@@ -3679,7 +3676,7 @@ class MbitMoreBlocks {
      * @param {string} args.FREQ - wave frequency to play
      * @param {string} args.VOL laudness of tone
      * @param {object} util - utility object provided by the runtime.
-     * @return {promise | undefined} - a Promise that resolves when the command was sent
+     * @returns {Promise | undefined} - a Promise that resolves when the command was sent
      *                                 or undefined if this process was yield.
      */
     playTone (args, util) {
@@ -3693,7 +3690,7 @@ class MbitMoreBlocks {
      * Stop playing tone on the speaker.
      * @param {object} args - the block's arguments.
      * @param {object} util - utility object provided by the runtime.
-     * @return {promise | undefined} - a Promise that resolves when the command was sent
+     * @returns {Promise | undefined} - a Promise that resolves when the command was sent
      *                                 or undefined if this process was yield.
      */
     stopTone (args, util) {
@@ -3706,20 +3703,19 @@ class MbitMoreBlocks {
      * @param {number} args.PIN - pin ID.
      * @param {string} args.EVENT_TYPE - event to listen.
      * @param {BlockUtility} util - utility object provided by the runtime.
-     * @return {promise | undefined} - a Promise that resolves when the command was sent
+     * @returns {Promise | undefined} - a Promise that resolves when the command was sent
      *                                 or undefined if this process was yield.
-    */
+     */
     listenPinEventType (args, util) {
         return this._peripheral.listenPinEventType(parseInt(args.PIN, 10), MbitMorePinEventType[args.EVENT_TYPE], util);
     }
 
     /**
-     * Rerutn value (timestamp of the edge or duration of the pulse) of the event or 0 when the event is not received.
+     * Return value (timestamp of the edge or duration of the pulse) of the event or 0 when the event is not received.
      * @param {object} args - the block's arguments.
      * @param {number} args.PIN - pin ID.
      * @param {string} args.EVENT - event value to get.
-     * @param {object} util - utility object provided by the runtime.
-     * @return {number} - timestamp of the event or 0.
+     * @returns {number} - timestamp of the event or 0.
      */
     getPinEventValue (args) {
         const value = this._peripheral.getPinEventValue(parseInt(args.PIN, 10), MbitMorePinEvent[args.EVENT]);
@@ -3746,7 +3742,7 @@ class MbitMoreBlocks {
      * Return the previous timestamp of the pin event or undefined if the event was not received.
      * @param {number} pinIndex - index of the pin to get the event.
      * @param {MbitMorePinEvent} eventID - ID of the event to get.
-     * @return {?number} Timestamp of the previous event or null.
+     * @returns {?number} Timestamp of the previous event or null.
      */
     getPrevPinEventTimestamp (pinIndex, eventID) {
         if (this.prevPinEvents[pinIndex] && this.prevPinEvents[pinIndex][eventID]) {
@@ -3760,7 +3756,7 @@ class MbitMoreBlocks {
      * @param {object} args - the block's arguments.
      * @param {number} args.PIN - pin ID.
      * @param {string} args.EVENT - event to catch.
-     * @return {boolean} - true if the event raised.
+     * @returns {boolean} - true if the event raised.
      */
     whenPinEvent (args) {
         if (!this.updateLastPinEventTimer) {
@@ -3783,7 +3779,7 @@ class MbitMoreBlocks {
      * Rerutn the last content of the messge or undefined if the data which has the label is not received.
      * @param {object} args - the block's arguments.
      * @param {number} args.LABEL - label of the data.
-     * @return {?(string | number)} - content of the data or empty string when the data was null
+     * @returns {?(string | number)} - content of the data or empty string when the data was null
      */
     getDataLabeled (args) {
         const data = this._peripheral.getDataLabeled(args.LABEL);
@@ -3809,7 +3805,7 @@ class MbitMoreBlocks {
     /**
      * Return the previous timestamp of the data or undefined if the data was not received.
      * @param {string} label - label of the data.
-     * @return {?number} Timestamp of the previous data or null.
+     * @returns {?number} Timestamp of the previous data or null.
      */
     getPrevReceivedDataTimestamp (label) {
         if (this.prevReceivedData[label]) {
@@ -3822,7 +3818,7 @@ class MbitMoreBlocks {
      * Test whether the data received which had the label.
      * @param {object} args - the block's arguments.
      * @param {number} args.LABEL - label of the data.
-     * @return {boolean} - true if the data received.
+     * @returns {boolean} - true if the data received.
      */
     whenDataReceived (args) {
         if (!this.updateLastDataTimer) {
@@ -3843,8 +3839,8 @@ class MbitMoreBlocks {
     /**
      * Test whether a micro:bit connected.
      * @param {object} args - the block's arguments.
-     * @property {string} args.STATE - the state of connection to check.
-     * @return {boolean} - true if the state is matched.
+     * @param {string} args.STATE - the state of connection to check.
+     * @returns {boolean} - true if the state is matched.
      */
     whenConnectionChanged (args) {
         const state = (args.STATE === 'connected');

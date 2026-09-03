@@ -1,4 +1,5 @@
 const log = require('../../util/log');
+
 const uint8ArrayToBase64 = array => window.btoa(String.fromCharCode(...array));
 const base64ToUint8Array = base64 => {
     const raw = window.atob(base64);
@@ -56,8 +57,8 @@ class WebSerial {
      * @param {Runtime} runtime - the Runtime for sending/receiving GUI update events.
      * @param {string} extensionId - the id of the extension using this object.
      * @param {object} peripheralOptions - the list of options for peripheral discovery.
-     * @param {function} connectCallback - a callback for connection.
-     * @param {function} resetCallback - a callback for resetting extension state.
+     * @param {function(): void} connectCallback - a callback for connection.
+     * @param {function(): void} [resetCallback] - a callback for resetting extension state.
      */
     constructor (runtime, extensionId, peripheralOptions, connectCallback, resetCallback = null) {
         /**
@@ -94,7 +95,7 @@ class WebSerial {
     /**
      * Request connection to the peripheral.
      * Request user to choose a device, and then connect it automatically.
-     * @return {Promise} - a Promise which will resolved when a serial-port was selected.
+     * @returns {Promise} - a Promise which will resolved when a serial-port was selected.
      */
     requestPeripheral () {
         let promise = Promise.resolve();
@@ -178,7 +179,7 @@ class WebSerial {
                 log.log(`SerialPort: open`);
                 this.state = 'open';
                 this.writer = this.port.writable.getWriter();
-                // eslint-disable-next-line no-undef
+                 
                 const chValueTransformStream = new TransformStream(new ChValueTransformer());
                 this.readableStreamClosed = this.port.readable.pipeTo(chValueTransformStream.writable);
                 this.reader = chValueTransformStream.readable.getReader();
@@ -195,7 +196,7 @@ class WebSerial {
     /**
      * Disconnect from the device and clean up.
      * Then emit the connection state by the runtime.
-     * @return {Promise} - a Promise which will resolve when the serial-port was disconnected.
+     * @returns {Promise} - a Promise which will resolve when the serial-port was disconnected.
      */
     async disconnect () {
         if (this.state !== 'open') return;
@@ -214,7 +215,7 @@ class WebSerial {
     }
 
     /**
-     * @return {bool} whether the peripheral is connected.
+     * @returns {boolean} whether the peripheral is connected.
      */
     isConnected () {
         return this.state === 'open';
@@ -290,9 +291,9 @@ class WebSerial {
      * Start receiving notifications from the device.
      * @param {number} _serviceId - the ble service to read. (ignore it for serial-port)
      * @param {number} characteristicId - the ble characteristic to get notifications from.
-     * @param {function?} onCharacteristicChanged - callback for characteristic change notifications
+     * @param {function(string): void} [onCharacteristicChanged] - callback for characteristic change notifications
      *  like function(base64message).
-     * @return {Promise} - a Promise which will resolve when requested start notification.
+     * @returns {Promise} - a Promise which will resolve when requested start notification.
      */
     startNotifications (_serviceId, characteristicId, onCharacteristicChanged = null) {
         // Connected device will start necessary notifications automatically on serial-port.
@@ -341,9 +342,9 @@ class WebSerial {
      * @param {number} serviceId - the ble service to read.
      * @param {number} characteristicId - the ble characteristic to read.
      * @param {boolean} optStartNotifications - whether to start receiving characteristic change notifications.
-     * @param {function} onCharacteristicChanged - callback for characteristic change notifications
+     * @param {function(string): void} [onCharacteristicChanged] - callback for characteristic change notifications
      *  like function(base64message).
-     * @return {Promise} - a Promise from the remote read request which resolve {message: base64string}.
+     * @returns {Promise} - a Promise from the remote read request which resolve {message: base64string}.
      */
     read (serviceId, characteristicId, optStartNotifications = false, onCharacteristicChanged = null) {
         const ch = SERIAL_CH_ID[characteristicId];
@@ -448,9 +449,9 @@ class WebSerial {
      * @param {string} message - the message to send.
      * @param {string} encoding - the message encoding type.
      * @param {boolean} withResponse - if true, resolve after peripheral's response. Always true for serial port.
-     * @return {Promise} - a Promise which will resolve true when success to write or reject with 'no response'
+     * @returns {Promise} - a Promise which will resolve true when success to write or reject with 'no response'
      */
-    // eslint-disable-next-line no-unused-vars
+     
     write (serviceId, characteristicId, message, encoding = null, withResponse = null) {
         withResponse = false; // true for noise tolerance on serial-port.
         const value = (encoding === 'base64') ? base64ToUint8Array(message) : message;

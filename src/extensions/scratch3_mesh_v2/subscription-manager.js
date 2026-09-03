@@ -1,0 +1,118 @@
+/* global process */
+const log = require('../../util/log');
+const debugLogger = require('../../util/debug-logger');
+const debug = debugLogger(process.env.DEBUG);
+const { ON_MESSAGE_IN_GROUP } = require('./gql-operations');
+
+/**
+ * WebSocket subscription manager. AppSync の onMessageInGroup を購読し、
+ * 受信した nodeStatus / batchEvent / groupDissolve をディスパッチする。
+ *
+ * `handleDataUpdate` は subscription / pollGroupData / fetchAllNodesData の
+ * 3 経路から呼ばれる共通の取り込み口。
+ *
+ * Mixed into MeshV2Service.prototype.
+ */
+const SubscriptionManagerMixin = {
+    startSubscriptions() {
+        if (!this.groupId || !this.client) return;
+
+        const variables = {
+            groupId: this.groupId,
+            domain: this.domain,
+        };
+
+        const messageSub = this.client
+            .subscribe({
+                query: ON_MESSAGE_IN_GROUP,
+                variables,
+            })
+            .subscribe({
+                next: result => {
+                    const message = result.data.onMessageInGroup;
+                    if (!message) return;
+
+                    // MeshMessage has three fields: nodeStatus, batchEvent, groupDissolve
+                    // Only one field will be non-null per message
+                    // Count all received messages for accurate cost estimation (AppSync delivers to sender too)
+                    if (message.nodeStatus) {
+                        this.costTracking.dataUpdateReceived++;
+                        this.handleDataUpdate(message.nodeStatus);
+                    } else if (message.batchEvent) {
+                        this.costTracking.batchEventReceived++;
+                        this.handleBatchEvent(message.batchEvent);
+                    } else if (message.groupDissolve) {
+                        this.costTracking.dissolveReceived++;
+                        debug(() => 'Mesh V2: Group dissolved by host');
+                        this.cleanupAndDisconnect();
+                    } else {
+                        log.warn('Mesh V2: Received message with all fields null');
+                    }
+                },
+                error: err => log.error(`Mesh V2: Subscription error: ${err}`),
+            });
+
+        this.subscriptions.push(messageSub);
+    },
+
+    stopSubscriptions() {
+        this.subscriptions.forEach(sub => sub.unsubscribe());
+        this.subscriptions = [];
+    },
+
+    handleDataUpdate(nodeStatus) {
+        // Issue #707: store data from every node, including this node itself.
+        // AppSync echoes the sender's own nodeStatus back; we keep it so the
+        // "sensor value" block can read this node's own global variables, treating
+        // self and peers uniformly (all values arrive via the network with server
+        // timestamps). A one-time UI notice informs users whose project has a
+        // global variable name colliding with a sensor value lookup.
+        if (!nodeStatus) return;
+
+        const nodeId = nodeStatus.nodeId;
+        if (!this.remoteData[nodeId]) {
+            this.remoteData[nodeId] = {};
+        }
+
+        // Use server timestamp with fallback to current time
+        const serverTimestamp = nodeStatus.timestamp
+            ? new Date(nodeStatus.timestamp).getTime()
+            : (log.warn('Mesh V2: Missing server timestamp, using client time'), Date.now());
+
+        nodeStatus.data.forEach(item => {
+            // Issue #713: own values always originate locally (seeded by
+            // sendData with a client timestamp), so an echo can never carry
+            // newer information than the local seed.
+            // - Same value: store with the server timestamp, normalizing the
+            //   seed's client-clock timestamp into the server time domain so
+            //   cross-node comparison self-heals despite clock skew.
+            // - Different value: it is the echo of an OLDER local write
+            //   (rapid successive writes) — keep the seed untouched.
+            if (nodeId === this.meshId) {
+                const existing = this.remoteData[nodeId][item.key];
+                if (existing && existing.value !== item.value) {
+                    return;
+                }
+            }
+            this.remoteData[nodeId][item.key] = {
+                value: item.value,
+                timestamp: serverTimestamp,
+            };
+        });
+    },
+
+    handleBatchEvent(batchEvent) {
+        if (!batchEvent || batchEvent.firedByNodeId === this.meshId) return;
+
+        const events = batchEvent.events
+            ? batchEvent.events.filter(event => event.firedByNodeId !== this.meshId)
+            : [];
+        if (events.length === 0) return;
+
+        debug(() => `Mesh V2: Received ${events.length} events from ${batchEvent.firedByNodeId}`);
+
+        this._queueEventsForPlayback(events);
+    },
+};
+
+module.exports = { SubscriptionManagerMixin };

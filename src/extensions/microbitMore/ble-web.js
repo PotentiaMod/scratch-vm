@@ -20,13 +20,13 @@ class WebBLE {
     constructor (runtime, extensionId, peripheralOptions, connectCallback, resetCallback = null) {
         /**
          * Remote device which have been connected.
-         * @type {BluetoothDevice}
+         * @type {object}
          */
         this._device = null;
 
         /**
          * Remote GATT server
-         * @type {BluetoothRemoteGATTServer}
+         * @type {object}
          */
         this._server = null;
 
@@ -96,7 +96,7 @@ class WebBLE {
     }
 
     /**
-     * @return {bool} whether the peripheral is connected.
+     * @returns {boolean} whether the peripheral is connected.
      */
     isConnected () {
         if (!this._server) return false;
@@ -109,7 +109,7 @@ class WebBLE {
      * @param {number} characteristicId - the ble characteristic to get notifications from.
      * @param {object} onCharacteristicChanged - callback for characteristic change notifications
      *  like function(base64message).
-     * @return {Promise} - a promise from the remote startNotifications request.
+     * @returns {Promise} - a promise from the remote startNotifications request.
      */
     startNotifications (serviceId, characteristicId, onCharacteristicChanged = null) {
         return this._server.getPrimaryService(serviceId)
@@ -131,7 +131,7 @@ class WebBLE {
      * @param {boolean} optStartNotifications - whether to start receiving characteristic change notifications.
      * @param {object} onCharacteristicChanged - callback for characteristic change notifications
      *  like function(base64message).
-     * @return {Promise} - a promise from the remote read request which resolve {message: base64string}.
+     * @returns {Promise} - a promise from the remote read request which resolve {message: base64string}.
      */
     read (serviceId, characteristicId, optStartNotifications = false, onCharacteristicChanged = null) {
         return this._server.getPrimaryService(serviceId)
@@ -154,9 +154,9 @@ class WebBLE {
      * @param {string} message - the message to send.
      * @param {string} encoding - the message encoding type.
      * @param {boolean} withResponse - if true, resolve after peripheral's response.
-     * @return {Promise} - a promise from the remote send request.
+     * @returns {Promise} - a promise from the remote send request.
      */
-    // eslint-disable-next-line no-unused-vars
+     
     write (serviceId, characteristicId, message, encoding = null, withResponse = null) {
         const value = encoding === 'base64' ? base64ToUint8Array(message) : message;
         return this._server.getPrimaryService(serviceId)
