@@ -183,6 +183,8 @@ const defaultBuiltinExtensions = {
 	reqRep: () => require('../extensions/scratch3_req_rep'),
 	shredsdk: () => require('../extensions/shredsdk'),
 	utils: () => require('../extensions/scratch3_utils'),
+	gameutils: () => require('../extensions/scratch3_gameutils'),
+	se: () => require('../extensions/se'),
 	
 	// Mistium
 	patching: () => require('../extensions/mistwarp_patching'),

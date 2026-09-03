@@ -23,7 +23,9 @@ const KEY_NAME = {
     HOME: 'home',
     END: 'end',
     PAGE_UP: 'page up',
-    PAGE_DOWN: 'page down'
+    PAGE_DOWN: 'page down',
+	// pot: added extras
+    ALT: 'alt'
 };
 
 /**
@@ -91,6 +93,8 @@ class Keyboard {
         case 'End': return KEY_NAME.END;
         case 'PageUp': return KEY_NAME.PAGE_UP;
         case 'PageDown': return KEY_NAME.PAGE_DOWN;
+		// pot: added extras
+        case 'Alt': return KEY_NAME.ALT;
         }
         // Ignore modifier keys
         if (keyString.length > 1) {
@@ -209,6 +213,36 @@ class Keyboard {
     // tw: expose last pressed key
     getLastKeyPressed () {
         return this.lastKeyPressed;
+    }
+	
+	// pot: why dont we expose all keys? Taken from PenguinMod.
+    getAllKeysPressed () {
+        return this._keysPressed;
+    }
+    getKeyTimestamp (keyArg) {
+        if (keyArg === 'any') {
+            // loop through all keys and see which one we have held the longest
+            let oldestTimestamp = Infinity;
+            let found = false;
+            for (const keyName in this._keyTimestamps) {
+                const timestamp = this._keyTimestamps[keyName];
+                if (timestamp < oldestTimestamp) {
+                    oldestTimestamp = timestamp;
+                    found = true;
+                }
+            }
+            if (!found) return 0;
+            return oldestTimestamp;
+        }
+        // everything else
+        const scratchKey = this._keyArgToScratchKey(keyArg);
+        if (!(scratchKey in this._keyTimestamps)) {
+            return 0;
+        }
+        return this._keyTimestamps[scratchKey];
+    }
+    getKeyTimestamps () {
+        return this._keyTimestamps;
     }
 
     /**
