@@ -34,6 +34,7 @@ const defaultBuiltinExtensions = {
     tw: () => require('../extensions/tw'),
 		
     appmaker: () => require('../extensions/potentia_appmaker'),
+    themes: () => require('../extensions/potentia_themes'),
     wonderblocks: () => require('../extensions/gaia_wonderblocks'),
 	
     kidsboard: () => require('../extensions/scratch3_kidsboard'),
@@ -228,7 +229,6 @@ const defaultBuiltinExtensions = {
     lepiWebPlottor: () => require('../extensions/lepi_web_plottor'),
     lepiEcharts: () => require('../extensions/lepi_echarts'),
     lepiImageProcess: () => require('../extensions/lepi_image_process'),
-    lepiSmartAudio: () => require('../extensions/lepi_smart_audio'),
     lepiRFID: () => require('../extensions/lepi_rfid'),
     lepiPupper: () => require('../extensions/lepi_pupper'),
     lepiHexapod: () => require('../extensions/lepi_hexapod'),
@@ -249,6 +249,20 @@ const defaultBuiltinExtensions = {
     localObjectDetection: () => require('../extensions/local_object_detect'),
     localTextDetection: () => require('../extensions/local_text_detect'),
     localApriltagDetection: () => require('../extensions/local_apriltag_detect'),
+	
+	voicetoTEXT: () => require('../extensions/scratch3_voicetotext'),
+    urlTXT: () => require('../extensions/scratch3_urltxt'),
+    rwGoogle: () => require('../extensions/scratch3_rwgoogle'),
+	chart: () => require('../extensions/scratch3_chart'),
+    stockInfo: () => require('../extensions/scratch3_stockInfo'),
+    googleMap: () => require('../extensions/scratch3_googleMap'),
+	dataProcessing: () => require('../extensions/scratch3_dataProcessing'),
+    linenotify: () => require('../extensions/scratch3_linenotify'),
+    telegrambot: () => require('../extensions/scratch3_telegrambot'),
+    pushnotifyapi: () => require('../extensions/scratch3_pushnotifyapi'),
+	dataMining:() => require('../extensions/scratch3_dataMining'), 
+    davinci:() => require('../extensions/scratch3_davinci'),    
+	textSentiment: () => require('../extensions/scratch3_textSentiment'),
 	
 	// Mistium
 	patching: () => require('../extensions/mistwarp_patching'),
