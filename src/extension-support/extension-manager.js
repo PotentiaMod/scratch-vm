@@ -39,6 +39,7 @@ const defaultBuiltinExtensions = {
 	
     kidsboard: () => require('../extensions/scratch3_kidsboard'),
     eim: () => require('../extensions/scratch3_eim'),
+    robobo: () => require('../extensions/scratch3_robobo'),
 	
     poseFace: () => require("../extensions/scratch3_pose_face"),
 	poseBody: () => require('../extensions/scratch3_posebody'),
@@ -1060,16 +1061,17 @@ _isLocalExtensionURL (extensionURL) {
         dispatch.call('runtime', '_removeExtensionPrimitive', extensionId);
         this.refreshBlocks();
     }
+	
+	    removeAllExtensions () {
+        this._loadedExtensions.keys().forEach(extension => {
+            this.removeExtension(extension);
+        });
+    }
 
-    /**
-     * Get the extension ID from an opcode.
-     * @param {*} opcode - the opcode to examine
-     * @returns {string} - the extension ID, or empty string if core extension or invalid opcode
-     */
-     extensionIdFromOpcode (opcode) {
+    getExtensionIdFromOpcode(opcode) {
         // Allowed ID characters are those matching the regular expression [\w-]: A-Z, a-z, 0-9, and hyphen ("-").
         if (!(typeof opcode === 'string')) {
-            console.error('Invalid opcode', opcode);
+            console.error('invalid opcode ' + opcode);
             return '';
         }
         const index = opcode.indexOf('_');
@@ -1079,26 +1081,25 @@ _isLocalExtensionURL (extensionURL) {
             if (prefix !== '') return prefix;
         }
     }
-
-    findUsedExtensions () {
+    findUsedExtensions() {
         const results = [];
         for (const target of this.runtime.targets) {
             for (const blockId in target.blocks._blocks) {
                 const block = target.blocks.getBlock(blockId);
-                const ext = this.extensionIdFromOpcode(block.opcode);
+                const ext = this.getExtensionIdFromOpcode(block.opcode);
                 results.push(ext);
             }
         }
         return results;
     }
-
-    removeUnusedExtensions () {
+    removeUnusedExtensions() {
         const all = [...this._loadedExtensions.keys()];
         const used = this.findUsedExtensions();
         const unused = all.filter(ext => !used.includes(ext));
         for (const toRemove of unused)
             this.removeExtension(toRemove);
     }
+
 
     /**
      * Get the extension URL from its ID.
