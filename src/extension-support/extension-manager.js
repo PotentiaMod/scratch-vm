@@ -186,7 +186,6 @@ const defaultBuiltinExtensions = {
 	utils: () => require('../extensions/scratch3_utils'),
 	gameutils: () => require('../extensions/scratch3_gameutils'),
 	se: () => require('../extensions/se'),
-	thingDemo: () => require('../extensions/scratch3_thingDemo'),
 	tinkibot: () => require('../extensions/tinkimo_tinkibot'),
 	mcremote: () => require('../extensions/scratch3_mcremote'),
 	ruby: () => require('../extensions/smalruby_ruby'),
