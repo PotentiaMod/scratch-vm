@@ -28,6 +28,8 @@ const blockIconURI = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53
  * @type {string}
  */
 const SERVER_HOST = 'https://synthesis-service.scratch.mit.edu';
+const MARTY_SERVER_HOST = 'https://appv2-analytics-server.robotical.io';
+const PM_SERVER_HOST = 'https://gextapi.derpygamer2142.com';
 
 /**
  * How long to wait in ms before timing out requests to synthesis server.
@@ -65,6 +67,11 @@ const GIANT_ID = 'GIANT';
  * An id for one of the voices.
  */
 const KITTEN_ID = 'KITTEN';
+
+/**
+ * An id for one of the voices.
+ */
+const PUPPY_ID = 'PUPPY';
 
 /**
  * Playback rate for the tenor voice, for cases where we have only a female gender voice.
@@ -184,6 +191,15 @@ class Scratch3Text2SpeechBlocks {
                     id: 'text2speech.kitten',
                     default: 'kitten',
                     description: 'A baby cat.'
+                }),
+                gender: 'female',
+                playbackRate: 1.41 // +6 semitones
+            },
+            [PUPPY_ID]: {
+                name: formatMessage({
+                    id: 'text2speech.puppy',
+                    default: 'puppy',
+                    description: 'A baby dog.'
                 }),
                 gender: 'female',
                 playbackRate: 1.41 // +6 semitones
@@ -712,6 +728,11 @@ class Scratch3Text2SpeechBlocks {
 
         if (state.voiceId === KITTEN_ID) {
             words = words.replace(/\S+/g, 'meow');
+            locale = this.LANGUAGE_INFO[this.DEFAULT_LANGUAGE].speechSynthLocale;
+        }
+		
+		if (state.voiceId === PUPPY_ID) {
+            words = words.replace(/\S+/g, 'woof');
             locale = this.LANGUAGE_INFO[this.DEFAULT_LANGUAGE].speechSynthLocale;
         }
 
