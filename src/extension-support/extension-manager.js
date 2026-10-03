@@ -107,7 +107,6 @@ const defaultBuiltinExtensions = {
     ml2scratch: () => require("../extensions/scratch3_ml2scratch"),
 	
 	// GvbvdxxMod2
-    beepboxsynth: () => require('../extensions/scratch3_beepbox_synth'),
     roku: () => require("../extensions/scratch3_roku"),
     nesemulator: () => require("../extensions/nes"),
     sndanalyser: () => require('../extensions/gm2_projectsound'),
