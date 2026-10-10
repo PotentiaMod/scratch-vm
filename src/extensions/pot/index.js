@@ -4,7 +4,7 @@ const ArgumentType = require('../../extension-support/argument-type');
 const Cast = require('../../util/cast');
 
 // PotentiaMod icon
-const iconURI = "https://potentiamod.github.io/images/512.png";
+const iconURI = "https://potentiamod.github.io/images/logo.png";
 
 /**
  * Class for TurboWarp blocks
@@ -35,7 +35,7 @@ class PotetentiaModExtraBlocks {
             blocks: [
 				{
                     opcode: 'getAllKeysPressed',
-                    text: 'get all keys pressed',
+                    text: 'Get All Keys Pressed',
                     blockType: BlockType.REPORTER
                 },
 				//stolen from CattyMod
@@ -54,15 +54,6 @@ class PotetentiaModExtraBlocks {
                         id: 'tw.blocks.getGUITheme',
                         default: 'Get GUI Theme',
                         description: 'Block that returns the current GUI theme'
-                    }),
-                    blockType: BlockType.REPORTER
-                },
-				{
-                    opcode: 'getBlockTheme',
-                    text: formatMessage({
-                        id: 'tw.blocks.getBlockTheme',
-                        default: 'Get Block Theme',
-                        description: 'Block that returns the current Block theme'
                     }),
                     blockType: BlockType.REPORTER
                 }
@@ -149,6 +140,8 @@ class PotetentiaModExtraBlocks {
         return 'Light';
     }
 	
+	
+  /*	
 	getBlockTheme () {
         const storedTheme = localStorage.getItem('tw:theme');
 
@@ -160,13 +153,14 @@ class PotetentiaModExtraBlocks {
         const theme = storedTheme.toLowerCase();
 		
         if (theme.includes('colorful')) return 'Colorful';
-        if (theme.includes('high-contrast')) return 'High Contrast';
+        if (theme.includes('high-contrast')) return 'High Contrasted';
         if (theme.includes('dark')) return 'Dark (Beta)';
         if (theme.includes('three')) return 'Original';
 
         // If no Block theme is specified, default to Original.
         return 'Original';
     }
+	*/
 }
 
 module.exports = PotetentiaModExtraBlocks;
