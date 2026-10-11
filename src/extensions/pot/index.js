@@ -83,7 +83,6 @@ class PotetentiaModExtraBlocks {
         if (theme.includes('orange')) return 'Orange';
         if (theme.includes('yellow')) return 'Yellow';
         if (theme.includes('green')) return 'Green';
-        if (theme.includes('dark-green')) return 'Dark Green';
         if (theme.includes('red')) return 'Red';
         if (theme.includes('purple')) return 'Purple';
         if (theme.includes('blue')) return 'Blue';
