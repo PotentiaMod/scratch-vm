@@ -120,18 +120,12 @@ class PotetentiaModExtraBlocks {
         const theme = storedTheme.toLowerCase();
 		
         if (theme.includes('high-contrast')) return 'High Contrast';
-        if (theme.includes('amp-amoled')) return 'AmpMod Amoled';
-        if (theme.includes('amoled')) return 'Amoled';
         if (theme.includes('catty-midnight')) return 'Catty Midnight';
         if (theme.includes('midnight')) return 'Midnight';
-        if (theme.includes('deep-dark')) return 'AstraEditor Dark';
         if (theme.includes('genesisdark')) return 'Genesis Dark';
         if (theme.includes('modern-dark')) return 'PotentiaMod Dark';
-        if (theme.includes('amp-dark')) return 'AmpMod Dark';
         if (theme.includes('dark')) return 'Dark';
-        if (theme.includes('modern-white')) return 'AstraEditor Light';
         if (theme.includes('genesislight')) return 'Genesis Light';
-        if (theme.includes('amp-light')) return 'AmpMod Light';
         if (theme.includes('modern-light')) return 'PotentiaMod Light';
         if (theme.includes('light')) return 'Light';
 
