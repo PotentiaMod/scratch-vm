@@ -38,6 +38,22 @@ class PotetentiaModExtraBlocks {
                     text: 'Get All Keys Pressed',
                     blockType: BlockType.REPORTER
                 },
+				{
+                    opcode: 'displayCursor',
+                    text: formatMessage({
+                        id: 'pot.blocks.displayCursor',
+                        default: 'Display Cursor: [DISPLAY]',
+                        description: 'Block that displays types of cursor.'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        DISPLAY: {
+                            type: ArgumentType.STRING,
+                            menu: 'cursor',
+                            defaultValue: 'default'
+                        }
+                    }
+                },
 				//stolen from CattyMod
                {
                     opcode: 'getColorTheme',
@@ -59,13 +75,51 @@ class PotetentiaModExtraBlocks {
                 }
             ],
 
-            menus: {}
+            menus: {
+                cursor: {
+                    items: [
+                        {
+                            text: 'default',
+                            value: 'default'
+                        },
+						{
+                            text: 'pointer',
+                            value: 'pointer'
+                        },
+						{
+                            text: 'wait',
+                            value: 'wait'
+                        },
+						{
+                            text: 'crosshair',
+                            value: 'crosshair'
+                        },
+						{
+                            text: 'move',
+                            value: 'move'
+                        },
+						{
+                            text: 'not-allowed',
+                            value: 'not-allowed'
+                        },
+                        {
+                            text: 'none',
+                            value: 'none'
+                        }
+                    ],
+                    acceptReporters: true
+                }
+            }
         };
     }
 	
 	getAllKeysPressed (args, util) {
         return util.ioQuery('keyboard', 'getAllKeysPressed');
     }
+	
+  displayCursor(args, util) {
+  document.body.style.cursor = args.DISPLAY;
+}
 	
 	getColorTheme () {
         const storedTheme = localStorage.getItem('tw:theme');
