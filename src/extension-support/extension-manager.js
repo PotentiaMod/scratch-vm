@@ -88,6 +88,7 @@ const defaultBuiltinExtensions = {
 	DTcameracontrols: () => require('../extensions/dt_cameracontrols'),
     colors: () => require('../extensions/gsa_colorUtilBlocks'),
 	jgBestExtension: () => require("../extensions/jg_bestextensioin"),
+	spPrinting: () => require("../extensions/sharkpool_printing"),
 ////////////////// -- penguinmod -- //////////////////
     		
 	// champierres
