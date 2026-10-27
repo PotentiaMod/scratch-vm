@@ -25,7 +25,7 @@ class PotetentiaModExtraBlocks {
     getInfo () {
         return {
             id: 'potentia',
-            name: 'PotentiaMod Extra',
+            name: 'PotentiaMod',
             color1: '#4800cc',
             color2: '#37009d',
             color3: '#5600f5',
@@ -33,6 +33,23 @@ class PotetentiaModExtraBlocks {
             menuIconURI: iconURI,
             blockIconURI: iconURI,
             blocks: [
+			    {
+                    opcode: 'getLastKeyPressed',
+                    text: 'last key pressed',
+                    blockType: BlockType.REPORTER
+                },
+                {
+                    opcode: 'getButtonIsDown',
+                    text: '[MOUSE_BUTTON] mouse button down?',
+                    blockType: BlockType.BOOLEAN,
+                    arguments: {
+                        MOUSE_BUTTON: {
+                            type: ArgumentType.NUMBER,
+                            menu: 'mouseButton',
+                            defaultValue: '0'
+                        }
+                    }
+                },
 				{
                     opcode: 'getAllKeysPressed',
                     text: 'Get All Keys Pressed',
@@ -76,6 +93,23 @@ class PotetentiaModExtraBlocks {
             ],
 
             menus: {
+				mouseButton: {
+                    items: [
+                        {
+                            text: '(0) primary',
+                            value: '0'
+                        },
+                        {
+                            text: '(1) middle',
+                            value: '1'
+                        },
+                        {
+                            text: '(2) secondary',
+                            value: '2'
+                        }
+                    ],
+                    acceptReporters: true
+                },
                 cursor: {
                     items: [
                         {
@@ -111,6 +145,15 @@ class PotetentiaModExtraBlocks {
                 }
             }
         };
+    }
+	
+	getLastKeyPressed (args, util) {
+        return util.ioQuery('keyboard', 'getLastKeyPressed');
+    }
+
+    getButtonIsDown (args, util) {
+        const button = Cast.toNumber(args.MOUSE_BUTTON);
+        return util.ioQuery('mouse', 'getButtonIsDown', [button]);
     }
 	
 	getAllKeysPressed (args, util) {
