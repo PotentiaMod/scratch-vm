@@ -300,6 +300,41 @@ class ScriptTreeGenerator {
             return new IntermediateInput(InputOpcode.LOOKS_COSTUME_NAME, InputType.STRING);
         case 'looks_size':
             return new IntermediateInput(InputOpcode.LOOKS_SIZE_GET, InputType.NUMBER_POS | InputType.NUMBER_ZERO);
+			
+			 //Looks originally from PenguinMod
+        case 'looks_getEffectValue':
+            return new IntermediateInput(InputOpcode.PM_LOOKS_GET_EFFECT, InputType.NUMBER, {
+                effect: block.fields.EFFECT.value.toLowerCase()
+            });
+        case 'looks_getinputofcostume':
+            return new IntermediateInput(InputOpcode.PM_LOOKS_GET_COSTUME_VALUE, InputType.STRING | InputType.NUMBER, {
+                costume: this.descendInputOfBlock(block, 'COSTUME', true),
+                value: this.descendInputOfBlock(block, 'INPUT').toType(InputType.STRING),
+                old: true
+            });
+        case 'looks_getinputofcostumenew':
+            return new IntermediateInput(InputOpcode.PM_LOOKS_GET_COSTUME_VALUE, InputType.STRING | InputType.NUMBER, {
+                costume: this.descendInputOfBlock(block, 'COSTUME', true),
+                value: this.descendInputOfBlock(block, 'INPUT').toType(InputType.STRING)
+            });
+        case 'looks_getOtherSpriteVisible':
+            return new IntermediateInput(InputOpcode.PM_LOOKS_VISIBLE_SPRITE, InputType.BOOLEAN, {
+                option: this.descendInputOfBlock(block, 'VISIBLE_OPTION').toType(InputType.STRING)
+            });
+        case 'looks_getSpriteVisible':
+            return new IntermediateInput(InputOpcode.PM_LOOKS_VISIBLE_GET, InputType.BOOLEAN);
+        case 'looks_layersGetLayer':
+            return new IntermediateInput(InputOpcode.PM_LOOKS_LAYER_GET, InputType.NUMBER_WHOLE);
+        case 'looks_sayHeight':
+            return new IntermediateInput(InputOpcode.PM_LOOKS_BUBBLE_HEIGHT, InputType.NUMBER);
+        case 'looks_sayWidth':
+            return new IntermediateInput(InputOpcode.PM_LOOKS_BUBBLE_WIDTH, InputType.NUMBER);
+        case 'looks_stretchGetX':
+            return new IntermediateInput(InputOpcode.PM_LOOKS_STRETCH_X, InputType.NUMBER);
+        case 'looks_stretchGetY':
+            return new IntermediateInput(InputOpcode.PM_LOOKS_STRETCH_Y, InputType.NUMBER);
+        case 'looks_tintColor':
+            return new IntermediateInput(InputOpcode.PM_LOOKS_GET_TINT, InputType.STRING);
 
         case 'motion_direction':
             return new IntermediateInput(InputOpcode.MOTION_DIRECTION_GET, InputType.NUMBER_REAL);

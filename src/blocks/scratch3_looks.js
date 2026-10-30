@@ -306,7 +306,17 @@ class Scratch3LooksBlocks {
             looks_goforwardbackwardlayers: this.goForwardBackwardLayers,
             looks_size: this.getSize,
             looks_costumenumbername: this.getCostumeNumberName,
-            looks_backdropnumbername: this.getBackdropNumberName
+            looks_backdropnumbername: this.getBackdropNumberName,
+			
+			//Originally from PenguiMod
+            looks_getEffectValue: ({EFFECT}, {target}) => target.getEffect(Cast.toString(EFFECT).toLowerCase()),
+            looks_getSpriteVisible: ({}, {target}) => target.visible,
+            looks_layersGetLayer: ({}, {target}) => target.getLayerOrder(),
+            looks_sayHeight: ({}, {target}) => this._getBubbleSize(target, 1),
+            looks_sayWidth: ({}, {target}) => this._getBubbleSize(target, 0),
+            looks_stretchGetX: ({}, {target}) => target.stretch[0],
+            looks_stretchGetY: ({}, {target}) => target.stretch[1], 
+            looks_tintColor: ({}, {target}) => this._getTintColor(target),
         };
     }
 
@@ -322,7 +332,41 @@ class Scratch3LooksBlocks {
             },
             looks_backdropnumbername: {
                 getId: (_, fields) => getMonitorIdForBlockWithArgs('backdropnumbername', fields)
-            }
+            },
+
+            // Originally from PenguiMod
+            looks_getEffectValue: {
+                isSpriteSpecific: true,
+                getId: (targetId, fields) => getMonitorIdForBlockWithArgs(`${targetId}_getEffectValue`, fields)
+            },
+            looks_getSpriteVisible: {
+                isSpriteSpecific: true,
+                getId: targetId => `${targetId}_getSpriteVisible`
+            },
+            looks_layersGetLayer: {
+                isSpriteSpecific: true,
+                getId: targetId => `${targetId}_layersGetLayer`
+            },
+            looks_sayHeight: {
+                isSpriteSpecific: true,
+                getId: targetId => `${targetId}_sayHeight`
+            },
+            looks_sayWidth: {
+                isSpriteSpecific: true,
+                getId: targetId => `${targetId}_sayWidth`
+            },
+            looks_stretchGetX: {
+                isSpriteSpecific: true,
+                getId: targetId => `${targetId}_stretchGetX`
+            },
+            looks_stretchGetY: {
+                isSpriteSpecific: true,
+                getId: targetId => `${targetId}_stretchGetY`
+            },
+            looks_tintColor: {
+                isSpriteSpecific: true,
+                getId: targetId => `${targetId}_tintColor`
+            },
         };
     }
 
@@ -612,6 +656,16 @@ class Scratch3LooksBlocks {
         }
         // Else return name
         return util.target.getCostumes()[util.target.currentCostume].name;
+    }
+	
+	 _getBubbleSize (target, component) {
+        try {
+            const bubbleState = this._getBubbleState(target);
+            const size = this.runtime.renderer.getSkinSize(bubbleState.skinId);
+            return size[component];
+        } catch {
+            return 0;
+        }
     }
 }
 

@@ -42,6 +42,11 @@ const defaultBuiltinExtensions = {
     eim: () => require('../extensions/scratch3_eim'),
     robobo: () => require('../extensions/scratch3_robobo'),
 	
+    toxicity: () => require('../extensions/scratch3_toxicity'),
+    shieldBot: () => require('../extensions/scratch3_shieldBot'),
+    ottoDiyRobot: () => require('../extensions/scratch3_ottoDiyRobot'),
+    mark: () => require('../extensions/scratch3_mark'),
+	
     poseFace: () => require("../extensions/scratch3_pose_face"),
 	poseBody: () => require('../extensions/scratch3_posebody'),
     poseHand: () => require('../extensions/scratch3_posehand'),
@@ -89,6 +94,7 @@ const defaultBuiltinExtensions = {
     colors: () => require('../extensions/gsa_colorUtilBlocks'),
 	jgBestExtension: () => require("../extensions/jg_bestextensioin"),
 	spPrinting: () => require("../extensions/sharkpool_printing"),
+	SPspeechBubbles: () => require('../extensions/penguinmod/SPspeechBubbles'),
 ////////////////// -- penguinmod -- //////////////////
     		
 	// champierres

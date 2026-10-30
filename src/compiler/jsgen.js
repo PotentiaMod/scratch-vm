@@ -258,6 +258,28 @@ class JSGenerator {
             return 'target.getCostumes()[target.currentCostume].name';
         case InputOpcode.LOOKS_COSTUME_NUMBER:
             return '(target.currentCostume + 1)';
+			
+			 //Looks originally from PenguinMod
+        case InputOpcode.PM_LOOKS_BUBBLE_HEIGHT:
+            return `runtime.ext_scratch3_looks._getBubbleSize(target, 1)`;
+        case InputOpcode.PM_LOOKS_BUBBLE_WIDTH:
+            return `runtime.ext_scratch3_looks._getBubbleSize(target, 0)`;
+        case InputOpcode.PM_LOOKS_GET_COSTUME_VALUE:
+            return `runtime.ext_scratch3_looks._getCostumeValue(target, ${this.descendInput(node.costume)}, ${this.descendInput(node.value)}${node.old ? `, true` : ''})`;
+        case InputOpcode.PM_LOOKS_GET_EFFECT:
+            return `target.getEffect("${sanitize(node.effect)}")`;
+        case InputOpcode.PM_LOOKS_GET_TINT:
+            return 'runtime.ext_scratch3_looks._getTintColor(target)';
+        case InputOpcode.PM_LOOKS_LAYER_GET:
+            return `target.getLayerOrder()`;
+        case InputOpcode.PM_LOOKS_STRETCH_X:
+            return 'target.stretch[0]';
+        case InputOpcode.PM_LOOKS_STRETCH_Y:
+            return 'target.stretch[1]';
+        case InputOpcode.PM_LOOKS_VISIBLE_GET:
+            return `target.visible`;
+        case InputOpcode.PM_LOOKS_VISIBLE_SPRITE:
+            return `runtime.ext_scratch3_looks._getOtherSpriteVisible(target, ${this.descendInput(node.option)})`;
 
         case InputOpcode.MOTION_DIRECTION_GET:
             return 'target.direction';

@@ -17,6 +17,10 @@ class PotetentiaModExtraBlocks {
          * @type {Runtime}
          */
         this.runtime = runtime;
+		this.starts = 0;
+        runtime.on("PROJECT_START", () => {
+        this.starts++;
+      });
     }
 
     /**
@@ -55,6 +59,17 @@ class PotetentiaModExtraBlocks {
                     text: 'Get All Keys Pressed',
                     blockType: BlockType.REPORTER
                 },
+				//originally from MistWarp
+			   {
+                opcode: "timesStarted",
+                blockType: BlockType.REPORTER,
+                text: "Times a green flag is clicked",
+               },
+			   {
+            opcode: "spriteCount",
+            blockType: BlockType.REPORTER,
+            text: "Number of sprites",
+          },
 				{
                     opcode: 'displayCursor',
                     text: formatMessage({
@@ -163,6 +178,14 @@ class PotetentiaModExtraBlocks {
   displayCursor(args, util) {
   document.body.style.cursor = args.DISPLAY;
 }
+
+timesStarted() {
+      return this.starts;
+    }
+	
+	spriteCount() {
+      return Scratch.vm.runtime.targets.filter(target => target.isOriginal && !target.isStage).length;
+    }
 	
 	getColorTheme () {
         const storedTheme = localStorage.getItem('tw:theme');
