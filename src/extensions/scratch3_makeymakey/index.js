@@ -48,6 +48,36 @@ const KEY_ID_UP = 'UP';
 const KEY_ID_DOWN = 'DOWN';
 
 /**
+ * An id for the A key on a keyboard.
+ */
+const KEY_ID_A = 'A';
+
+/**
+ * An id for the B key on a keyboard.
+ */
+const KEY_ID_B = 'B';
+
+/**
+ * An id for the X key on a keyboard.
+ */
+const KEY_ID_X = 'X';
+
+/**
+ * An id for the Y key on a keyboard.
+ */
+const KEY_ID_Y = 'Y';
+
+/**
+ * An id for the Z key on a keyboard.
+ */
+const KEY_ID_Z = 'Z';
+
+/**
+ * An id for the Enter key on a keyboard.
+ */
+const KEY_ID_ENTER = 'ENTER';
+
+/**
  * Names used by keyboard io for keys used in scratch.
  * @enum {string}
  */
@@ -56,7 +86,13 @@ const SCRATCH_KEY_NAME = {
     [KEY_ID_LEFT]: 'left arrow',
     [KEY_ID_UP]: 'up arrow',
     [KEY_ID_RIGHT]: 'right arrow',
-    [KEY_ID_DOWN]: 'down arrow'
+    [KEY_ID_DOWN]: 'down arrow',
+    [KEY_ID_A]: 'a',
+    [KEY_ID_B]: 'b',
+    [KEY_ID_X]: 'x',
+    [KEY_ID_Y]: 'y',
+    [KEY_ID_Z]: 'z',
+    [KEY_ID_ENTER]: 'enter'
 };
 
 /**
@@ -140,6 +176,36 @@ class Scratch3MakeyMakeyBlocks {
                 id: 'makeymakey.downArrowShort',
                 default: 'down',
                 description: 'Short name for the down arrow key on a computer keyboard.'
+            }),
+            [KEY_ID_A]: formatMessage({
+                id: 'makeymakey.aButton',
+                default: 'a',
+                description: 'Short name for the a key on a computer keyboard.'
+            }),
+            [KEY_ID_B]: formatMessage({
+                id: 'makeymakey.bButton',
+                default: 'b',
+                description: 'Short name for the b key on a computer keyboard.'
+            }),
+            [KEY_ID_X]: formatMessage({
+                id: 'makeymakey.xButton',
+                default: 'down',
+                description: 'Short name for the x key on a computer keyboard.'
+            }),
+            [KEY_ID_Y]: formatMessage({
+                id: 'makeymakey.yButton',
+                default: 'down',
+                description: 'Short name for the y key on a computer keyboard.'
+            }),
+            [KEY_ID_Z]: formatMessage({
+                id: 'makeymakey.zButton',
+                default: 'z',
+                description: 'Short name for the z key on a computer keyboard.'
+            }),
+            [KEY_ID_ENTER]: formatMessage({
+                id: 'makeymakey.enterShort',
+                default: 'enter',
+                description: 'Short name for the Enter key on a computer keyboard.'
             })
         };
     }
@@ -160,7 +226,7 @@ class Scratch3MakeyMakeyBlocks {
             `${KEY_ID_UP} ${KEY_ID_RIGHT} ${KEY_ID_DOWN} ${KEY_ID_LEFT}`,
             `${KEY_ID_UP} ${KEY_ID_LEFT} ${KEY_ID_DOWN} ${KEY_ID_RIGHT}`,
             `${KEY_ID_UP} ${KEY_ID_UP} ${KEY_ID_DOWN} ${KEY_ID_DOWN} ` +
-                `${KEY_ID_LEFT} ${KEY_ID_RIGHT} ${KEY_ID_LEFT} ${KEY_ID_RIGHT}`
+                `${KEY_ID_LEFT} ${KEY_ID_RIGHT} ${KEY_ID_LEFT} ${KEY_ID_RIGHT} ${KEY_ID_B} ${KEY_ID_A} ${KEY_ID_ENTER}` //Konami Code
         ];
     }
 
@@ -218,6 +284,14 @@ class Scratch3MakeyMakeyBlocks {
                             }),
                             value: KEY_ID_SPACE
                         },
+						{
+                            text: formatMessage({
+                                id: 'makeymakey.enterShort',
+                                default: 'enter',
+                                description: 'The enter key on a computer keyboard.'
+                            }),
+                            value: KEY_ID_ENTER
+                        },
                         {
                             text: formatMessage({
                                 id: 'makeymakey.upArrow',
@@ -252,6 +326,10 @@ class Scratch3MakeyMakeyBlocks {
                         },
                         {text: 'w', value: 'w'},
                         {text: 'a', value: 'a'},
+                        {text: 'b', value: 'b'},
+                        {text: 'x', value: 'x'},
+                        {text: 'y', value: 'y'},
+                        {text: 'z', value: 'z'},
                         {text: 's', value: 's'},
                         {text: 'd', value: 'd'},
                         {text: 'f', value: 'f'},

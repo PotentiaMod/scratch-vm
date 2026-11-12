@@ -2,6 +2,13 @@ const formatMessage = require('format-message');
 const BlockType = require('../../extension-support/block-type');
 const ArgumentType = require('../../extension-support/argument-type');
 const Cast = require('../../util/cast');
+const Clone = require('../../util/clone');
+const Color = require('../../util/color');
+const MathUtil = require('../../util/math-util');
+const log = require('../../util/log');
+const StageLayering = require('../../engine/stage-layering');
+
+const Swal = require('sweetalert2');
 
 // PotentiaMod icon
 const iconURI = "https://potentiamod.github.io/images/logo.png";

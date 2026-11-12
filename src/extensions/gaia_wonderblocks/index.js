@@ -95,7 +95,7 @@ class WonderBlocks {
                     arguments: {
                         URL: {
                             type: ArgumentType.STRING,
-                            menu: 'https://warp.mistium.com/users/GaiaKitty'
+                            menu: 'https://www.facebook.com/CrystalMae1990/'
                         }
                     }
                 },
