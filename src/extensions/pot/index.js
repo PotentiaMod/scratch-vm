@@ -40,7 +40,6 @@ class PotetentiaModExtraBlocks {
             color1: '#4800cc',
             color2: '#37009d',
             color3: '#5600f5',
-            docsURI: 'https://potentiamod.github.io/docs/blocks',
             menuIconURI: iconURI,
             blockIconURI: iconURI,
             blocks: [
@@ -77,6 +76,11 @@ class PotetentiaModExtraBlocks {
             blockType: BlockType.REPORTER,
             text: "Number of sprites",
           },
+		  {
+                    opcode: 'getSaveFileType',
+                    text: 'Get save file type',
+                    blockType: BlockType.REPORTER
+                },
 				{
                     opcode: 'displayCursor',
                     text: formatMessage({
@@ -185,6 +189,44 @@ class PotetentiaModExtraBlocks {
   displayCursor(args, util) {
   document.body.style.cursor = args.DISPLAY;
 }
+
+getSaveFileType () {
+        const storedType = localStorage.getItem('potentiamod:saveFileType');
+		const VALID_PROJECT_FILE_TYPES = ["pot", "cmp", "mwp", "dbp", "torch", "pmp", "cw", "dino", "ich", "bm", "arkide",
+	                                    "zinc", "falcon", "coffee", "snail", "electra", "gaia", "sbx", "sb3", "zip"];
+
+        // If tw:theme does not exist, default to Pot.
+        if (storedType === null) {
+            return 'PotentiaMod Project';
+        }
+		
+        const saveType = storedType.toLowerCase();
+
+        if (saveType.includes('pot')) return 'PotentiaMod Project';
+        if (saveType.includes('cmp')) return 'CattyMod Project';
+        if (saveType.includes('mwp')) return 'MistWarp Project';
+        if (saveType.includes('dbp')) return 'DashBlocks Project';
+        if (saveType.includes('torch')) return 'CodeTorch Project';
+        if (saveType.includes('pmp')) return 'PenguinMod Project';
+        if (saveType.includes('coffee')) return 'Espresso Project';
+        if (saveType.includes('arkide')) return 'Ark IDE Project';
+        if (saveType.includes('dino')) return 'DinosaurMod Project';
+        if (saveType.includes('snail')) return 'Snail IDE Project';
+        if (saveType.includes('electra')) return 'ElectraMod Project';
+        if (saveType.includes('gaia')) return 'GaiaMod Project';
+        if (saveType.includes('cw')) return 'Cattiest World Project';
+        if (saveType.includes('ich')) return 'Itch Project';
+        if (saveType.includes('bm')) return 'BananaMod Project';
+        if (saveType.includes('falcon')) return 'FalconMod Project';
+        if (saveType.includes('zinc')) return 'Zinc Coding Project';
+        if (saveType.includes('sbx')) return 'ScratchX Project';
+        if (saveType.includes('sb3')) return 'Scratch Project';
+        if (saveType.includes('zip')) return 'Generic ZIP';
+
+
+        // Unknown or missing color = PotentiaMod.
+        return 'PotentiaMod Project';
+    }
 
 timesStarted() {
       return this.starts;

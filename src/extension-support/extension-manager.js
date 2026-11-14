@@ -61,7 +61,6 @@ const defaultBuiltinExtensions = {
     teachableMachine: () => require('../extensions/scratch3_teachablemachine'),
     qrcode: () => require('../extensions/scratch3_qrcode'),
 	dataviewer: () => require('../extensions/scratch3_dataviewer'),
-
 	
 	// Cognimates
     typescratch: () => require('../extensions/typescratch'),

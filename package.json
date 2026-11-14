@@ -36,6 +36,7 @@
 	"dependencies": {
 		"@babel/eslint-parser": "^7.29.9",
 		"@croquet/croquet": "^0.3.3",
+		"@google/generative-ai": "^0.24.1",
 		"@googlemaps/google-maps-services-js": "^3.4.2",
 		"@mediapipe/tasks-vision": "^1.0.1",
 		"@serialport/binding-abstract": "^10.1.0",

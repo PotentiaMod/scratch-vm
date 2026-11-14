@@ -1,331 +1,412 @@
-const ArgumentType = require('../../extension-support/argument-type');
-const BlockType = require('../../extension-support/block-type');
-const msg = require('./translation');
-const formatMessage = require('format-message');
+const ArgumentType = require("../../extension-support/argument-type");
+const BlockType = require("../../extension-support/block-type");
+const TargetType = require("../../extension-support/target-type");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const formatMessage = require("format-message");
+const getMonitorIdForBlockWithArgs = require("../../util/get-monitor-id");
 
-//async add estea
-const ml5 = require('ml5');
-//require('babel-polyfill');
-//end
-//const { GoogleGenerativeAI } = require("@google/generative-ai"); //^0.14.0
-const { GoogleGenAI } = require("@google/genai");
-//import * as fs from "node:fs";
-//const google_fs = require ("node:fs");
-let genAI = '';
+const languages = [
+  { name: "English", code: "en" },
+  { name: "Spanish", code: "es" },
+  { name: "French", code: "fr" },
+  { name: "German", code: "de" },
+  { name: "Chinese (Simplified)", code: "zh-CN" },
+  { name: "Japanese", code: "ja" },
+  { name: "Korean", code: "ko" },
+  { name: "Russian", code: "ru" },
+  { name: "Portuguese", code: "pt" },
+  { name: "Hindi", code: "hi" },
+];
 
-const menuIconURI = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhLS0gQ3JlYXRlZCB3aXRoIElua3NjYXBlIChodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy8pIC0tPgoKPHN2ZwogICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iCiAgIHhtbG5zOmNjPSJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9ucyMiCiAgIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyIKICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB4bWxuczpzb2RpcG9kaT0iaHR0cDovL3NvZGlwb2RpLnNvdXJjZWZvcmdlLm5ldC9EVEQvc29kaXBvZGktMC5kdGQiCiAgIHhtbG5zOmlua3NjYXBlPSJodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy9uYW1lc3BhY2VzL2lua3NjYXBlIgogICB3aWR0aD0iNDkuNjE2MTczbW0iCiAgIGhlaWdodD0iNTMuNTI1NjA4bW0iCiAgIHZpZXdCb3g9IjAgMCA0OS42MTYxNzMgNTMuNTI1NjA4IgogICB2ZXJzaW9uPSIxLjEiCiAgIGlkPSJzdmc4IgogICBpbmtzY2FwZTp2ZXJzaW9uPSIwLjkyLjUgKDIwNjBlYzFmOWYsIDIwMjAtMDQtMDgpIgogICBzb2RpcG9kaTpkb2NuYW1lPSJvcGVuYWktc21hbGwuc3ZnIj4KICA8ZGVmcwogICAgIGlkPSJkZWZzMiIgLz4KICA8c29kaXBvZGk6bmFtZWR2aWV3CiAgICAgaWQ9ImJhc2UiCiAgICAgcGFnZWNvbG9yPSIjZmZmZmZmIgogICAgIGJvcmRlcmNvbG9yPSIjNjY2NjY2IgogICAgIGJvcmRlcm9wYWNpdHk9IjEuMCIKICAgICBpbmtzY2FwZTpwYWdlb3BhY2l0eT0iMC4wIgogICAgIGlua3NjYXBlOnBhZ2VzaGFkb3c9IjIiCiAgICAgaW5rc2NhcGU6em9vbT0iMC40ODQyMTQ0MyIKICAgICBpbmtzY2FwZTpjeD0iLTE5Ny4yMTQ3MiIKICAgICBpbmtzY2FwZTpjeT0iLTY1Ljg0MzIzNSIKICAgICBpbmtzY2FwZTpkb2N1bWVudC11bml0cz0ibW0iCiAgICAgaW5rc2NhcGU6Y3VycmVudC1sYXllcj0ibGF5ZXIxIgogICAgIHNob3dncmlkPSJmYWxzZSIKICAgICBpbmtzY2FwZTp3aW5kb3ctd2lkdGg9IjE4NTYiCiAgICAgaW5rc2NhcGU6d2luZG93LWhlaWdodD0iMTAxNiIKICAgICBpbmtzY2FwZTp3aW5kb3cteD0iNjQiCiAgICAgaW5rc2NhcGU6d2luZG93LXk9IjI3IgogICAgIGlua3NjYXBlOndpbmRvdy1tYXhpbWl6ZWQ9IjEiCiAgICAgZml0LW1hcmdpbi10b3A9IjAiCiAgICAgZml0LW1hcmdpbi1sZWZ0PSIwIgogICAgIGZpdC1tYXJnaW4tcmlnaHQ9IjAiCiAgICAgZml0LW1hcmdpbi1ib3R0b209IjAiIC8+CiAgPG1ldGFkYXRhCiAgICAgaWQ9Im1ldGFkYXRhNSI+CiAgICA8cmRmOlJERj4KICAgICAgPGNjOldvcmsKICAgICAgICAgcmRmOmFib3V0PSIiPgogICAgICAgIDxkYzpmb3JtYXQ+aW1hZ2Uvc3ZnK3htbDwvZGM6Zm9ybWF0PgogICAgICAgIDxkYzp0eXBlCiAgICAgICAgICAgcmRmOnJlc291cmNlPSJodHRwOi8vcHVybC5vcmcvZGMvZGNtaXR5cGUvU3RpbGxJbWFnZSIgLz4KICAgICAgICA8ZGM6dGl0bGU+PC9kYzp0aXRsZT4KICAgICAgPC9jYzpXb3JrPgogICAgPC9yZGY6UkRGPgogIDwvbWV0YWRhdGE+CiAgPGcKICAgICBpbmtzY2FwZTpsYWJlbD0i5ZyW5bGkIDEiCiAgICAgaW5rc2NhcGU6Z3JvdXBtb2RlPSJsYXllciIKICAgICBpZD0ibGF5ZXIxIgogICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC02OC4zNTg1OSwtNjguMzk5NDUpIj4KICAgIDxnCiAgICAgICBpZD0iZzkxMiIKICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM0My4xNTAzMSwtMTAyLjE4MDExKSI+CiAgICAgIDxwYXRoCiAgICAgICAgIHNvZGlwb2RpOm5vZGV0eXBlcz0iY2NjY2NjY3NjY2NjY2NjY3NjY3Njc2Nzc2NjY2Nzc3NjY3NzY3Nzc2NjY3NjY2Njc3NjY2Njc2NjY2NjY2NjIgogICAgICAgICBzdHlsZT0iZmlsbDojNjA5OGY0O3N0cm9rZS13aWR0aDowLjM1Mjc3Nzc4IgogICAgICAgICBkPSJtIC0yNTQuNjcxNDIsMjIyLjQ2NTkzIGMgLTAuNjA0NTksLTAuOTgyNTcgLTIuMDYzMDQsLTIuNjQ1MDEgLTMuMjQxLC0zLjY5NDMxIGwgLTIuMTQxNzYsLTEuOTA3ODIgNC4wMjI0MywwLjA0MjMgYyA0LjgzNDg5LDAuMDUwOCA2Ljg3MjU1LC0wLjM5MjE4IDExLjA3Nzk5LC0yLjQwODU5IDMuNDY1NDcsLTEuNjYxNjIgNi44MjUyNiwtNC40MjExMSA4Ljc0MDMsLTcuMTc4NjcgMC45ODQyMywtMS40MTcyMyAxLjE1MjMxLC0xLjUzMzYxIDEuMjQ3NjMsLTAuODYzOCAwLjEzNzkxLDAuOTY5MTEgLTEuMjUwMSw0LjQ0NjI3IC0yLjgwNzI4LDcuMDMyNjcgLTIuOTIzMDEsNC44NTQ5OCAtOS4yNDk2Niw5LjM5Njg0IC0xNC42NjQ4NiwxMC41Mjc4MyAtMS4wNzA5NywwLjIyMzY4IC0xLjE5NTUsMC4xMzcyNyAtMi4yMzM0NSwtMS41NDk2MiB6IG0gLTUuODA0NTcsLTYuNjAyMzkgYyAtNC4xNTEzNSwtMC42MzU4MiAtOS4zMTEzNSwtMy4xMDkwOSAtMTIuMzExMjUsLTUuOTAwOTcgbCAtMi4wMDQ0OCwtMS44NjU0OSAxLjA0NjM3LC0yLjIxMjU3IGMgMC41NzU1MSwtMS4yMTY5IDEuMjMxMiwtMy4zMDgzNCAxLjQ1NzEsLTQuNjQ3NjQgMC4yMjU5MSwtMS4zMzkzIDAuNTE1NDUsLTIuNDM1MDUgMC42NDM0NCwtMi40MzUgMC4xMjgsNWUtNSAwLjc0NzMyLDEuMDcxNjEgMS4zNzYyOSwyLjM4MTI1IDMuNDEyOSw3LjEwNjM5IDEwLjM5MTQxLDExLjkwMjMxIDE4Ljg3NjU2LDEyLjk3MjczIDAuOTIxNjMsMC4xMTYyNyAxLjY3NTcsMC4zNDE1NyAxLjY3NTcsMC41MDA2NyAwLDAuODA1MDcgLTcuNzI1NjMsMS42NzE3MyAtMTAuNzU5NzMsMS4yMDcwMiB6IG0gMjIuNzU0MTcsLTAuMzc0OTIgYyAwLC0wLjE3NzA5IDAuNDA5NTksLTAuODY4NzYgMC45MTAyMSwtMS41MzcwNSA0Ljc4MzY0LC02LjM4NTg0IDUuNzIzODIsLTE1Ljg2Nzg4IDIuMzE4MTIsLTIzLjM3ODk5IC0xLjI2ODA1LC0yLjc5NjYyIC0wLjgyOTQ4LC0zLjA5OTc0IDEuMjM2ODIsLTAuODU0ODIgMy4wODYxMSwzLjM1Mjg5IDQuNzc5NDEsNi40NTg1NSA1Ljc2NjY2LDEwLjU3NjU4IDAuNzg2MDIsMy4yNzg2NCAwLjg5MzA2LDYuNzE0MzEgMC4zMTI5OSwxMC4wNDUzNiAtMC40ODMxMiwyLjc3NDI3IC0wLjk1MjI4LDMuMjc2MTYgLTMuMDczNDcsMy4yODc4NiAtMS4zOTY4NSwwLjAwOCAtNC40ODEzOCwwLjg2Nzk2IC02Ljg1Mzk3LDEuOTExNTEgLTAuMzM5NTUsMC4xNDkzNSAtMC42MTczNiwwLjEyNjY1IC0wLjYxNzM2LC0wLjA1MDQgeiBtIC0yOC44Njg1OSwtMTAuNzMwODQgYyAtNC44NjI4OSwtNS4wNzE0NyAtNy4yMjE5OSwtMTIuNzUxOTkgLTYuMDU5NDYsLTE5LjcyNzc1IDAuNTk5MDYsLTMuNTk0NjMgMC43Nzk2MSwtMy44NjYyNyAyLjU3MzEsLTMuODcxMzIgMS44NzQxNiwtMC4wMDUgNC41NjM5NywtMC43MTYxMiA2LjU0ODE3LC0xLjczMDUxIDAuODQzNDEsLTAuNDMxMTggMS42MDY1OSwtMC43MTA4NiAxLjY5NTk0LC0wLjYyMTUxIDAuMDg5MywwLjA4OTMgLTAuNTYwMjQsMS4yNDAwMyAtMS40NDM1MiwyLjU1NzA3IC00LjU1MjU5LDYuNzg4MTcgLTUuMjc4MDQsMTUuMjk3MTQgLTEuOTMzMTUsMjIuNjc0MTQgMC41NjYwNSwxLjI0ODQgMS4wMjkxOCwyLjMyNzIzIDEuMDI5MTgsMi4zOTc0MSAwLDAuNTEwNDcgLTAuOTM4NzIsLTAuMTQyODcgLTIuNDEwMjYsLTEuNjc3NTMgeiBtIDM2Ljk3MzEsLTExLjQ4NTAzIGMgLTMuMTUxOTUsLTYuNTExOTIgLTkuNjM2MjEsLTExLjE4Mjk0IC0xNy4yMzE5NSwtMTIuNDEzMjYgLTEuOTY0NDksLTAuMzE4MTkgLTMuNTcxOTcsLTAuNjkxNDggLTMuNTcyMTcsLTAuODI5NTIgLTAuMDAxLC0wLjY3ODIzIDMuMzMyNjcsLTEuMTU5MDkgNy45MzcxMSwtMS4xNDQ4NyA0LjUzMzA5LDAuMDE0IDUuMTU2MjgsMC4wOTY5IDcuNTg0NzIsMS4wMDgyNSAxLjQ1NTIxLDAuNTQ2MTQgMy4yMDE0NiwxLjMyMTg1IDMuODgwNTYsMS43MjM3OSAyLjEyNDIsMS4yNTcyNSA1LjU5NzI2LDQuMTMzIDUuODEzMjIsNC44MTM0NSAwLjExMzYyLDAuMzU4IC0wLjEwMjYxLDEuMTg0NTQgLTAuNDgwNTMsMS44MzY3NSAtMC45NTU1MSwxLjY0OTA0IC0xLjgwNDkxLDQuNzI3NTEgLTEuODA0OTEsNi41NDE1MyAwLDAuODM3OTEgLTAuMTQ1MTUsMS41MjM0NyAtMC4zMjI1NiwxLjUyMzQ3IC0wLjE3NzQxLDAgLTAuOTg4OTgsLTEuMzc2ODEgLTEuODAzNDksLTMuMDU5NTkgeiBtIC0zNS4wODg2OCwtNS44NDgwNSBjIDAuNDE2MjYsLTIuMDI0MTYgMi45MDE5OCwtNi43MzAxNiA0LjY0OTk2LC04LjgwMzM3IDEuNzUwMjksLTIuMDc1OTYgNC4yNTE1LC00LjE3Njg3IDYuNTI3NjksLTUuNDgzMDEgMS41NjE5MSwtMC44OTYyNiA2LjA3MzA2LC0yLjU1ODc2IDYuOTQzMTQsLTIuNTU4NzYgMC4zNDc4OSwwIDAuOTQ3MzIsMC41ODAxIDEuMzY2OTksMS4zMjI5MiAwLjg3NDkyLDEuNTQ4NTcgMi41NDEyNiwzLjM3NTkxIDQuNDMzOTcsNC44NjIzOCBsIDEuMzQ3MywxLjA1ODExIC00LjUyMjMsLTAuMDA2IGMgLTQuMDQ3MTUsLTAuMDA1IC00Ljg1MDUyLDAuMTAxODQgLTcuNjQ2MSwxLjAxODExIC00Ljc5NTUxLDEuNTcxNzQgLTkuNjA2NjYsNS4wODIwNyAtMTIuMDI2LDguNzc0NDUgLTAuODU4MSwxLjMwOTYyIC0xLjM2NDExLDEuMjIyNDYgLTEuMDc0NjUsLTAuMTg1MDkgeiIKICAgICAgICAgaWQ9InBhdGg4OTciCiAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIHNvZGlwb2RpOm5vZGV0eXBlcz0iY2NjY2NzY2NzY3NjY3NjY2NjY3NzY2Nzc2Nzc3NjY2NzY2NjY3NzYyIKICAgICAgICAgc3R5bGU9ImZpbGw6I2Y5YmUyMTtzdHJva2Utd2lkdGg6MC4zNTI3Nzc3OCIKICAgICAgICAgZD0ibSAtMjYwLjQ3NTk5LDIxNS44NjM1NCBjIC00LjE1MTM1LC0wLjYzNTgyIC05LjMxMTM1LC0zLjEwOTA5IC0xMi4zMTEyNSwtNS45MDA5NyBsIC0yLjAwNDQ4LC0xLjg2NTQ5IDEuMDQ2MzcsLTIuMjEyNTcgYyAwLjU3NTUxLC0xLjIxNjkgMS4yMzEyLC0zLjMwODM0IDEuNDU3MTEsLTQuNjQ3NjQgMC4yMjU5LC0xLjMzOTMgMC41MTU0NCwtMi40MzUwNSAwLjY0MzQzLC0yLjQzNSAwLjEyOCw1ZS01IDAuNzQ3MzIsMS4wNzE2MSAxLjM3NjI5LDIuMzgxMjUgMy40MTI5LDcuMTA2MzkgMTAuMzkxNDEsMTEuOTAyMzEgMTguODc2NTYsMTIuOTcyNzMgMC45MjE2MywwLjExNjI3IDEuNjc1NywwLjM0MTU3IDEuNjc1NywwLjUwMDY3IDAsMC44MDUwNyAtNy43MjU2MywxLjY3MTczIC0xMC43NTk3MywxLjIwNzAyIHogbSAyMy4xMDY5NSwtMC42ODIyMiBjIDAsLTAuMTEwNTYgMC40NTQ1MiwtMC44NjQ2MiAxLjAxMDA1LC0xLjY3NTY5IDQuMjY4NzMsLTYuMjMyMyA1LjI4NDY5LC0xNC4zODQ0NyAyLjY1ODkzLC0yMS4zMzU1OSAtMS40NDMwNiwtMy44MjAxNiAtMS40MDA3LC0zLjkyNzIzIDAuNjkzMTIsLTEuNzUxOTkgNC4wMjI5Niw0LjE3OTQgNi4wMTQzOSw5LjQ1MTQ5IDUuOTY1MTQsMTUuNzkyMDcgLTAuMDE2MSwyLjA2NTk0IC0wLjI0MzkzLDQuNDAwMTkgLTAuNTE1MjQsNS4yNzc5NCBsIC0wLjQ4NjQ3LDEuNTczNzcgLTIuODM1MjcsMC40Mzk5NyBjIC0xLjU1OTQsMC4yNDE5OSAtMy41OTE0MiwwLjc2NDEgLTQuNTE1NjIsMS4xNjAyNiAtMS44MjI5OSwwLjc4MTQyIC0xLjk3NDY0LDAuODIxMyAtMS45NzQ2NCwwLjUxOTI2IHogbSAtMjkuMjIxMzcsLTEwLjQyMzU0IGMgLTQuODYyODksLTUuMDcxNDcgLTcuMjIxOTksLTEyLjc1MTk5IC02LjA1OTQ2LC0xOS43Mjc3NSAwLjU5OTA2LC0zLjU5NDYzIDAuNzc5NjEsLTMuODY2MjcgMi41NzMxLC0zLjg3MTMyIDEuODc0MTYsLTAuMDA1IDQuNTYzOTcsLTAuNzE2MTIgNi41NDgxNywtMS43MzA1MSAwLjg0MzQxLC0wLjQzMTE4IDEuNjA2NTksLTAuNzEwODYgMS42OTU5NCwtMC42MjE1MSAwLjA4OTMsMC4wODkzIC0wLjU2MDI0LDEuMjQwMDMgLTEuNDQzNTIsMi41NTcwNyAtNC41NTI1OSw2Ljc4ODE3IC01LjI3ODA0LDE1LjI5NzE0IC0xLjkzMzE1LDIyLjY3NDE0IDAuNTY2MDUsMS4yNDg0IDEuMDI5MTgsMi4zMjcyMyAxLjAyOTE4LDIuMzk3NDEgMCwwLjUxMDQ3IC0wLjkzODcyLC0wLjE0Mjg3IC0yLjQxMDI2LC0xLjY3NzUzIHogbSAzNi45NzMxLC0xMS40ODUwMyBjIC0zLjE1MTk1LC02LjUxMTkyIC05LjYzNjIxLC0xMS4xODI5NCAtMTcuMjMxOTUsLTEyLjQxMzI2IC0xLjk2NDQ5LC0wLjMxODE5IC0zLjU3MTk3LC0wLjY5MTQ4IC0zLjU3MjE3LC0wLjgyOTUyIC0wLjAwMSwtMC42NzgyMyAzLjMzMjY3LC0xLjE1OTA5IDcuOTM3MTEsLTEuMTQ0ODcgNC41MzMwOSwwLjAxNCA1LjE1NjI4LDAuMDk2OSA3LjU4NDcyLDEuMDA4MjUgMS40NTUyMSwwLjU0NjE0IDMuMjAxNDYsMS4zMjE4NSAzLjg4MDU2LDEuNzIzNzkgMi4xMjQyLDEuMjU3MjUgNS41OTcyNiw0LjEzMyA1LjgxMzIyLDQuODEzNDUgMC4xMTM2MiwwLjM1OCAtMC4xMDI2MSwxLjE4NDU0IC0wLjQ4MDUzLDEuODM2NzUgLTAuOTU1NTEsMS42NDkwNCAtMS44MDQ5MSw0LjcyNzUxIC0xLjgwNDkxLDYuNTQxNTMgMCwwLjgzNzkxIC0wLjE0NTE1LDEuNTIzNDcgLTAuMzIyNTYsMS41MjM0NyAtMC4xNzc0MSwwIC0wLjk4ODk4LC0xLjM3NjgxIC0xLjgwMzQ5LC0zLjA1OTU5IHoiCiAgICAgICAgIGlkPSJwYXRoODk1IgogICAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgICA8cGF0aAogICAgICAgICBzb2RpcG9kaTpub2RldHlwZXM9InNjY3NjY2NjY3NzY2Nzc2Nzc3NjY2NzY2NjY3NzYyIKICAgICAgICAgc3R5bGU9ImZpbGw6I2VjNjM1NztzdHJva2Utd2lkdGg6MC4zNTI3Nzc3OCIKICAgICAgICAgZD0ibSAtMjM3LjM2OTA0LDIxNS4xODEzMiBjIDAsLTAuMTEwNTYgMC40NTQ1MiwtMC44NjQ2MiAxLjAxMDA1LC0xLjY3NTY5IDQuMjY4NzMsLTYuMjMyMyA1LjI4NDY5LC0xNC4zODQ0NyAyLjY1ODkzLC0yMS4zMzU1OSAtMS40NDMwNiwtMy44MjAxNiAtMS40MDA3LC0zLjkyNzIzIDAuNjkzMTIsLTEuNzUxOTkgNC4wMjI5Niw0LjE3OTQgNi4wMTQzOSw5LjQ1MTQ5IDUuOTY1MTQsMTUuNzkyMDcgLTAuMDE2MSwyLjA2NTk0IC0wLjI0MzkzLDQuNDAwMTkgLTAuNTE1MjQsNS4yNzc5NCBsIC0wLjQ4NjQ3LDEuNTczNzcgLTIuODM1MjcsMC40Mzk5NyBjIC0xLjU1OTQsMC4yNDE5OSAtMy41OTE0MiwwLjc2NDEgLTQuNTE1NjIsMS4xNjAyNiAtMS44MjI5OSwwLjc4MTQyIC0xLjk3NDY0LDAuODIxMyAtMS45NzQ2NCwwLjUxOTI2IHogbSAtMjkuMjIxMzcsLTEwLjQyMzU0IGMgLTQuODYyODksLTUuMDcxNDcgLTcuMjIxOTksLTEyLjc1MTk5IC02LjA1OTQ2LC0xOS43Mjc3NSAwLjU5OTA2LC0zLjU5NDYzIDAuNzc5NjEsLTMuODY2MjcgMi41NzMxLC0zLjg3MTMyIDEuODc0MTYsLTAuMDA1IDQuNTYzOTcsLTAuNzE2MTIgNi41NDgxNywtMS43MzA1MSAwLjg0MzQxLC0wLjQzMTE4IDEuNjA2NTksLTAuNzEwODYgMS42OTU5NCwtMC42MjE1MSAwLjA4OTMsMC4wODkzIC0wLjU2MDI0LDEuMjQwMDMgLTEuNDQzNTIsMi41NTcwNyAtNC41NTI1OSw2Ljc4ODE3IC01LjI3ODA0LDE1LjI5NzE0IC0xLjkzMzE1LDIyLjY3NDE0IDAuNTY2MDUsMS4yNDg0IDEuMDI5MTgsMi4zMjcyMyAxLjAyOTE4LDIuMzk3NDEgMCwwLjUxMDQ3IC0wLjkzODcyLC0wLjE0Mjg3IC0yLjQxMDI2LC0xLjY3NzUzIHogbSAzNi45NzMxLC0xMS40ODUwMyBjIC0zLjE1MTk1LC02LjUxMTkyIC05LjYzNjIxLC0xMS4xODI5NCAtMTcuMjMxOTUsLTEyLjQxMzI2IC0xLjk2NDQ5LC0wLjMxODE5IC0zLjU3MTk3LC0wLjY5MTQ4IC0zLjU3MjE3LC0wLjgyOTUyIC0wLjAwMSwtMC42NzgyMyAzLjMzMjY3LC0xLjE1OTA5IDcuOTM3MTEsLTEuMTQ0ODcgNC41MzMwOSwwLjAxNCA1LjE1NjI4LDAuMDk2OSA3LjU4NDcyLDEuMDA4MjUgMS40NTUyMSwwLjU0NjE0IDMuMjAxNDYsMS4zMjE4NSAzLjg4MDU2LDEuNzIzNzkgMi4xMjQyLDEuMjU3MjUgNS41OTcyNiw0LjEzMyA1LjgxMzIyLDQuODEzNDUgMC4xMTM2MiwwLjM1OCAtMC4xMDI2MSwxLjE4NDU0IC0wLjQ4MDUzLDEuODM2NzUgLTAuOTU1NTEsMS42NDkwNCAtMS44MDQ5MSw0LjcyNzUxIC0xLjgwNDkxLDYuNTQxNTMgMCwwLjgzNzkxIC0wLjE0NTE1LDEuNTIzNDcgLTAuMzIyNTYsMS41MjM0NyAtMC4xNzc0MSwwIC0wLjk4ODk4LC0xLjM3NjgxIC0xLjgwMzQ5LC0zLjA1OTU5IHoiCiAgICAgICAgIGlkPSJwYXRoODkzIgogICAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgICA8cGF0aAogICAgICAgICBzb2RpcG9kaTpub2RldHlwZXM9InNjY3NjY2NjY3NjY2NjY3NzY2NjY3NjY2NjY2NjY2MiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNlODQxMzM7c3Ryb2tlLXdpZHRoOjAuMzUyNzc3NzgiCiAgICAgICAgIGQ9Im0gLTIzNy4zNjkwNCwyMTUuMTgxMzIgYyAwLC0wLjExMDU2IDAuNDU0NTIsLTAuODY0NjIgMS4wMTAwNSwtMS42NzU2OSA0LjI2ODczLC02LjIzMjMgNS4yODQ2OSwtMTQuMzg0NDcgMi42NTg5MywtMjEuMzM1NTkgLTEuNDQzMDYsLTMuODIwMTYgLTEuNDAwNywtMy45MjcyMyAwLjY5MzEyLC0xLjc1MTk5IDQuMDIyOTYsNC4xNzk0IDYuMDE0MzksOS40NTE0OSA1Ljk2NTE0LDE1Ljc5MjA3IC0wLjAxNjEsMi4wNjU5NCAtMC4yNDM5Myw0LjQwMDE5IC0wLjUxNTI0LDUuMjc3OTQgbCAtMC40ODY0NywxLjU3Mzc3IC0yLjgzNTI3LDAuNDM5OTcgYyAtMS41NTk0LDAuMjQxOTkgLTMuNTkxNDIsMC43NjQxIC00LjUxNTYyLDEuMTYwMjYgLTEuODIyOTksMC43ODE0MiAtMS45NzQ2NCwwLjgyMTMgLTEuOTc0NjQsMC41MTkyNiB6IG0gLTMwLjE1NjgsLTEyLjM4NjYxIGMgLTMuODg3MzksLTUuMDg5OTMgLTUuNTk4NDUsLTEyLjU4NjQ5IC00LjI5MzIxLC0xOC44MDk1OSBsIDAuNDA2OTUsLTEuOTQwMjggMi4xMTY2NywtMC4yNjIyMiBjIDEuMTY0MTcsLTAuMTQ0MjMgMi44MTk2MywtMC41MDE0MiAzLjY3ODgyLC0wLjc5Mzc1IDAuODU5MTgsLTAuMjkyMzQgMS42ODEwNCwtMC41MzE1MyAxLjgyNjM0LC0wLjUzMTUzIDAuMTQ1MzEsMCAtMC4yNzM0OSwwLjg5MjkyIC0wLjkzMDY2LDEuOTg0MjYgLTMuMzMzNDQsNS41MzU3MyAtNC4xMjE3MSwxMi43NjAxIC0yLjA5MDI3LDE5LjE1NzEzIDAuNDYxMjQsMS40NTI0NyAwLjc4MTI1LDIuNjk4MjMgMC43MTExMiwyLjc2ODM1IC0wLjA3MDEsMC4wNzAxIC0wLjcxMTcyLC0wLjYzNzQ0IC0xLjQyNTc2LC0xLjU3MjM3IHogbSAzOC4xMTIxLC0xMC42MDgzNSBjIC0wLjYzODUsLTEuMjQ0MiAtMi4yMDYsLTMuMTk0MDggLTQuMDU2OTUsLTUuMDQ2NiAtMy41MTg4NiwtMy41MjE4NCAtNy4xMDc3MywtNS41ODQzNyAtMTEuNTM2MjksLTYuNjI5OTQgLTIuMjUwOTMsLTAuNTMxNDMgLTIuNjExOTEsLTAuNzAzNjggLTEuOTI5MzQsLTAuOTIwNjMgMS41MzQzOSwtMC40ODc2OCA3LjUzNDYsLTAuMjg1MjkgOS45MTQwMywwLjMzNDQxIDMuNzY1OTUsMC45ODA4MiA4LjEzNjc1LDMuNDEwODYgMTAuMzYzNzQsNS43NjE5NyBsIDEuMDA5MTEsMS4wNjUzNCAtMC45MTkxNiwxLjk0MjkzIGMgLTAuNTA1NTMsMS4wNjg2MSAtMS4wOTE4NCwyLjc0ODE5IC0xLjMwMjkyLDMuNzMyMzggLTAuMjExMDcsMC45ODQyIC0wLjQxMDMsMS43ODkwOCAtMC40NDI3MywxLjc4ODYyIC0wLjAzMjQsLTMuNmUtNCAtMC41MjcyLC0wLjkxMzI3IC0xLjA5OTQ5LC0yLjAyODQ4IHoiCiAgICAgICAgIGlkPSJwYXRoODkxIgogICAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgICA8cGF0aAogICAgICAgICBzb2RpcG9kaTpub2RldHlwZXM9InNjY3NjY2NjY3MiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMzYWFhNTg7c3Ryb2tlLXdpZHRoOjAuMzUyNzc3NzgiCiAgICAgICAgIGQ9Im0gLTIzNy4zNjkwNCwyMTUuMTgxMzIgYyAwLC0wLjExMDU2IDAuNDU0NTIsLTAuODY0NjIgMS4wMTAwNSwtMS42NzU2OSA0LjI2ODczLC02LjIzMjMgNS4yODQ2OSwtMTQuMzg0NDcgMi42NTg5MywtMjEuMzM1NTkgLTEuNDQzMDYsLTMuODIwMTYgLTEuNDAwNywtMy45MjcyMyAwLjY5MzEyLC0xLjc1MTk5IDQuMDIyOTYsNC4xNzk0IDYuMDE0MzksOS40NTE0OSA1Ljk2NTE0LDE1Ljc5MjA3IC0wLjAxNjEsMi4wNjU5NCAtMC4yNDM5Myw0LjQwMDE5IC0wLjUxNTI0LDUuMjc3OTQgbCAtMC40ODY0NywxLjU3Mzc3IC0yLjgzNTI3LDAuNDM5OTcgYyAtMS41NTk0LDAuMjQxOTkgLTMuNTkxNDIsMC43NjQxIC00LjUxNTYyLDEuMTYwMjYgLTEuODIyOTksMC43ODE0MiAtMS45NzQ2NCwwLjgyMTMgLTEuOTc0NjQsMC41MTkyNiB6IgogICAgICAgICBpZD0icGF0aDg4OSIKICAgICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDwvZz4KICA8L2c+Cjwvc3ZnPgo=';
-const blockIconURI = menuIconURI;
-let theLocale = null;
-let ai_user = '一般人';
-let ai_assistant = '簡單回答問題';
-let ai_question = '';
-//let ai_model='gemini-2.5-flash-lite';
-//this.prompt='';
-let ai_temperature = 0.5;
-let max_tokens = 2048;
-let ai_top_p = 0.9;  //>0 <1
-//let ai_frequency_penalty=0.8; //>0.1 <0.9
-//let ai_presence_penalty=0.5;  //>0 <1         
+const partsOfSpeech = [
+  { name: "Noun", value: "noun" },
+  { name: "Pronoun", value: "pronoun" },
+  { name: "Verb", value: "verb" },
+  { name: "Adverb", value: "adverb" },
+  { name: "Adjective", value: "adjective" },
+  { name: "Preposition", value: "preposition" },
+  { name: "Conjunction", value: "conjunction" },
+  { name: "Interjection", value: "interjection" },
+];
 
-class scratch3_gemini {
-    constructor(runtime) {
-        theLocale = this._setLocale();
-        this.runtime = runtime;
-        this.api_key = genAI;
-        this.ai_answer = '';
-        this.image_size_ary = ['1024x1024', '512x512', '256x256'];
-        //this.runtime.registerPeripheralExtension('openai', this);
-        this.ai_model = 'gemini-2.5-flash-lite';
+// Icon svg to be displayed at the left edge of each extension block, encoded as a data URI.
+const blockIconURI =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAABFFBMVEVHcEwcoOOHbMOOacKKa8Nsess7kdovl953dMiCb8U4k9s5kttuectmfM02k9tqeswdoONGjNYtmd4tmN4knOE9kNkineE0ldw4k9tbgtFueMtag9EknOE4k9s1lNxsecskneFkf85vecpwd8p0dclRhtNreswnm+BLidVdgc87kdp9ccdYgtFne80umN5ifs4coONqe8whnuJkfc2PacE/j9mOacIlneCOacJoe82OacKNasKKa8NQh9NMidQ+kNlif85lfc1agtBegM9ThtJFjNc2lNtBjthpe805kto7kdlJitZNiNRVhNFLidV8csdPh9Ntecsvl91xd8pHi9Z2dcgrmd4nm+CFbcQineIzldxXg9Gl+YXoAAAAP3RSTlMA/hb9zy8WHtNkPEwg0Cpb2uGC2puhbu0JEEIFGN5xFlMDAeOXc/UxXeDO+dC8bDuvbMyfqrp6R4uHRE8tktBFUF/DAAABz0lEQVRIx5WW11rCQBBGVzqE0Iv0Kh0UFRFbiBKBEIpI9/3fwxQiJCaws/fnmzOz+0+CkM5JpRD0mM1gJOqGEplmB4pk7+oxIJIiy05oKwUa2kyH7t5lgV50F2jmHnQ/3q8gRKRO80jNAkCaAwEZA8o4SYH46XlduEQsLxXpzYKXuL0X9gjHYapFcwPJa8aNvATWq7d9yV7ciPE6cIhvGeEmI6Z/nonKhOi1YPpU4rRbzJ5b/hWZTQSEHYaTJ+bmzFeXS6UXxQ4/dwG9+zHYbdPp8shrInjxxG7uD8U1AdNmekBEL4YRi8xX6/VtyKoMuuHp0WTc8IjCa7H34pHt9sITSFulbBtenh/uTUYjT2w0vFjBS0T447nxpYvxY+S/V18qokLEdSKISUW0vdY84Qm04xl1+1WF10ia174Vdfv7KNptevPyhCy6V1nQ8loFTkQt486pvHbzebhxOmjXpHpe/vbZx08qvfw4gakde+EQvFv5MK8wgRf+0lj2GjZwl9Kr7IW9lJD1TZpXwoW/LktSHpOQNd4SvCqQNY5KDLAIQpYKxSassA+fjxoGgd9wR5glYAiKVKBeCAVb0F8FlPSBf3uINBhxFcGIRffqfwEWLqTTfBD7qQAAAABJRU5ErkJggg==";
 
+class Scratch3_gemini {
+  constructor(runtime) {
+    this.runtime = runtime;
+    this.apiKey = "AIzaSyDcM6vALY39_hQzET-A6mLKHOVyc_EY_FM";
+    // this.apiKey = process.env.REACT_APP_API_KEY;
+    console.log(process.env.REACT_APP_API_KEY);
+    this.client = new GoogleGenerativeAI(this.apiKey);
+    this.modelId = "gemini-2.5-flash";
+    this._questionQueue = [];
+    this.generateContent = null;
+    // Context controls (defaults only; no extra blocks)
+    this.region = "India"; // default region context
+    this.audience = "school"; // "school" | "college"
+
+    // Log available models for debugging
+    this._logAvailableModels();
+  }
+
+  // Build a short system-style context string for all prompts
+  _buildContext() {
+    const audienceLabel = this.audience === "college" ? "college" : "school";
+    return `Respond for learners in ${this.region}. Keep it appropriate for ${audienceLabel} students. Prefer Indian context, metric units, INR where relevant.`;
+  }
+
+  async _logAvailableModels() {
+    try {
+      const model = this.client.getGenerativeModel({ model: this.modelId });
+      console.log(`Using model: ${this.modelId}`);
+      console.log("Model initialized successfully");
+    } catch (error) {
+      console.error("Error initializing model:", error);
+      console.log("Try these alternative model names:");
+      console.log("- gemini-1.5-pro-latest");
+      console.log("- gemini-1.5-flash-8b-latest");
+      console.log("- gemini-2.0-flash-exp");
     }
+  }
 
-    _setLocale() {
-        let nowLocale = '';
-        switch (formatMessage.setup().locale) {
-            case 'zh-tw':
-                nowLocale = 'zh-tw';
-                break;
-            default:
-                nowLocale = 'en';
-                break;
-        }
-        return nowLocale;
+  get EXTENSION_ID() {
+    return "gemini";
+  }
+
+  getInfo() {
+    return [
+      {
+        id: "gemini",
+        name: formatMessage({
+          id: "ai.AiTranslate.name",
+          default: "Gemini",
+          description: "Name of Extension",
+        }),
+        blockIconURI: blockIconURI,
+        color1: "#AD6EE8",
+        blocks: [
+          {
+            opcode: "AiTranslate",
+            blockType: BlockType.REPORTER,
+            text: formatMessage({
+              id: "ai.AiTranslate",
+              default: "Translate [text] into [Hindi]",
+              description: "Get the AI response for a given prompt",
+            }),
+            arguments: {
+              text: {
+                type: ArgumentType.STRING,
+                defaultValue: "Mango",
+              },
+              Hindi: {
+                type: ArgumentType.STRING,
+                menu: "languages",
+                defaultValue: "Hindi",
+              },
+            },
+          },
+          {
+            opcode: "AskAI",
+            blockType: BlockType.COMMAND,
+            text: formatMessage({
+              id: "ai.AskAI",
+              default: "ask AI [text]",
+              description: "Get the AI response for a given prompt",
+            }),
+            arguments: {
+              text: {
+                type: ArgumentType.STRING,
+                defaultValue: "Hello AI",
+              },
+            },
+          },
+          {
+            opcode: "GetAI",
+            blockType: BlockType.REPORTER,
+            text: formatMessage({
+              id: "ai.GetAI",
+              default: "get AI generated text",
+              description: "Get the AI response for a given prompt",
+            }),
+          },
+          {
+            opcode: "SummarizeText",
+            blockType: BlockType.REPORTER,
+            text: formatMessage({
+              id: "ai.summarizeText",
+              default: "summarize [text]",
+              description: "Summarize input text concisely",
+            }),
+            arguments: {
+              text: {
+                type: ArgumentType.STRING,
+                defaultValue: "Photosynthesis is the process...",
+              },
+            },
+          },
+          {
+            opcode: "ExplainConcept",
+            blockType: BlockType.REPORTER,
+            text: formatMessage({
+              id: "ai.explainConcept",
+              default: "explain [concept]",
+              description: "Explain concept simply for students",
+            }),
+            arguments: {
+              concept: {
+                type: ArgumentType.STRING,
+                defaultValue: "Newton's first law",
+              },
+            },
+          },
+        ],
+        menus: {
+          languages: {
+            acceptReporters: true,
+            items: languages.map((lang) => lang.name),
+            sort: "alphabetical",
+          },
+          partsOfSpeech: {
+            acceptReporters: true,
+            items: partsOfSpeech.map((pos) => pos.name),
+          },
+        },
+      },
+    ];
+  }
+
+  async AiTranslate(args) {
+    const text = args.text;
+    const targetLanguage = args.Hindi; // Assuming 'Hindi' is used to specify the target language
+    try {
+      const model = this.client.getGenerativeModel({ model: this.modelId });
+      const prompt = `You are a translator. ${this._buildContext()} Translate the text into ${targetLanguage}. Output ONLY the translated text — no quotes, no explanations, no bullets. Text: ${text}`;
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.2,
+          topK: 20,
+          topP: 0.9,
+          maxOutputTokens: 120,
+        },
+      });
+      // Return the translated text
+      return result.response.text();
+    } catch (error) {
+      return "Error fetching translation response";
     }
+  }
 
-    getInfo() {
-        theLocale = this._setLocale();
-        return {
-            id: 'gemini',
-            name: 'Gemini',
-            color1: '#0000CD',
-            color2: '#0000CD',
-            menuIconURI: menuIconURI,
-            blockIconURI: blockIconURI,
-            blocks: [
-                {
-                    opcode: 'gmeini_api_key_url',
-                    blockType: BlockType.COMMAND,
-                    text: msg.gmeini_api_key_url[theLocale]
-                },
-                {
-                    opcode: 'set_ai_modle',
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        MODLE: {
-                            type: ArgumentType.STRING,
-                            menu: 'modleItem',
-                            defaultValue: 'gemini-2.5-flash-lite'
-                        },
-                    },
-                    text: msg.set_ai_modle[theLocale]
-                },
-                {
-                    opcode: 'openai_apikey',
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        KEY: {
-                            type: ArgumentType.STRING,
-                            defaultValue: 'api key'
-                        },
-                    },
-                    text: msg.openai_apikey[theLocale]
-                },
+  async AskAI(args, util) {
+    const text = args.text;
+    try {
+      console.log("AskAI invoked with:", text);
+      const model = this.client.getGenerativeModel({ model: this.modelId });
+      const prompt = `Answer the user's question: ${text}. ${this._buildContext()} Keep it factual and concise (1-3 short sentences).`;
+      // Use simple string API for broader compatibility
+      let result = await model.generateContent(prompt);
+      let answer =
+        result && result.response && typeof result.response.text === "function"
+          ? result.response.text()
+          : "";
+      if (!answer || !answer.trim()) {
+        // Try extracting manually from candidates if helper returned empty
+        try {
+          const candidates =
+            result && result.response && result.response.candidates
+              ? result.response.candidates
+              : [];
+          if (
+            candidates.length &&
+            candidates[0].content &&
+            candidates[0].content.parts &&
+            candidates[0].content.parts.length
+          ) {
+            const part =
+              candidates[0].content.parts.find((p) => p.text) ||
+              candidates[0].content.parts[0];
+            answer = part && part.text ? part.text : "";
+          }
+        } catch (_) {}
+      }
+      if (!answer || !answer.trim()) {
+        console.log(
+          "AskAI: empty first answer, retrying with simplified prompt..."
+        );
+        const retryPrompt = `Answer briefly: ${text}`;
+        result = await model.generateContent(retryPrompt);
+        answer =
+          result.response && typeof result.response.text === "function"
+            ? result.response.text()
+            : "";
+      }
+      console.log(
+        "AskAI raw response:",
+        JSON.stringify(
+          result && result.response ? result.response : {},
+          null,
+          2
+        )
+      );
+      console.log("AskAI answer:", answer);
+      this.generateContent = answer;
 
-                /*                
-                {
-                    opcode: 'drawimage',
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        TEXT: {
-                            type: ArgumentType.STRING,
-                            defaultValue: ' '
-                        },
-                    },
-                    text: msg.drawimage [theLocale]
-                },                
-                {
-                    opcode: 'set_max_token',
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        TOKEN: {
-                            type: ArgumentType.STRING,
-                            defaultValue: '2048'
-                        },
-                    },
-                    text: msg.set_max_token[theLocale]
-                },*/
-                {
-                    opcode: 'set_temperature',
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        TEMP: {
-                            type: ArgumentType.STRING,
-                            defaultValue: '0.5'
-                        },
-                    },
-                    text: msg.set_temperature[theLocale]
-                },
-                /*{
-                    opcode: 'upload_file',
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        ASSISTANT: {
-                            type: ArgumentType.STRING,
-                            defaultValue: ' '
-                        },
-                    },
-                    text: msg.upload_file[theLocale]
-                },*/
-                {
-                    opcode: 'do_question',
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        QUESTION: {
-                            type: ArgumentType.STRING,
-                            defaultValue: ' '
-                        },
-                    },
-                    text: msg.set_question[theLocale]
-                },
-                '---',
-                {
-                    opcode: 'aianswer',
-                    blockType: BlockType.REPORTER,
-                    text: msg.ananswer[theLocale],
-                    arguments: {
-                        id: {
-                            type: ArgumentType.STRING,
-                            defaultValue: 'id'
-                        }
-                    },
-                },
-                {
-                    opcode: 'copyTEXT_memory',
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        TEXT: {
-                            type: ArgumentType.STRING,
-                            defaultValue: ' '
-                        },
-                    },
-                    text: msg.copyTEXT_memory[theLocale]
-                },
-
-            ],
-            menus: {
-                sizeItem: {
-                    acceptReporters: true,
-                    items: msg.size[theLocale],
-                },
-                modleItem: {
-                    acceptReporters: true,
-                    items: ['gemini-2.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-3.1-flash-lite', 'gemma-4-26b-a4b-it', 'gemma-4-31b-it'],
-                },
-
-            }
-        };
+      // Display on sprite/stage for command-style feedback
+      const target = util && util.target ? util.target : null;
+      if (target && target.visible && !target.isStage) {
+        this.runtime.emit("SAY", target, "say", answer);
+      } else if (target) {
+        this.runtime.emit("QUESTION", answer);
+      } else {
+        console.log(
+          "AskAI: no target available to display; only returning text."
+        );
+      }
+      return answer;
+    } catch (error) {
+      console.error("AskAI error:", error);
+      return "Error fetching response";
     }
+  }
+  GetAI() {
+    return this.generateContent;
+  }
 
-    openai_apikey(args) {
-        this.api_key = args.KEY;
-        console.log('api_key=', this.api_key);
+  async SummarizeText(args) {
+    const text = args.text;
+    try {
+      const model = this.client.getGenerativeModel({ model: this.modelId });
+      const prompt = `Summarize the following for ${this.audience} students in India using 2-3 short sentences: ${text}`;
+      const result = await model.generateContent(prompt);
+      return result.response.text();
+    } catch (e) {
+      return "Error summarizing";
     }
-    gmeini_api_key_url() {
-        window.open('https://aistudio.google.com/api-keys', 'google aistudio');
+  }
+
+  async ExplainConcept(args) {
+    const concept = args.concept;
+    try {
+      const model = this.client.getGenerativeModel({ model: this.modelId });
+      const prompt = `Explain ${concept} for ${this.audience} students in ${this.region}. Use simple words and a short example.`;
+      const result = await model.generateContent(prompt);
+      return result.response.text();
+    } catch (e) {
+      return "Error explaining";
     }
-    /*upload_file(){
+  }
 
-        const fileUploader = document.querySelector('#file-uploader');
+  async GenerateMCQs(args) {
+    const topic = args.topic;
+    try {
+      const model = this.client.getGenerativeModel({ model: this.modelId });
+      const prompt = `Create 3 multiple-choice questions on ${topic} for ${this.audience} students in ${this.region}. Format each as: Question | A) | B) | C) | D) | Answer: <letter>. Return only three lines.`;
+      const result = await model.generateContent(prompt);
+      return result.response.text();
+    } catch (e) {
+      return "Error creating MCQs";
+    }
+  }
 
-        fileUploader.addEventListener('change', (e) => {
-        console.log(e.target.files); // get file object
+  async extractPartOfSpeech(args) {
+    const text = args.Text;
+    const partOfSpeech = args.PartOfSpeech;
+    try {
+      const model = this.client.getGenerativeModel({ model: this.modelId });
+
+      const prompt = `Extract all ${partOfSpeech} from: "${text}". ${this._buildContext()} Return ONLY a comma-separated list.`;
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.2,
+          topK: 20,
+          topP: 0.9,
+          maxOutputTokens: 120,
+        },
+      });
+
+      // Return the extracted part of speech
+      return result.response.text();
+    } catch (error) {
+      return `Error fetching ${partOfSpeech} from the text`;
+    }
+  }
+
+  getPrimitives() {
+    return {
+      sensing_askandwait: this.askAndWait,
+    };
+  }
+
+  getMonitored() {
+    return {
+      sensing_answer: {
+        getId: () => "ai.askAndWaitBlock",
+      },
+    };
+  }
+
+  async askAndWait(args, util) {
+    const question = String(args.question);
+    const target = util.target;
+
+    return new Promise((resolve) => {
+      this._enqueueAsk(question, resolve, target);
+
+      this._askNextQuestion();
+    });
+  }
+
+  _enqueueAsk(question, resolve, target) {
+    console.log(`Enqueuing question: ${question}`);
+    this._questionQueue.push({
+      question,
+      resolve,
+      target,
+      visible: target.visible,
+      isStage: target.isStage,
+    });
+  }
+
+  async _askNextQuestion() {
+    if (this._questionQueue.length === 0) return;
+
+    const current = this._questionQueue.shift();
+    const { question, resolve, target, visible, isStage } = current;
+    console.log(`Processing question: ${question}`);
+
+    setTimeout(async () => {
+      try {
+        const prompt = `Answer the question briefly: "${question}". ${this._buildContext()} Limit to 1-2 short sentences.`;
+        const model = this.client.getGenerativeModel({ model: this.modelId });
+        const result = await model.generateContent({
+          contents: [{ role: "user", parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.3,
+            topK: 20,
+            topP: 0.9,
+            maxOutputTokens: 100,
+          },
         });
-    }*/
-    set_ai_modle(args) {
-        this.ai_model = args.MODLE;
-        console.log('ai_modle=', this.ai_model);
-    }
-    set_max_token(args) {
-        max_tokens = parseInt(args.TOKEN, 10);
-        if (max_tokens < 2048) {
-            max_tokens = 2048;
-        }
-        console.log('max_tokens=', max_tokens);
-    }
-    set_temperature(args) {
-        ai_temperature = parseFloat(args.TEMP);
-        if (ai_temperature < 0) {
-            ai_temperature = 0;
-        }
-        if (ai_temperature > 1) {
-            ai_temperature = 1;
-        }
-        console.log('temperature=', ai_temperature);
-    }
-    async drawimage(args) {
-        const ai = new GoogleGenAI({ apiKey: this.api_key });
-        //genAI = new GoogleGenAI({apiKey: this.api_key});
-        const prompt = args.TEXT;
-        console.log('prompt=', prompt);
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash-image",
-            contents: prompt,
-        });
-        console.log('response=', response);
-        for (const part of response.candidates[0].content.parts) {
-            if (part.text) {
-                console.log('part.text=', part.text);
-            } else if (part.inlineData) {
-                const imageData = part.inlineData.data;
-                const buffer = Buffer.from(imageData, "base64");
-                console.log('img=', buffer)
+        const answer = result.response.text();
 
-                /*const newWindow = window.open('', '_blank');
-                if (newWindow) {
-                    // 創建一個 img 元素
-                    const img = newWindow.document.createElement('img');
-                    
-                    // 將 base64 字串設置為 img 的 src 屬性
-                    myBase64Image = buffer;
-                    img.src = base64String;
-                    
-                    // 將 img 元素添加到新窗口的 body 中
-    
-                    newWindow.document.body.appendChild(img);
-                    
-                    // 可選：設置新窗口的標題
-                    newWindow.document.title = 'AI圖片預覽';
-                } else {
-                    alert('無法打開新窗口，請檢查您的瀏覽器彈出視窗設定。');
-                }*/
-                //windows.open('<img src="data:image/png;base64"'+imageData);
-                console('img=', buffer);
-                //fs.writeFileSync("gemini-native-image.png", buffer);
-                //console.log("Image saved as gemini-native-image.png");
-            }
-        }
-    }
-
-    set_ai_user(args) {
-        ai_user = args.USER;
-    }
-
-    set_assistant(args) {
-        ai_assistant = args.ASSISTANT;
-    }
-
-    async do_question(args) {
-        ai_question = args.QUESTION;
-        console.log('ai_question=', ai_question + ai_assistant);
-        if (this.api_key == '' || this.api_key == 'api key' || ai_question == '') {
-            this.ai_answer = msg.error_ai[theLocale];//'api_key system assistant user can not empty';
+        if (visible && !isStage) {
+          this.runtime.emit("SAY", target, "say", answer);
         } else {
-            //console.log('api_key=',this.api_key);
-            genAI = new GoogleGenAI({ apiKey: this.api_key });
-            console.log('api_key=', this.api_key);
-            console.log('genAI=', genAI);
-            const generationConfig = {
-                stopSequences: ["red"],
-                maxOutputTokens: max_tokens,
-                temperature: ai_temperature,  //0.9,
-                topP: ai_top_p,  //0.1,
-                topK: 16,
-            };
-            //const model = genAI.getGenerativeModel({ model: "gemini-pro",generationConfig});
-            const response = await genAI.models.generateContent({
-                model: this.ai_model,
-                contents: ai_question,
-
-            });
-            console.log(response.text);
-            const result = response.text;
-
-            //const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-001",generationConfig});
-            //const prompt = "Write a story about a magic backpack."
-            //const result = await model.generateContent(ai_question);
-            this.ai_answer = response.text;
-            //console.log('response=',response.text());
-            //this.ai_answer = response.text();
-            console.log('ai_answer=', this.ai_answer);
+          this.runtime.emit("QUESTION", answer);
         }
-    }
+        console.log(`Answer received: ${answer}`);
+        resolve(answer);
+      } catch (error) {
+        console.error("Error fetching AI answer:", error);
+        resolve("Error fetching answer");
+      }
+    }, 100);
+  }
 
-    aianswer() {
-        return this.ai_answer;
-    }
-
-    copyTEXT_memory(args) {
-        const copy_text = args.TEXT;
-        navigator.clipboard.writeText(copy_text).then(function () {
-            console.log('Async: Copying to clipboard was successful!');
-        }, function (err) {
-            alert(err);
-            console.error('Async: Could not copy text: ', err);
-        });
-
-    }
-
-    /**/
+  // No extra blocks exposed; defaults above will be used.
 }
 
-module.exports = scratch3_gemini;
+module.exports = Scratch3_gemini;
