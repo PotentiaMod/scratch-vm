@@ -197,7 +197,7 @@ getSaveFileType () {
 
         // If tw:theme does not exist, default to Pot.
         if (storedType === null) {
-            return 'PotentiaMod Project';
+            return 'Custom Project';
         }
 		
         const saveType = storedType.toLowerCase();
@@ -225,7 +225,7 @@ getSaveFileType () {
 
 
         // Unknown or missing color = PotentiaMod.
-        return 'PotentiaMod Project';
+        return 'Custom Project';
     }
 
 timesStarted() {
