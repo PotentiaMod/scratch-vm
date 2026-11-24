@@ -265,13 +265,13 @@ timesStarted() {
         if (theme.includes('ztengine')) return '02Engine';
         if (theme.includes('miku')) return 'Miku Green';
         if (theme.includes('ty')) return 'Tianyi Blue';
-        if (theme.includes('ce')) return 'CE Pink';
+        if (theme.includes('cyexp')) return 'CE Pink';
         if (theme.includes('oubi')) return 'Oubi';
         if (theme.includes('cottoncandy')) return 'Cotton Candy';
         if (theme.includes('omnimax')) return 'OmniMax Blue';
         if (theme.includes('hfse')) return 'Hot Fuse';
         if (theme.includes('nitro')) return 'Nitro Fire';
-        if (theme.includes('ace')) return 'Ace';
+        if (theme.includes('ace')) return 'Asexual';
         if (theme.includes('aurora')) return 'Aurora';
         if (theme.includes('bi')) return 'Bisexual';
         if (theme.includes('cherry')) return 'Cherry';
