@@ -239,13 +239,14 @@ timesStarted() {
 	getColorTheme () {
         const storedTheme = localStorage.getItem('tw:theme');
 
-        // If tw:theme does not exist, default to Indigo.
+        // If tw:theme does not exist, default to Custom.
         if (storedTheme === null) {
-            return 'Indigo';
+            return 'Custom';
         }
 		
         const theme = storedTheme.toLowerCase();
 
+        if (theme.includes('indigo')) return 'Indigo';
         if (theme.includes('magenta')) return 'Magenta';
         if (theme.includes('pink')) return 'Pink';
         if (theme.includes('orange')) return 'Orange';
@@ -262,17 +263,16 @@ timesStarted() {
         if (theme.includes('gaiablue')) return 'GaiaBlue';
         if (theme.includes('cottoncandy')) return 'CottonCandy';
         if (theme.includes('omnimaxblue')) return 'OmniMaxBlue';
-        if (theme.includes('hotfuse')) return 'HotFuse';
+        if (theme.includes('stars')) return 'HotFuse';
         if (theme.includes('nitrofire')) return 'NitroFire';
         if (theme.includes('nebula')) return 'Nebula';
         if (theme.includes('cosmic')) return 'Cosmic';
         if (theme.includes('aurora')) return 'Aurora';
         if (theme.includes('mint')) return 'Mint';
         if (theme.includes('rainbow')) return 'Rainbow';
-        if (theme.includes('custom')) return 'Custom';
 
-        // Unknown or missing color = Indigo.
-        return 'Indigo';
+        // Unknown or missing color = Custom.
+        return 'Custom';
     }
 
     getGUITheme () {
