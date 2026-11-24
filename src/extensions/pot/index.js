@@ -241,12 +241,11 @@ timesStarted() {
 
         // If tw:theme does not exist, default to Custom.
         if (storedTheme === null) {
-            return 'Custom';
+            return 'Indigo';
         }
 		
         const theme = storedTheme.toLowerCase();
 
-        if (theme.includes('indigo')) return 'Indigo';
         if (theme.includes('magenta')) return 'Magenta';
         if (theme.includes('pink')) return 'Pink';
         if (theme.includes('orange')) return 'Orange';
@@ -257,22 +256,48 @@ timesStarted() {
         if (theme.includes('blue')) return 'Blue';
         if (theme.includes('cyan')) return 'Cyan';
         if (theme.includes('lime')) return 'Lime';
-        if (theme.includes('magentapurple')) return 'Fuchsia';
-        if (theme.includes('indigoblue')) return 'SereneBlue';
-        if (theme.includes('corruptedblue')) return 'CorruptedBlue';
-        if (theme.includes('gaiablue')) return 'GaiaBlue';
-        if (theme.includes('cottoncandy')) return 'CottonCandy';
-        if (theme.includes('omnimaxblue')) return 'OmniMaxBlue';
-        if (theme.includes('stars')) return 'HotFuse';
-        if (theme.includes('nitrofire')) return 'NitroFire';
-        if (theme.includes('nebula')) return 'Nebula';
-        if (theme.includes('cosmic')) return 'Cosmic';
+        if (theme.includes('fuchsia')) return 'Fuchsia';
+        if (theme.includes('serene')) return 'Serene Blue';
+        if (theme.includes('corrupted')) return 'Corrupted Blue';
+        if (theme.includes('gaia')) return 'Gaia Blue';
+        if (theme.includes('rotur')) return 'Rotur';
+        if (theme.includes('astraeditor')) return 'Astra Editor';
+        if (theme.includes('ztengine')) return '02Engine';
+        if (theme.includes('miku')) return 'Miku Green';
+        if (theme.includes('ty')) return 'Tianyi Blue';
+        if (theme.includes('ce')) return 'CE Pink';
+        if (theme.includes('oubi')) return 'Oubi';
+        if (theme.includes('cottoncandy')) return 'Cotton Candy';
+        if (theme.includes('omnimax')) return 'OmniMax Blue';
+        if (theme.includes('hfse')) return 'Hot Fuse';
+        if (theme.includes('nitro')) return 'Nitro Fire';
+        if (theme.includes('ace')) return 'Ace';
         if (theme.includes('aurora')) return 'Aurora';
+        if (theme.includes('bi')) return 'Bisexual';
+        if (theme.includes('cherry')) return 'Cherry';
+        if (theme.includes('coral')) return 'Coral';
+        if (theme.includes('cosmic')) return 'Cosmic';
+        if (theme.includes('fire')) return 'Fire';
+        if (theme.includes('forest')) return 'Forest';
+        if (theme.includes('gay')) return 'Gay';
+        if (theme.includes('honey')) return 'Honey';
+        if (theme.includes('lavender')) return 'Lavender';
+        if (theme.includes('lesbian')) return 'Lesbian';
+        if (theme.includes('matrix')) return 'Matrix';
         if (theme.includes('mint')) return 'Mint';
+        if (theme.includes('nebula')) return 'Nebula';
+        if (theme.includes('nonbinary')) return 'Nonbinary';
+        if (theme.includes('ocean')) return 'Ocean';
+        if (theme.includes('pan')) return 'Pansexual';
+        if (theme.includes('sky')) return 'Sky';
+        if (theme.includes('sunset')) return 'Sunset';
+        if (theme.includes('trans')) return 'Trans';
+        if (theme.includes('vaporwave')) return 'Vaporwave';
         if (theme.includes('rainbow')) return 'Rainbow';
+        if (theme.includes('custom')) return 'Custom';
 
         // Unknown or missing color = Custom.
-        return 'Custom';
+        return 'Indigo';
     }
 
     getGUITheme () {
@@ -290,12 +315,13 @@ timesStarted() {
         if (theme.includes('high-contrast')) return 'High Contrast';
         if (theme.includes('catty-midnight')) return 'Catty Midnight';
         if (theme.includes('midnight')) return 'Midnight';
-        if (theme.includes('genesisdark')) return 'Genesis Dark';
-        if (theme.includes('modern-dark')) return 'PotentiaMod Dark';
+        if (theme.includes('genesis-black')) return 'Genesis Dark';
+        if (theme.includes('pot-black')) return 'PotentiaMod Dark';
         if (theme.includes('dark')) return 'Dark';
-        if (theme.includes('genesislight')) return 'Genesis Light';
-        if (theme.includes('modern-light')) return 'PotentiaMod Light';
+        if (theme.includes('genesis-white')) return 'Genesis Light';
+        if (theme.includes('pot-white')) return 'PotentiaMod Light';
         if (theme.includes('light')) return 'Light';
+        if (theme.includes('custom')) return 'Custom';
 
         // If no GUI theme is specified, default to Light.
         return window.matchMedia('(prefers-color-scheme: dark)').matches ?
