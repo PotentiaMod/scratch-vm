@@ -96,6 +96,7 @@ Object.assign(global.Scratch, ScratchCommon, {
  */
 const extensionWorker = new ExtensionWorker();
 global.Scratch.extensions = {
+	isPotentiaMod: true,
     register: extensionWorker.register.bind(extensionWorker)
 };
 
