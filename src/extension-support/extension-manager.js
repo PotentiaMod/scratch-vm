@@ -35,6 +35,7 @@ const defaultBuiltinExtensions = {
     potentia: () => require('../extensions/pot'),
 		
     appmaker: () => require('../extensions/potentia_appmaker'),
+    server: () => require('../extensions/potentia_server'),
     wonderblocks: () => require('../extensions/gaia_wonderblocks'),
 	
     kidsboard: () => require('../extensions/scratch3_kidsboard'),

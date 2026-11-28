@@ -1,4 +1,4 @@
-// gaia: Added server support.
+// pot: Added server support from OmniBlocks and LibreKitten.
 
 const formatMessage = require('format-message');
 const BlockType = require('../../extension-support/block-type');
@@ -24,7 +24,7 @@ const REQ_METHOD_LIST = [
 ];
 
 /**
- * gaia: Blocks to provide the front-end for GaiaMod server support.
+ * pot: Blocks to provide the front-end for PotentiaMod server support.
  * @constructor
  */
 class Server {
@@ -114,7 +114,7 @@ class Server {
                     arguments: {
                         CONTENT: {
                             type: ArgumentType.STRING,
-                            defaultValue: 'Hello GaiaMod!'
+                            defaultValue: 'Hello PotentiaMod!'
                         },
                         MIME: {
                             type: ArgumentType.STRING,
@@ -144,7 +144,7 @@ class Server {
                     arguments: {
                         CONTENT: {
                             type: ArgumentType.STRING,
-                            defaultValue: 'Hello GaiaMod!'
+                            defaultValue: 'Hello PotentiaMod!'
                         }
                     }
                 },

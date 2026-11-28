@@ -192,7 +192,7 @@ class PotetentiaModExtraBlocks {
 
 getSaveFileType () {
         const storedType = localStorage.getItem('potentiamod:saveFileType');
-		const VALID_PROJECT_FILE_TYPES = ["pot", "cmp", "mwp", "dbp", "torch", "pmp", "cw", "dino", "ich", "bm", "arkide",
+		const VALID_PROJECT_FILE_TYPES = ["pot", "cmp", "mwp", "tbp", "rj", "dbp", "torch", "pmp", "cw", "dino", "ich", "bm", "arkide",
 	                                    "zinc", "falcon", "coffee", "snail", "electra", "gaia", "sbx", "sb3", "zip"];
 
         // If tw:theme does not exist, default to Pot.
@@ -202,25 +202,27 @@ getSaveFileType () {
 		
         const saveType = storedType.toLowerCase();
 
-        if (saveType.includes('pot')) return 'PotentiaMod Project';
-        if (saveType.includes('cmp')) return 'CattyMod Project';
-        if (saveType.includes('mwp')) return 'MistWarp Project';
-        if (saveType.includes('dbp')) return 'DashBlocks Project';
-        if (saveType.includes('torch')) return 'CodeTorch Project';
-        if (saveType.includes('pmp')) return 'PenguinMod Project';
-        if (saveType.includes('coffee')) return 'Espresso Project';
-        if (saveType.includes('arkide')) return 'Ark IDE Project';
-        if (saveType.includes('dino')) return 'DinosaurMod Project';
-        if (saveType.includes('snail')) return 'Snail IDE Project';
-        if (saveType.includes('electra')) return 'ElectraMod Project';
-        if (saveType.includes('gaia')) return 'GaiaMod Project';
-        if (saveType.includes('cw')) return 'Cattiest World Project';
-        if (saveType.includes('ich')) return 'Itch Project';
-        if (saveType.includes('bm')) return 'BananaMod Project';
-        if (saveType.includes('falcon')) return 'FalconMod Project';
-        if (saveType.includes('zinc')) return 'Zinc Coding Project';
-        if (saveType.includes('sbx')) return 'ScratchX Project';
-        if (saveType.includes('sb3')) return 'Scratch Project';
+        if (saveType.includes('pot')) return 'PotentiaMod';
+        if (saveType.includes('cmp')) return 'CattyMod';
+        if (saveType.includes('mwp')) return 'MistWarp';
+        if (saveType.includes('rj')) return 'RemixWarp';
+        if (saveType.includes('tbp')) return 'ThunderBlocks';
+        if (saveType.includes('dbp')) return 'DashBlocks';
+        if (saveType.includes('torch')) return 'CodeTorch';
+        if (saveType.includes('pmp')) return 'PenguinMod';
+        if (saveType.includes('coffee')) return 'Espresso';
+        if (saveType.includes('arkide')) return 'Ark IDE';
+        if (saveType.includes('dino')) return 'DinosaurMod';
+        if (saveType.includes('snail')) return 'Snail IDE';
+        if (saveType.includes('electra')) return 'ElectraMod';
+        if (saveType.includes('gaia')) return 'GaiaMod';
+        if (saveType.includes('cw')) return 'Cattiest World';
+        if (saveType.includes('ich')) return 'Itch';
+        if (saveType.includes('bm')) return 'BananaMod';
+        if (saveType.includes('falcon')) return 'FalconMod';
+        if (saveType.includes('zinc')) return 'Zinc Coding';
+        if (saveType.includes('sbx')) return 'ScratchX';
+        if (saveType.includes('sb3')) return 'Scratch';
         if (saveType.includes('zip')) return 'Generic ZIP';
 
 
@@ -254,6 +256,7 @@ timesStarted() {
         if (theme.includes('red')) return 'Red';
         if (theme.includes('purple')) return 'Purple';
         if (theme.includes('blue')) return 'Blue';
+        if (theme.includes('thunderblocks')) return 'Electric Blue';
         if (theme.includes('cyan')) return 'Cyan';
         if (theme.includes('lime')) return 'Lime';
         if (theme.includes('fuchsia')) return 'Fuchsia';

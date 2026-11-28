@@ -15,7 +15,7 @@ const {resolvePath} = require('./resolve-path');
 const {JSDOM} = require('jsdom');
 
 /**
- * This is a privileged client for running PotentiaMod as a web server.
+ * astro: This is a privileged client for running AstroBlocks as a web server.
  * It starts a HTTP server that interfaces with the project running in the VM,
  * via the Web Server extension.
  * @param {boolean} dev If true, runs the server in developer mode.
@@ -48,7 +48,7 @@ class Server {
         this.vm.attachStorage(initStorage());
         this.vm.runtime.isPrivileged = true;
 
-        this.securityManager = this.vm.runtime.extensionManager.securityManager;
+        this.securityManager = this.vm.securityManager;
 
         this.vm.runtime.on('SAY', (target, type, text) => {
             console.log(text);
@@ -57,7 +57,7 @@ class Server {
         this.vm.runtime.on(Runtime.SERVER_RESPONSE, (content, mime, status, extraHeaders, requestId) => {
             const res = this.resMap.get(requestId);
             if (typeof res === 'undefined') return;
-            if (res._potTimeout) clearTimeout(res._potTimeout);
+            if (res._astroTimeout) clearTimeout(res._astroTimeout);
             let parsedJSON;
             try {
                 parsedJSON = JSON.parse(extraHeaders);
@@ -97,7 +97,7 @@ class Server {
         this.vm.clear();
 
         this.http.listen(this.port, () => {
-            console.log(`PotentiaMod on server has started at port ${port}.`);
+            console.log(`AstroBlocks on server has started at port ${port}.`);
         });
     }
 
@@ -108,7 +108,7 @@ class Server {
     httpServer (req, res) {
         const dataRaw = [];
         let bodySize = 0;
-        // lk: TODO: Make this configurable.
+        // astro: TODO: Make this configurable.
         const MAX_BODY_SIZE = 10 * 1024 * 1024; // 10 MB limit
 
         req.on('data', chunk => {
@@ -125,11 +125,11 @@ class Server {
             const dataBuffer = Buffer.concat(dataRaw);
             const dataString = String(dataBuffer);
 
-            if (this.dev && req.url === '/_lk_devServer_updateLb') {
+            if (this.dev && req.url === '/_astro_devServer_updateProj') {
                 if (!('origin' in req.headers)) return res.end('denied');
                 
                 const isEditor = req.headers.origin === 'http://localhost:8601' ||
-                    req.headers.origin === 'https://potentiamod.github.io/';
+                    req.headers.origin === 'https://astroblocks.hermits.cc';
                 if (!isEditor) return res.end('denied');
                 
                 try {
@@ -157,7 +157,7 @@ class Server {
             }, 30000); // 30 second timeout
             
             // Store timeout with response for cleanup on successful response
-            res._potTimeout = timeout;
+            res._astroTimeout = timeout;
             this.vm.runtime.emit(
                 Runtime.SERVER_REQUEST,
                 req.url,

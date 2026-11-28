@@ -4,7 +4,7 @@ const path = require('node:path');
 const os = require('node:os');
 
 /**
- * lk: A curried function that returns a custom path resolver, based on the inputted values.
+ * astro: A curried function that returns a custom path resolver, based on the inputted values.
  * @param {() => string} homeDir The home directory.
  * @param {() => string} workingDir The working directory.
  * @returns {(location: string) => string} The path resolver.
@@ -14,7 +14,7 @@ const makePathResolver = (homeDir, workingDir) => {
     if (typeof workingDir !== 'function') throw new TypeError('"workingDir" must be a function.');
 
     /**
-     * lk: A parser that normalizes a path and converts relative paths to absolute paths,
+     * astro: A parser that normalizes a path and converts relative paths to absolute paths,
      * based on the inputted values.
      * @param {string} location An absolute or relative path.
      * @returns {string} An normalized absolute path.
@@ -30,7 +30,7 @@ const makePathResolver = (homeDir, workingDir) => {
 };
 
 /**
- * lk: A parser that normalizes a path and converts relative paths to absolute paths,
+ * astro: A parser that normalizes a path and converts relative paths to absolute paths,
  * based on the current working directory.
  * @param {string} location An absolute or relative path.
  * @returns {string} An normalized absolute path.

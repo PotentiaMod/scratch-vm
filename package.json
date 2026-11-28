@@ -19,6 +19,7 @@
 		"i18n:push": "tx-push-src scratch-editor extensions translations/core/en.json",
 		"lint": "eslint .",
 		"prepublish": "in-publish && npm run build || not-in-publish",
+		"server": "node ./src/server/cli.js",
 		"start": "webpack-dev-server",
 		"tap": "tap ./test/{unit,integration}/*.js",
 		"tap:unit": "tap ./test/unit/*.js",
@@ -198,5 +199,8 @@
 		"webpack-cli": "3.1.0",
 		"webpack-dev-server": "3.11.2"
 	},
-	"private": true
+	"private": true,
+	"bin": {
+    "potentia-server": "./src/server/cli.js"
+  }
 }
