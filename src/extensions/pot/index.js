@@ -115,6 +115,15 @@ class PotetentiaModExtraBlocks {
                         description: 'Block that returns the current GUI theme'
                     }),
                     blockType: BlockType.REPORTER
+                },
+				{
+                    opcode: 'getBlockTheme',
+                    text: formatMessage({
+                        id: 'tw.blocks.getBlockTheme',
+                        default: 'Get Block Theme',
+                        description: 'Block that returns the current block theme'
+                    }),
+                    blockType: BlockType.REPORTER
                 }
             ],
 
@@ -333,7 +342,7 @@ timesStarted() {
     }
 	
 	
-  /*	
+  
 	getBlockTheme () {
         const storedTheme = localStorage.getItem('tw:theme');
 
@@ -344,15 +353,14 @@ timesStarted() {
 
         const theme = storedTheme.toLowerCase();
 		
-        if (theme.includes('colorful')) return 'Colorful';
-        if (theme.includes('high-contrast')) return 'High Contrasted';
-        if (theme.includes('dark')) return 'Dark (Beta)';
+        if (theme.includes('highcontrasted')) return 'High-Contrast';
+        if (theme.includes('blackbeta')) return 'Dark (Beta)';
         if (theme.includes('three')) return 'Original';
 
         // If no Block theme is specified, default to Original.
         return 'Original';
     }
-	*/
+	
 }
 
 module.exports = PotetentiaModExtraBlocks;
